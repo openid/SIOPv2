@@ -3,7 +3,7 @@
 <rfc version="3" ipr="none" docName="openid-connect-self-issued-v2-1_0" submissionType="IETF" category="std" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" consensus="true">
 
 <front>
-<title abbrev="siop-v2">Self-Issued OpenID Provider V2, draft 01</title><seriesInfo value="openid-connect-self-issued-v2-1_0" status="standard" name="Internet-Draft"></seriesInfo>
+<title abbrev="siop-v2">Self-Issued OpenID Provider V2, draft 02</title><seriesInfo value="openid-connect-self-issued-v2-1_0" status="standard" name="Internet-Draft"></seriesInfo>
 <author initials="K." surname="Yasuda" fullname="Kristina Yasuda"><organization>Microsoft</organization><address><postal><street></street>
 </postal><email>kristina.yasuda@microsoft.com</email>
 </address></author>
