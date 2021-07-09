@@ -138,7 +138,7 @@ Figure: Self-Issued Op Protocol Flow
 
 # Discovery and Negotiation
 
-# Self-Issued OpenID Provider Discovery
+## Self-Issued OpenID Provider Discovery
 
 Self-Issued OP MUST associate a custom schema `openid://` with itself. Relying Party MUST call `openid://` when sending a request to a Self-Issued OP.
 
@@ -146,7 +146,7 @@ Note: Custom schema is a mechanism offered by Mobile Operating System providers.
 
 Note: When more than one Self-issued OP with the same custom schema has been installed on one device, there could be confusion over which Self-Issued OP gets invoked. 
 
-# Relying Party Registration
+## Relying Party Registration
 
 Relying Party must communicate which metadata parameters it supports. If Self-Issued OP and RP mutually support a compatible set of parameters, Self-Issued OP flow continues. If they do not, Self-Issued OP returns an error. Metadata parameters should preferrably be sent by reference as a URI, but when RP cannot host a webserver, they can be sent by value.
 
@@ -174,14 +174,14 @@ Metadata parameters should preferably be sent by reference as a URI using `regis
 `registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP. 
 
 
-## Passing Relying Party Registration Metadata by Value
+### Passing Relying Party Registration Metadata by Value
     
 The `registration` SIOP Request parameter enables RP Registration Metadata to be passed in a single, self-contained parameter.
     
 The registration parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
 
 
-## Passing Relying Party Registration Metadata by Reference
+### Passing Relying Party Registration Metadata by Reference
 
 The `registration_uri` SIOP Request parameter enables RP Registration Metadata to be passed by reference. 
 
@@ -189,7 +189,7 @@ This parameter is used identically to the request parameter, other than that the
 
 The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the `registration_uri` value MUST be https. The request_uri value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP.
 
-## Relying Party Registration Metadata Values
+### Relying Party Registration Metadata Values
 
 This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:
 
@@ -244,7 +244,7 @@ The following is a non-normative example of RP Registration Metadata Values supp
   }
 ```
 
-### Sub Types
+## Sub Types
 
 A sub type is used by Self-Issued OP to advertise which types of identifiers are supported for the `sub` claim. Two types are defined by this specification:
 
@@ -278,7 +278,7 @@ Error response must be made in the same manner as defined in Section 3.1.2.6.
 
 # Identifier Portability and Verifiable Presentation Support
 
-# Self-Issued OpenID Provider Request
+## Self-Issued OpenID Provider Request
 
 The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:
 
@@ -325,7 +325,7 @@ The following is a non-normative example HTTP 302 redirect response by the RP, w
 ```
 
 
-# Self-Issued OpenID Provider Response
+## Self-Issued OpenID Provider Response
 
 Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all of the Relying Party Registration metadata values received from the Relying Party in the registration parameter. If even one of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to Section 4.4.
 
@@ -334,23 +334,23 @@ This extension defines the following claims to be included in the ID token for u
 * sub
     * REQUIRED. Subject identifier value, represented by a URI. When sub type is `jkt`, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When sub type is `did`, the value is a decentralized identifier. The thumbprint value is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the kty value is RSA, the member names e, kty, and n are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the kty value is EC, the member names crv, kty, x, and y are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.
 * sub_jwk
-    * REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is `jkt`, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is `did`, sub_jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id_token directly or indirectly. The sub_jwk value is a JSON object. Use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
-* vp
-    * OPTIONAL. A JSON object, that represents a JWT verifiable presentation, following W3C Verifiable Credentials Specification [VC-DATA-MODEL]. Verifiable Credentials must be embedded in the Verifiable Presentation following W3C Verifiable Credentials Specification [VC-DATA-MODEL]
-    
-Verifiable Presentation is data derived from one or more Verifiable Credentials, issued by one or more issuers, that is shared with a specific verifier. Verifiable Credential is a set of one or more claims made by an issuer.
-
-Self-Issued OP may present credentials to the RP using Verifiable Presentation credential format by including it in the `vp` claim inside the ID token. 
+    * REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is `jkt`, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is `did`, sub_jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id_token directly or indirectly. The sub_jwk value is a JSON object. Use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued. 
 
 Whether the Self-Issued OP is a mobile client or a web client, response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
 1. The `iss` (issuer) Claim Value is `https://self-issued.me/v2`.
-1. A `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
-1. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a decentralized identifier. 
-1. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
+2. A `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
+3. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a decentralized identifier. 
+4. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
 
+## Verifiable Presentation Support
 
-# Self-Issued ID Token Validation
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [OIDC4VP] and W3C Verifiable Credentials Specification [VC-DATA-MODEL].
+
+Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA-MODEL]
+ 
+
+## Self-Issued ID Token Validation
 
 To validate the ID Token received, the RP MUST do the following:
 
@@ -408,6 +408,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 * [RFC7638] https://tools.ietf.org/html/rfc7638
 * [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
 * [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
+* [OIDC4VP] https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html
 
 ## Non-Normative References
 
