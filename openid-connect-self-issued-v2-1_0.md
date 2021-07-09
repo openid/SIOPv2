@@ -146,6 +146,23 @@ Note: Custom schema is a mechanism offered by Mobile Operating System providers.
 
 Note: When more than one Self-issued OP with the same custom schema has been installed on one device, there could be confusion over which Self-Issued OP gets invoked. 
 
+If the input identifier for the discovery process contains the domain self-issued.me, dynamic discovery is not performed. Instead, then the following static configuration values are used:
+
+* authorization_endpoint
+    * REQUIRED. MUST include `openid:`, could also include additional custom schema.
+* issuer
+    * REQUIRED. MUST be `https://self-issued.me/v2`
+* response_types_supported
+    * REQUIRED. MUST be `id_token`
+* scopes_supported
+    * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
+* subject_types_supported
+    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
+* id_token_signing_alg_values_supported
+    * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
+* request_object_signing_alg_values_supported
+    * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`. 
+
 ## Relying Party Registration
 
 Relying Party must communicate which metadata parameters it supports. If Self-Issued OP and RP mutually support a compatible set of parameters, Self-Issued OP flow continues. If they do not, Self-Issued OP returns an error. Metadata parameters should preferrably be sent by reference as a URI, but when RP cannot host a webserver, they can be sent by value.
@@ -193,26 +210,11 @@ The contents of the resource referenced by the URL MUST be a RP Registration Met
 
 This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:
 
-* authorization_endpoint
-    * REQUIRED. MUST include `openid:`, could also include additional custom schema.
-* issuer
-    * REQUIRED. MUST be `https://self-issued.me/v2`
-* response_types_supported
-    * REQUIRED. MUST be `id_token`
-* scopes_supported
-    * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
-* subject_types_supported
-    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
 * subject_identifier_types_supported
-    * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and concrete did methods supported. DID methods supported must take the value of `Method Name` in Chapter 9 of [did-spec-registries](https://w3c.github.io/did-spec-registries/#did-methods), such as `did:peer:`
+    * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and `did`. 
 * did_methods_supported
-    * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values include DID method names expressed following [DID] specification, for example `did:web`. RP can indicate support for any DID method by omitting `did_methods_supported`, While including `did` in `subject_identifier_types_supported'.
-* credential_formats_supported
-    * REQUIRED. A JSON array of strings representing supported credential formats. Valid values include `jwt`, `jwt_vc`, `jwt_vp`, `ldp_vc`, and `ldp_vp`. 
-* id_token_signing_alg_values_supported
-    * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
-* request_object_signing_alg_values_supported
-    * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
+    * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values must take the value of `Method Name` in Chapter 9 of [did-spec-registries](https://w3c.github.io/did-spec-registries/#did-methods), such as `did:peer:` RP can indicate support for any DID method by omitting `did_methods_supported`, while including `did` in `subject_identifier_types_supported'. 
+
 
 Other registration parameters defined in [OpenID.Registration] could be used. Examples are explanatory parameters such as policy_uri, tos_uri, and logo_uri. If the RP uses more than one Redirection URI, the redirect_uris parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the jwks_uri, id_token_encrypted_response_alg and id_token_encrypted_response_enc parameters.
 
@@ -345,10 +347,11 @@ Whether the Self-Issued OP is a mobile client or a web client, response is the s
 
 ## Verifiable Presentation Support
 
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [OIDC4VP] and W3C Verifiable Credentials Specification [VC-DATA-MODEL].
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [OIDC4VP] and W3C Verifiable Credentials Specification [VC-DATA-MODEL].  
 
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA-MODEL]
- 
+Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA-MODEL] 
+
+See [OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs. 
 
 ## Self-Issued ID Token Validation
 
