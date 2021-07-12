@@ -97,6 +97,10 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 
 Mechanism for Self-Issued OPs to present claims using additional credential formats that enable the Holder to prove posession over the claims using cryptographic means. Additional credential formats include Verifiabel Presentation defined in [VC-DATA-MODEL].
 
+* Use of a SIOP even if the SIOP and RP reside on different devices. 
+
+The user might want to use her SIOP, run on her smartphone, to login to or share claims with an RP she is using on a dfferent device, e.g. a tablet or workstation.
+
 Out of Scope:
 
 * Claims issuance flow that defines how Self-Issued OP requests and receives claims from a Claims Provider acting in RP's capacity. Self-Issued OP can present those claims to the RP in Self-Issued OP response defined in this document. 
