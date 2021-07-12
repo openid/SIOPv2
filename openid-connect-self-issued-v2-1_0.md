@@ -282,7 +282,7 @@ Error response must be made in the same manner as defined in Section 3.1.2.6.
 
 # Identifier Portability and Verifiable Presentation Support
 
-# Self-Issued OpenID Provider Request
+# Self-Issued OpenID Provider Request {#siop_authentication_request}
 
 The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:
 
@@ -329,9 +329,11 @@ The following is a non-normative example HTTP 302 redirect response by the RP, w
 ```
 
 
-# Self-Issued OpenID Provider Response
+# Self-Issued OpenID Provider Response {#siop-authentication-response}
 
 Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all of the Relying Party Registration metadata values received from the Relying Party in the registration parameter. If even one of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to Section 4.4.
+
+The response contains an ID Token and, if applicable, further response parameters as defined in extensions. As an example, the response MAY also include a VP token as defined in [OIDC4VP].
 
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses: 
 
@@ -354,7 +356,7 @@ Whether the Self-Issued OP is a mobile client or a web client, response is the s
 1. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
 
 
-# Self-Issued ID Token Validation
+# Self-Issued ID Token Validation {#siop-id_token-validation}
 
 To validate the ID Token received, the RP MUST do the following:
 
@@ -400,6 +402,59 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
   
 ```
    
+# Cross Device SIOP
+
+This section describes how SIOP is used in cross device scenarios. In contrast to on device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through an user agent. The flow is therefore modfied as follows:
+
+1. The RP prepares a SIOP request and renders it as a QR code.
+2. The user scans the QR code with her smartphone's camera app. 
+3. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the openid custom scheme)
+4. The SIOP processes the authentication request.
+5. Upon completion of the authentication request, the SIOP sends a HTTP POST request with the authentication response to an endpoint exposed by the RP 
+
+## Authentication Request 
+
+The cross device authentication request differs from the on-device variant as defined in (#siop_authentication_request) as follows:
+
+* This specification introduces a new response mode `post` in accordance with [OIDM]. This response mode is used to request the SIOP to deliver the result of the authentication process to a certain endpoint. The additional parameter `response_mode` is used to carry this value.  
+* This endpoint the SIOP shall deliver the authentication result to is conveyed in the standard parameter `redirect_uri`.
+* The RP MUST ensure the `nonce` value used for a particular transaction is available at this endpoint for security checks.   
+
+Here is an example of an authentication request URL: 
+
+```
+    openid://?
+    response_type=id_token
+    response_mode=post
+    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=openid%20profile
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
+    &registration=%7B%22logo_uri%22%3A%22https%3A%2F%2F
+      client.example.org%2Flogo.png%22%7D
+```
+
+## Authentication Response
+
+The SIOP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request. The authentication response contains the parameters as defined in (#siop-authentication-response).
+
+Here is an example: 
+
+```http
+  POST /cb HTTP/1.1
+  Host: client.example.com
+  Content-Type: application/x-www-form-urlencoded
+
+  &id_token=eyJ0 ... NiJ9.eyJ1c ... I6IjIifX0.DeWt4Qu ... ZXso
+```
+
+## ID Token Validation
+
+The RP MUST perform all the check as defined in (#siop-id_token-validation)
+
+Additionally, the RP MUST check whether the `nonce` claim value provided in the ID Token is known to the RP and was not used before in an authentication response.  
+
 # References
 
 ## Normative References
@@ -412,6 +467,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 * [RFC7638] https://tools.ietf.org/html/rfc7638
 * [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
 * [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
+* [OIDM] https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
 
 ## Non-Normative References
 
