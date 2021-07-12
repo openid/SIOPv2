@@ -163,7 +163,7 @@ If the input identifier for the discovery process contains the domain self-issue
 * request_object_signing_alg_values_supported
     * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`. 
 
-The following is a non-normative example of RP Registration Metadata Values supported by Self-Issued OP:
+The following is a non-normative example of the supported Self-issued OP Discovery metadata values:
 
 ```
   {
@@ -241,8 +241,7 @@ Other registration parameters defined in [OpenID.Registration] could be used. Ex
 
 Registration parameter may include decentralized identifier of the RP.
 
-The following is a non-normative example of RP Registration Metadata Values supported by Self-Issued OP:
-
+The following is a non-normative example of the supported RP Registration Metadata Values:
 
 ```
   {
