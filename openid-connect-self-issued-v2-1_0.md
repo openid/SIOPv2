@@ -39,29 +39,9 @@ organization="Mattr"
 
 .# Abstract
 
-<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 This specification defines an extension of OpenID Connect to allow End-users to use OpenID Providers (OPs) that they control. Using Self-Issued OPs, End-users can authenticate themselves and present claims directly to the Relying Parties (RPs) without relying on a third-party Identity Provider. 
 
 {mainmatter}
-=======
-4. Security Considerations
-
-    4.1. Invocation Using Custom Schemas
-
-5. Privacy Considerations
-
-    5.1. Selective Disclosure and Un-linkable Presentations
-
-6. References
-    
-    6.1. Normative References
-    
-    6.2. Non-Normative References
-    
-    6.3. Relationships to other documents
-
-7. Notices
->>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 
 # Introduction
 
@@ -123,19 +103,12 @@ Out of Scope:
 
 # Terms and definitions
 
-<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 Common terms in this document come from four primary sources: DID-CORE, VC-DATA, RFC6749 and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.
-=======
+
 - Trust framework
     -  a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements. [OIX]
 
-## 1.3. Abbreviations 
-- Self-Issued OP: Self-Issued OpenID Provider
-- RP: Relying Party
-- OP: OpenID Provider
->>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
-
-# Abbreviations 
+## Abbreviations 
 
 * Self-Issued OP: Self-Issued OpenID Provider
 * RP: Relying Party
@@ -170,12 +143,8 @@ Figure: Self-Issued Op Protocol Flow
 
 # Self-Issued OpenID Provider Discovery
 
-<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
-Self-Issued OP MUST associate a custom schema `openid://` with itself. Relying Party MUST call `openid://` when sending a request to a Self-Issued OP.
-=======
-## 2.1. Self-Issued OpenID Provider Discovery
+## Self-Issued OpenID Provider Discovery
 Self-Issued OP SHALL belong to at least one trust framework. The trust framework is responsible for hosting a public website with the list of universal links that the RP can display to the End-user to let the End-user choose the application with which to use Self-Issued OP.
->>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 
 If the End-user has already chosen an app within a particular framework, that app will be automatically launched. If the End-user has not done so yet, the End-user will be displayed with the options of available apps.
 
@@ -450,7 +419,6 @@ When more than one Self-issued OP with the same custom schema has been installed
 Usage of decentralized identifiers does not prevent possible RP correlation and depending on how status check of presentation is done, IdP correlation can occur.
 Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs instead of traditional correlatable signatures.
    
-<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 # References
 
 ## Normative References
@@ -475,30 +443,6 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
 
 # IANA Considerations
-=======
-## 6. References
-
-### 6.1. Normative References
-- [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
-- [VC-DATA] https://www.w3.org/TR/vc-data-model/
-- [RFC6749] https://tools.ietf.org/html/rfc6749
-- [RFC6750] https://tools.ietf.org/html/rfc6750
-- [OpenID.Core] https://openid.net/specs/openid-connect-core-1_0.html
-- [RFC7638] https://tools.ietf.org/html/rfc7638
-- [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
-- [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
-
-### 6.2. Non-Normative References
-- [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
-- [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
-- [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
-
-### 6.3. Relationships to other documents 
-The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
-
-## 7. Notices
-Copyright (c) 2020 The OpenID Foundation.
->>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 
 TBD
 
