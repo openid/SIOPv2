@@ -163,6 +163,27 @@ If the input identifier for the discovery process contains the domain self-issue
 * request_object_signing_alg_values_supported
     * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`. 
 
+The following is a non-normative example of RP Registration Metadata Values supported by Self-Issued OP:
+
+```
+  {
+   "authorization_endpoint":
+    "openid:",
+   "issuer":
+    "https://self-issued.me/v2",
+   "response_types_supported":
+    ["id_token"],
+   "scopes_supported":
+    ["openid", "profile", "email", "address", "phone"],
+   "subject_types_supported":
+    ["pairwise"],
+    "id_token_signing_alg_values_supported":
+    ["ES256", "ES256K"],
+   "request_object_signing_alg_values_supported":
+    ["ES256", "ES256K"]
+  }
+```
+
 ## Relying Party Registration
 
 Relying Party must communicate which metadata parameters it supports. If Self-Issued OP and RP mutually support a compatible set of parameters, Self-Issued OP flow continues. If they do not, Self-Issued OP returns an error. Metadata parameters should preferrably be sent by reference as a URI, but when RP cannot host a webserver, they can be sent by value.
@@ -225,24 +246,10 @@ The following is a non-normative example of RP Registration Metadata Values supp
 
 ```
   {
-   "authorization_endpoint":
-    "openid:",
-   "issuer":
-    "https://self-issued.me/v2",
-   "response_types_supported":
-    ["id_token"],
-   "scopes_supported":
-    ["openid", "profile", "email", "address", "phone"],
-   "subject_types_supported":
-    ["pairwise"],
    "subject_identifier_types_supported":
-    ["did:web:", "did:ion:"],
-    "credential_formats_supported":
-    ["jwt","jwt_vp"],
-    "id_token_signing_alg_values_supported":
-    ["ES256", "ES256K"],
-   "request_object_signing_alg_values_supported":
-    ["ES256", "ES256K"]
+    ["did", "jkt"],
+    "did_methods_supported":
+    ["did:key:", "did:example:"]
   }
 ```
 
@@ -387,11 +394,6 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
      w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
      "e":"AQAB"
     },
-    "vp": {
-     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
-      "https://www.w3.org/2018/credentials/examples/v1"
-     ],
      "type": ["VerifiablePresentation"],
      "verifiableCredential": ["..."]
     }
