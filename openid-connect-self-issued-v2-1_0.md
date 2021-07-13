@@ -290,9 +290,11 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
     * REQUIRED. Client ID value for the Client, which in this case contains the `redirect_uri` value of the RP.
 * redirect_uri
     * REQUIRED. MUST equal to `client_id` value. MUST be included for compatibility reasons.
+* nonce
+    * REQUIRED. String value used to associate a Client session with an ID Token, and to mitigate replay attacks. The value is passed through unmodified from the Self-Issued OP Authentication Request to the ID Token. Sufficient entropy MUST be present in the nonce values used to prevent attackers from guessing values.
 * id_token_hint
     * OPTIONAL. id_token_hint parameter value, as specified in Section 3.1.2. If the ID Token is encrypted to the Self-Issued OP, the sub (subject) of the signed ID Token MUST be sent as the kid (Key ID) of the JWE. 
-- claims
+* claims
     * OPTIONAL. claims parameter value, as specified in Section 5.5.
 * registration
     * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in Section 2.2.1.  
@@ -361,7 +363,7 @@ To validate the ID Token received, the RP MUST do the following:
 1. The RP MUST validate that the`sub` claim is bound to the `sub_jwk` value. When sub type is`jkt`, the RP MUST validate that the sub Claim value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in Section 6. When sub type is `did`, the RP MUST validate that the `kid` of the `sub_jwk` claim matches the verification method from the DID Document that is obtained by resolving decentralized identifier included in `sub` claim.
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP specific.
-1. If a `nonce` value was sent in the Authentication Request, a `nonce` Claim MUST be present and its value checked to verify that it is the same value as the one that was sent in the Authentication Request. The RP SHOULD check the `nonce `value for replay attacks. The precise method for detecting replay attacks is RP specific.
+1. The RP MUST validate that a `nonce` Claim MUST be present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the nonce value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 
 The following is a non-normative example of a base64url decoded Self-Issued ID Token (with line wraps within values for display purposes only):
