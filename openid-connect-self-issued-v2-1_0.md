@@ -144,11 +144,16 @@ Figure: Self-Issued Op Protocol Flow
 # Self-Issued OpenID Provider Discovery
 
 ## Self-Issued OpenID Provider Discovery
-Self-Issued OP SHALL belong to at least one trust framework. The trust framework is responsible for hosting a public website with the list of universal links that the RP can display to the End-user to let the End-user choose the application with which to use Self-Issued OP.
 
-If the End-user has already chosen an app within a particular framework, that app will be automatically launched. If the End-user has not done so yet, the End-user will be displayed with the options of available apps.
+When the End-user first interacts with the RP there are no established means to signal where to direct the request for an available Self-Issued OP application. Even if possible, such signals may be susceptible to fingerprinting and passive tracking of the End-user.
 
-When Self-Issued OP cannot belog to a trust framework, it may consider the usage of custom schemas as a way to invoke a Self-Issued OP, but it is NOT RECOMMENDED. 
+The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice oto select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.
+
+Alternatively the RP MAY belong to at least one trust framework. The trust framework is then responsible for hosting a public website that maintains the latest platform specific metadata for all supported Self-Issued OP applications, known as app-link or universal link at the time of publication. The RP forms the request URL to that shared website and any of the supported installed applications will instead be launched and given the request to process. If none are available, the website will be displayed with the static list for the End-user to choose from to install or use.
+
+The trust framework MAY be operated by just one RP, but due to the required maintenance of every application's metadata (which may change frequently) this burden SHOULD be shared across multiple RPs. The same trust framework MAY also be used to host metadata about the supported RPs such that the Self-Issued OP applications can verify the origin of the incoming request as part of the framework as well.
+
+The legacy usage of custom protocol schemas such as `openid:` as a way to invoke any installed Self-Issued OP is NOT RECOMMENDED due to the security issues (see (invocation-using-custom-schema) in Privacy Considerations section).
 
 # Relying Party Registration
 
@@ -400,9 +405,9 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
   
 ```
 
-## 4. Security Considerations
+## Security Considerations
 
-### 4.1. Invocation using Custom Schema
+### Invocation using Custom Schema {invocation-using-custom-schema}
 
 Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior. 
 
@@ -412,12 +417,13 @@ Any malicious app can register the custom schema already used by another app, im
 
 When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined. 
 
-## 5. Privacy Considerations
+## Privacy Considerations
 
-### 5.1. Selective disclosure and un-linkable presentations
+### Selective disclosure and un-linkable presentations
 
-Usage of decentralized identifiers does not prevent possible RP correlation and depending on how status check of presentation is done, IdP correlation can occur.
-Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs instead of traditional correlatable signatures.
+Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.
+
+Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
    
 # References
 
