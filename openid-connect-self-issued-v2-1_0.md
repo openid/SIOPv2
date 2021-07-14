@@ -403,6 +403,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 　}
 ```
 
+<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 <<<<<<< HEAD
 <<<<<<< HEAD
 The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only): 
@@ -444,6 +445,11 @@ Note: Further processing steps are required if the authentication response conta
 
 ### Invocation using Custom Schema {invocation-using-custom-schema}
 >>>>>>> 1ed35a327ee8dd1289a38739e60d08bdc85c545e
+=======
+## 4. Security Considerations
+
+### 4.1. Invocation using Custom Schema
+>>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 
 Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior. 
 
@@ -453,13 +459,17 @@ Any malicious app can register the custom schema already used by another app, im
 
 When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined. 
 
+<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 <<<<<<< HEAD
+=======
+>>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 ## 5. Privacy Considerations
 
 ### 5.1. Selective disclosure and un-linkable presentations
 
 Usage of decentralized identifiers does not prevent possible RP correlation and depending on how status check of presentation is done, IdP correlation can occur.
 Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs instead of traditional correlatable signatures.
+<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 =======
 ## Privacy Considerations
 
@@ -478,6 +488,31 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 # References
 
 ## Normative References
+=======
+   
+## 6. References
+
+### 6.1. Normative References
+- [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
+- [VC-DATA] https://www.w3.org/TR/vc-data-model/
+- [RFC6749] https://tools.ietf.org/html/rfc6749
+- [RFC6750] https://tools.ietf.org/html/rfc6750
+- [OpenID.Core] https://openid.net/specs/openid-connect-core-1_0.html
+- [RFC7638] https://tools.ietf.org/html/rfc7638
+- [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
+- [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
+
+### 6.2. Non-Normative References
+- [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
+- [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
+- [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
+
+### 6.3. Relationships to other documents 
+The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
+
+## 7. Notices
+Copyright (c) 2020 The OpenID Foundation.
+>>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 
 * [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
 * [VC-DATA] https://www.w3.org/TR/vc-data-model/
