@@ -431,8 +431,8 @@ Here is an example of an authentication request URL:
     &scope=openid%20profile
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22logo_uri%22%3A%22https%3A%2F%2F
-      client.example.org%2Flogo.png%22%7D
+    &registration=%7B%22subject_identifier_types_supported%22:%5B%22jkt%22%5D,
+    %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 ```
 
 Note: Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case. 
