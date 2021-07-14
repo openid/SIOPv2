@@ -406,7 +406,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 This section describes how SIOP is used in cross device scenarios. In contrast to on device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through an user agent. The flow is therefore modfied as follows:
 
-1. The RP prepares a SIOP request and renders it as a QR code.
+1. The RP prepares a SIOP request and renders it as a QR code. 
 2. The user scans the QR code with her smartphone's camera app. 
 3. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the openid custom scheme)
 4. The SIOP processes the authentication request.
@@ -434,6 +434,8 @@ Here is an example of an authentication request URL:
     &registration=%7B%22logo_uri%22%3A%22https%3A%2F%2F
       client.example.org%2Flogo.png%22%7D
 ```
+
+Note: Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case. 
 
 ## Authentication Response
 
