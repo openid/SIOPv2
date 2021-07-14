@@ -143,6 +143,7 @@ Figure: Self-Issued Op Protocol Flow
 ## Self-Issued OpenID Provider Discovery
 
 When the End-user first interacts with the RP there are no established means to signal where to direct the request for an available Self-Issued OP application. Even if possible, such signals may be susceptible to fingerprinting and passive tracking of the End-user.
+<<<<<<< HEAD
 
 The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice oto select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.
 
@@ -170,6 +171,16 @@ If the input identifier for the discovery process contains the domain self-issue
     * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * request_object_signing_alg_values_supported
     * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`. 
+=======
+
+The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice oto select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.
+
+Alternatively the RP MAY belong to at least one trust framework. The trust framework is then responsible for hosting a public website that maintains the latest platform specific metadata for all supported Self-Issued OP applications, known as app-link or universal link at the time of publication. The RP forms the request URL to that shared website and any of the supported installed applications will instead be launched and given the request to process. If none are available, the website will be displayed with the static list for the End-user to choose from to install or use.
+
+The trust framework MAY be operated by just one RP, but due to the required maintenance of every application's metadata (which may change frequently) this burden SHOULD be shared across multiple RPs. The same trust framework MAY also be used to host metadata about the supported RPs such that the Self-Issued OP applications can verify the origin of the incoming request as part of the framework as well.
+
+The legacy usage of custom protocol schemas such as `openid:` as a way to invoke any installed Self-Issued OP is NOT RECOMMENDED due to the security issues (see (invocation-using-custom-schema) in Privacy Considerations section).
+>>>>>>> 1ed35a3 (incorporate Jeremie's edits)
 
 The following is a non-normative example of the supported Self-issued OP Discovery metadata values:
 
@@ -403,6 +414,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 　}
 ```
 
+<<<<<<< HEAD
 <<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -450,6 +462,11 @@ Note: Further processing steps are required if the authentication response conta
 
 ### 4.1. Invocation using Custom Schema
 >>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
+=======
+## Security Considerations
+
+### Invocation using Custom Schema {invocation-using-custom-schema}
+>>>>>>> 1ed35a3 (incorporate Jeremie's edits)
 
 Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior. 
 
@@ -459,14 +476,21 @@ Any malicious app can register the custom schema already used by another app, im
 
 When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined. 
 
+<<<<<<< HEAD
 <<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
 <<<<<<< HEAD
 =======
 >>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 ## 5. Privacy Considerations
+=======
+## Privacy Considerations
 
-### 5.1. Selective disclosure and un-linkable presentations
+### Selective disclosure and un-linkable presentations
+>>>>>>> 1ed35a3 (incorporate Jeremie's edits)
 
+Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.
+
+<<<<<<< HEAD
 Usage of decentralized identifiers does not prevent possible RP correlation and depending on how status check of presentation is done, IdP correlation can occur.
 Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs instead of traditional correlatable signatures.
 <<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
@@ -479,6 +503,9 @@ Usage of decentralized identifiers does not automatically prevent possible RP co
 
 Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
 >>>>>>> 1ed35a327ee8dd1289a38739e60d08bdc85c545e
+=======
+Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
+>>>>>>> 1ed35a3 (incorporate Jeremie's edits)
    
 <<<<<<< HEAD
 <<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
