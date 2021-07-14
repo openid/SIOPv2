@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0"
+value = "openid-connect-self-issued-v2-1_0-02"
 status = "standard"
 
 [[author]]
@@ -95,7 +95,7 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 
 * Usage of cryptographically verifiable claims
 
-Mechanism for Self-Issued OPs to present claims using additional credential formats that enable the Holder to prove posession over the claims using cryptographic means. Additional credential formats include Verifiabel Presentation defined in [VC-DATA-MODEL].
+Mechanism for Self-Issued OPs to present claims using additional credential formats that enable the Holder to prove posession over the claims using cryptographic means. Additional credential formats include Verifiable Presentation defined in [VC-DATA-MODEL].
 
 Out of Scope:
 
@@ -115,7 +115,6 @@ Common terms in this document come from four primary sources: DID-CORE, VC-DATA,
 
 Self-Issued OpenID Provider Request is an OpenID Connect Authentication Request that results in a Holder providing ID Token to the Relying Party through the Self-Issued OP. ID Token MAY include attested claims about the Holder.
 
-!---
 ~~~ ascii-art
 +----------+                                                    +--------+
 |          |                                                    |        |
@@ -305,7 +304,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * request_uri
     * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2.
     
-When `request` or `reques_uri` parameters are NOT present, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `reques_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
+When `request` or `request_uri` parameters are NOT present, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
@@ -347,11 +346,11 @@ Whether the Self-Issued OP is a mobile client or a web client, response is the s
 
 ## Verifiable Presentation Support
 
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [OIDC4VP] and W3C Verifiable Credentials Specification [VC-DATA-MODEL].  
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [VC-DATA-MODEL].  
 
 Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA-MODEL] 
 
-See [OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs. 
+See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs. 
 
 ## Self-Issued ID Token Validation
 
@@ -366,6 +365,7 @@ To validate the ID Token received, the RP MUST do the following:
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP specific.
 1. If a `nonce` value was sent in the Authentication Request, a `nonce` Claim MUST be present and its value checked to verify that it is the same value as the one that was sent in the Authentication Request. The RP SHOULD check the `nonce `value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
+Note: Further processing steps are required if the authentication response contains verifiable presentations as defined in [@!OIDC4VP].
 
 The following is a non-normative example of a base64url decoded Self-Issued ID Token (with line wraps within values for display purposes only):
 
@@ -386,17 +386,8 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
      SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
      w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
      "e":"AQAB"
-    },
-    "vp": {
-     "@context": [
-      "https://www.w3.org/2018/credentials/v1",
-      "https://www.w3.org/2018/credentials/examples/v1"
-     ],
-     "type": ["VerifiablePresentation"],
-     "verifiableCredential": ["..."]
     }
 　}
-  
 ```
    
 # References
@@ -411,7 +402,6 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 * [RFC7638] https://tools.ietf.org/html/rfc7638
 * [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
 * [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
-* [OIDC4VP] https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html
 
 ## Non-Normative References
 
@@ -441,3 +431,25 @@ The technology described in this specification was made available from contribut
     * Version proposed for working group adoption
 
 {backmatter}
+
+<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author initials="O." surname="Terbu" fullname="Oliver Terbu">
+      <organization>ConsenSys Mesh</organization>
+    </author>
+    <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
+      <organization>Microsoft</organization>
+    </author>
+    <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
+      <organization>Convergence.tech</organization>
+    </author>
+    <author initials="T." surname="Looker" fullname="Tobias Looker">
+      <organization>Mattr</organization>
+    </author>
+   <date day="20" month="May" year="2021"/>
+  </front>
+</reference>
