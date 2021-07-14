@@ -105,7 +105,10 @@ Out of Scope:
 
 Common terms in this document come from four primary sources: DID-CORE, VC-DATA, RFC6749 and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.
 
-# Abbreviations 
+- Trust framework
+    -  a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements. [OIX]
+
+## Abbreviations 
 
 * Self-Issued OP: Self-Issued OpenID Provider
 * RP: Relying Party
@@ -139,11 +142,11 @@ Figure: Self-Issued Op Protocol Flow
 
 ## Self-Issued OpenID Provider Discovery
 
-Self-Issued OP MUST associate a custom schema `openid://` with itself. Relying Party MUST call `openid://` when sending a request to a Self-Issued OP.
+Self-Issued OP SHALL belong to at least one trust framework. The trust framework is responsible for hosting a public website with the list of universal links that the RP can display to the End-user to let the End-user choose the application with which to use Self-Issued OP.
 
-Note: Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.
+If the End-user has already chosen an app within a particular framework, that app will be automatically launched. If the End-user has not done so yet, the End-user will be displayed with the options of available apps.
 
-Note: When more than one Self-issued OP with the same custom schema has been installed on one device, there could be confusion over which Self-Issued OP gets invoked. 
+When Self-Issued OP cannot belog to a trust framework, it may consider the usage of custom schemas as a way to invoke a Self-Issued OP, but it is NOT RECOMMENDED. 
 
 If the input identifier for the discovery process contains the domain self-issued.me, dynamic discovery is not performed. Instead, then the following static configuration values are used:
 
@@ -394,6 +397,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 　}
 ```
 
+<<<<<<< HEAD
 The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only): 
 ```
   {
@@ -424,6 +428,28 @@ The following is a non-normative example of an ID token containing a verfiable p
 
 Note: Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
+=======
+## 4. Security Considerations
+
+### 4.1. Invocation using Custom Schema
+
+Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior. 
+
+Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.
+
+Any malicious app can register the custom schema already used by another app, imitate the user interface and impersonate a good app. 
+
+When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined. 
+
+## 5. Privacy Considerations
+
+### 5.1. Selective disclosure and un-linkable presentations
+
+Usage of decentralized identifiers does not prevent possible RP correlation and depending on how status check of presentation is done, IdP correlation can occur.
+Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs instead of traditional correlatable signatures.
+   
+<<<<<<< HEAD:openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.md
+>>>>>>> 3a8045f (rebase mmark changes)
 # References
 
 ## Normative References
@@ -448,6 +474,30 @@ Note: Further processing steps are required if the authentication response conta
 The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
 
 # IANA Considerations
+=======
+## 6. References
+
+### 6.1. Normative References
+- [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
+- [VC-DATA] https://www.w3.org/TR/vc-data-model/
+- [RFC6749] https://tools.ietf.org/html/rfc6749
+- [RFC6750] https://tools.ietf.org/html/rfc6750
+- [OpenID.Core] https://openid.net/specs/openid-connect-core-1_0.html
+- [RFC7638] https://tools.ietf.org/html/rfc7638
+- [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
+- [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
+
+### 6.2. Non-Normative References
+- [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
+- [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
+- [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
+
+### 6.3. Relationships to other documents 
+The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
+
+## 7. Notices
+Copyright (c) 2020 The OpenID Foundation.
+>>>>>>> 425ae45 (invocation text added):openid-connect-self-issued-v2-1_0.md
 
 TBD
 
