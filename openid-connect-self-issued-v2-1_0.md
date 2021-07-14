@@ -371,8 +371,6 @@ To validate the ID Token received, the RP MUST do the following:
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP specific.
 1. If a `nonce` value was sent in the Authentication Request, a `nonce` Claim MUST be present and its value checked to verify that it is the same value as the one that was sent in the Authentication Request. The RP SHOULD check the `nonce `value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
-Note: Further processing steps are required if the authentication response contains verifiable presentations as defined in [@!OIDC4VP].
-
 The following is a non-normative example of a base64url decoded Self-Issued ID Token (with line wraps within values for display purposes only):
 
 ```
@@ -423,6 +421,8 @@ The following is a non-normative example of an ID token containing a verfiable p
    ],
 　}
 ```
+
+Note: Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
 # References
 
