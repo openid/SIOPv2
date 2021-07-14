@@ -193,35 +193,34 @@ The contents of the resource referenced by the URL MUST be a RP Registration Met
 
 This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:
 
-* authorization_endpoint
+* `authorization_endpoint`
     * REQUIRED. MUST include `openid:`, could also include additional custom schema.
-* issuer
+* `issuer`
     * REQUIRED. MUST be `https://self-issued.me/v2`
-* response_types_supported
+* `response_types_supported`
     * REQUIRED. MUST be `id_token`
-* scopes_supported
+* `scopes_supported`
     * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
-* subject_types_supported
+* `subject_types_supported`
     * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
-* subject_identifier_types_supported
+* `subject_identifier_types_supported`
     * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and concrete did methods supported. DID methods supported must take the value of `Method Name` in Chapter 9 of [did-spec-registries](https://w3c.github.io/did-spec-registries/#did-methods), such as `did:peer:`
-* did_methods_supported
+* `did_methods_supported`
     * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values include DID method names expressed following [DID] specification, for example `did:web`. RP can indicate support for any DID method by omitting `did_methods_supported`, While including `did` in `subject_identifier_types_supported'.
-* credential_formats_supported
+* `credential_formats_supported`
     * REQUIRED. A JSON array of strings representing supported credential formats. Valid values include `jwt`, `jwt_vc`, `jwt_vp`, `ldp_vc`, and `ldp_vp`. 
-* id_token_signing_alg_values_supported
+* `id_token_signing_alg_values_supported`
     * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
-* request_object_signing_alg_values_supported
+* `request_object_signing_alg_values_supported`
     * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 
-Other registration parameters defined in [OpenID.Registration] could be used. Examples are explanatory parameters such as policy_uri, tos_uri, and logo_uri. If the RP uses more than one Redirection URI, the redirect_uris parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the jwks_uri, id_token_encrypted_response_alg and id_token_encrypted_response_enc parameters.
+Other registration parameters defined in [OpenID.Registration] could be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
 
 Registration parameter may include decentralized identifier of the RP.
 
 The following is a non-normative example of RP Registration Metadata Values supported by Self-Issued OP:
 
-
-```
+```json
   {
    "authorization_endpoint":
     "openid:",
@@ -248,10 +247,10 @@ The following is a non-normative example of RP Registration Metadata Values supp
 
 A sub type is used by Self-Issued OP to advertise which types of identifiers are supported for the `sub` claim. Two types are defined by this specification:
 
-* jkt 
+* `jkt`
     * JWK Thumbprint Subject sub type. When this subject sub type is used, the `sub` claim value MUST be the base64url encoded representation of the thumbprint of the key in the `sub_jwk` claim. [RFC7638]
     
-* did
+* `did`
     * Decentralized sub type. When this sub type is used,  the `sub` value MUST be a DID defined in [DID-CORE]. 
     
 NOTE: Consider adding a subject type for OpenID Connect Federation entity statements.
@@ -260,17 +259,17 @@ NOTE: Consider adding a subject type for OpenID Connect Federation entity statem
 
 This extension defines the following error codes that MUST be returned when Self-Issued OP does not support all of the Relying Party Registration metadata values received from the Relying Party in the registration parameter:
 
-* did_methods_not_supported
+* `did_methods_not_supported`
     * The Self-Issued OP does not support all of the DID methods included in `did_methods_supported` parameter.
-* subject_identifier_types_not_supported
+* `subject_identifier_types_not_supported`
     * The Self-Issued OP does not support all of the subject identifier types included in `subject_identifier_types_supported` parameter.
-* credential_formats_not_supported
+* `credential_formats_not_supported`
     * The Self-Issued OP does not support all of the credential formats included in `credential_formats_supported` parameter.
-* value_not_supported
+* `value_not_supported`
     * The Self-Issued OP does not support more than one of the RP Registration Metadata values defined in Section 4.3. When not supported metadata values are DID methods, subject identifier types, or credential formats, more specific error message must be used.
-* invalid_registration_uri
+* `invalid_registration_uri`
     * The registration_uri in the Self-Issued OpenID Provider request returns an error or contains invalid data.
-* invalid_registration_object
+* `invalid_registration_object`
     * The registration parameter contains an invalid RP Registration Metadata Object.
 
 Error response must be made in the same manner as defined in Section 3.1.2.6.
@@ -282,25 +281,25 @@ Error response must be made in the same manner as defined in Section 3.1.2.6.
 
 The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:
 
-* scope
+* `scope`
     * REQUIRED. `scope` parameter value, as specified in Section 3.1.2.
-* response_type
+* `response_type`
     * REQUIRED. Constant string value `id_token`.
-* client_id
+* `client_id`
     * REQUIRED. Client ID value for the Client, which in this case contains the `redirect_uri` value of the RP.
-* redirect_uri
+* `redirect_uri`
     * REQUIRED. MUST equal to `client_id` value. MUST be included for compatibility reasons.
-* id_token_hint
+* `id_token_hint`
     * OPTIONAL. id_token_hint parameter value, as specified in Section 3.1.2. If the ID Token is encrypted to the Self-Issued OP, the sub (subject) of the signed ID Token MUST be sent as the kid (Key ID) of the JWE. 
-- claims
+* `claims`
     * OPTIONAL. claims parameter value, as specified in Section 5.5.
-* registration
+* `registration`
     * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in Section 2.2.1.  
-* registration_uri
+* `registration_uri`
     * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in Section 2.2.2. 
-* request
+* `request`
     * OPTIONAL. Request Object value, as specified in Section 6.1. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the sub (subject) of a previously issued ID Token for this RP MUST be sent as the kid (Key ID) of the JWE. 
-* request_uri
+* `request_uri`
     * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2.
     
 When `request` or `reques_uri` parameters are NOT present, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `reques_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
@@ -331,9 +330,9 @@ Self-Issued OpenID Provider Response is returned when Self-Issued OP supports al
 
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses: 
 
-* sub
+* `sub`
     * REQUIRED. Subject identifier value, represented by a URI. When sub type is `jkt`, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When sub type is `did`, the value is a decentralized identifier. The thumbprint value is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the kty value is RSA, the member names e, kty, and n are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the kty value is EC, the member names crv, kty, x, and y are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.
-* sub_jwk
+* `sub_jwk`
     * REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is `jkt`, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is `did`, sub_jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id_token directly or indirectly. The sub_jwk value is a JSON object. Use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 * vp
     * OPTIONAL. A JSON object, that represents a JWT verifiable presentation, following W3C Verifiable Credentials Specification [VC-DATA-MODEL]. Verifiable Credentials must be embedded in the Verifiable Presentation following W3C Verifiable Credentials Specification [VC-DATA-MODEL]
