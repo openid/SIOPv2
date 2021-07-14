@@ -162,6 +162,27 @@ If the input identifier for the discovery process contains the domain self-issue
 * request_object_signing_alg_values_supported
     * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`. 
 
+The following is a non-normative example of the supported Self-issued OP Discovery metadata values:
+
+```
+  {
+   "authorization_endpoint":
+    "openid:",
+   "issuer":
+    "https://self-issued.me/v2",
+   "response_types_supported":
+    ["id_token"],
+   "scopes_supported":
+    ["openid", "profile", "email", "address", "phone"],
+   "subject_types_supported":
+    ["pairwise"],
+    "id_token_signing_alg_values_supported":
+    ["ES256", "ES256K"],
+   "request_object_signing_alg_values_supported":
+    ["ES256", "ES256K"]
+  }
+```
+
 ## Relying Party Registration
 
 Relying Party must communicate which metadata parameters it supports. If Self-Issued OP and RP mutually support a compatible set of parameters, Self-Issued OP flow continues. If they do not, Self-Issued OP returns an error. Metadata parameters should preferrably be sent by reference as a URI, but when RP cannot host a webserver, they can be sent by value.
@@ -219,29 +240,14 @@ Other registration parameters defined in [OpenID.Registration] could be used. Ex
 
 Registration parameter may include decentralized identifier of the RP.
 
-The following is a non-normative example of RP Registration Metadata Values supported by Self-Issued OP:
-
+The following is a non-normative example of the supported RP Registration Metadata Values:
 
 ```
   {
-   "authorization_endpoint":
-    "openid:",
-   "issuer":
-    "https://self-issued.me/v2",
-   "response_types_supported":
-    ["id_token"],
-   "scopes_supported":
-    ["openid", "profile", "email", "address", "phone"],
-   "subject_types_supported":
-    ["pairwise"],
    "subject_identifier_types_supported":
-    ["did:web:", "did:ion:"],
-    "credential_formats_supported":
-    ["jwt","jwt_vp"],
-    "id_token_signing_alg_values_supported":
-    ["ES256", "ES256K"],
-   "request_object_signing_alg_values_supported":
-    ["ES256", "ES256K"]
+    ["did", "jkt"],
+    "did_methods_supported":
+    ["did:key:", "did:example:"]
   }
 ```
 
@@ -389,7 +395,35 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
     }
 　}
 ```
-   
+
+The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only): 
+```
+  {
+   "iss": "https://self-issued.me/v2",
+   "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+   "aud": "https://client.example.org/cb",
+   "nonce": "n-0S6_WzA2Mj",
+   "exp": 1311281970,
+   "iat": 1311280970,
+   "sub_jwk": {
+     "kty":"RSA",
+     "n": "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx
+     4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs
+     tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2
+     QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
+     SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
+     w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+     "e":"AQAB"
+    },
+    "verifiable_presentations":[
+      {
+         "format":"vp_jwt",
+         "presentation":"ewogICAgImlzcyI6Imh0dHBzOi8vYm9vay5pdHNvdXJ3ZWIub...IH0="
+      }
+   ],
+　}
+```
+
 # References
 
 ## Normative References
