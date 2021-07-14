@@ -433,6 +433,18 @@ The following is a non-normative example of an ID token containing a verfiable p
 
 Note: Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
+## Security Considerations
+ 
+### Invocation using Custom Schema {invocation-using-custom-schema}
+
+Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior. 
+
+Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.
+
+Any malicious app can register the custom schema already used by another app, imitate the user interface and impersonate a good app. 
+
+When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined. 
+
 ## Privacy Considerations
  
 ### Selective disclosure and un-linkable presentations
@@ -457,6 +469,7 @@ Consider supporting selective disclosure and un-linkable presentations using zer
  
 * [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
 * [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
+* [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
  
  
 # Relationships to other documents 
