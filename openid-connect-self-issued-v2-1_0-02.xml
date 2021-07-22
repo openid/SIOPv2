@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
-<rfc version="3" ipr="none" docName="openid-connect-self-issued-v2-1_0" submissionType="IETF" category="std" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" consensus="true">
+<rfc version="3" ipr="none" docName="openid-connect-self-issued-v2-1_0-02" submissionType="IETF" category="std" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" consensus="true">
 
 <front>
-<title abbrev="siop-v2">Self-Issued OpenID Provider V2, draft 02</title><seriesInfo value="openid-connect-self-issued-v2-1_0" status="standard" name="Internet-Draft"></seriesInfo>
+<title abbrev="siop-v2">Self-Issued OpenID Provider V2, draft 02</title><seriesInfo value="openid-connect-self-issued-v2-1_0-02" status="standard" name="Internet-Draft"></seriesInfo>
 <author initials="K." surname="Yasuda" fullname="Kristina Yasuda"><organization>Microsoft</organization><address><postal><street></street>
 </postal><email>kristina.yasuda@microsoft.com</email>
 </address></author>
@@ -84,7 +84,7 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 <li><t>Usage of cryptographically verifiable claims</t>
 </li>
 </ul>
-<t>Mechanism for Self-Issued OPs to present claims using additional credential formats that enable the Holder to prove posession over the claims using cryptographic means. Additional credential formats include Verifiabel Presentation defined in [VC-DATA-MODEL].</t>
+<t>Mechanism for Self-Issued OPs to present claims using additional credential formats that enable the Holder to prove posession over the claims using cryptographic means. Additional credential formats include Verifiable Presentation defined in [VC-DATA-MODEL].</t>
 <t>Out of Scope:</t>
 
 <ul>
@@ -95,7 +95,15 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 
 <section anchor="terms-and-definitions"><name>Terms and definitions</name>
 <t>Common terms in this document come from four primary sources: DID-CORE, VC-DATA, RFC6749 and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.</t>
-</section>
+
+<ul>
+<li><t>Trust framework</t>
+
+<ul>
+<li><t>a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements. [OIX]</t>
+</li>
+</ul></li>
+</ul>
 
 <section anchor="abbreviations"><name>Abbreviations</name>
 
@@ -108,10 +116,10 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 </li>
 </ul>
 </section>
+</section>
 
 <section anchor="protocol-flow"><name>Protocol Flow</name>
 <t>Self-Issued OpenID Provider Request is an OpenID Connect Authentication Request that results in a Holder providing ID Token to the Relying Party through the Self-Issued OP. ID Token MAY include attested claims about the Holder.</t>
-<t>!---</t>
 <figure><name>Self-Issued Op Protocol Flow
 <br />
 </name>
@@ -135,12 +143,81 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 </section>
 
 <section anchor="discovery-and-negotiation"><name>Discovery and Negotiation</name>
-</section>
 
 <section anchor="self-issued-openid-provider-discovery"><name>Self-Issued OpenID Provider Discovery</name>
-<t>Self-Issued OP MUST associate a custom schema <tt>openid://</tt> with itself. Relying Party MUST call <tt>openid://</tt> when sending a request to a Self-Issued OP.</t>
-<t>Note: Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.</t>
-<t>Note: When more than one Self-issued OP with the same custom schema has been installed on one device, there could be confusion over which Self-Issued OP gets invoked.</t>
+<t>When the End-user first interacts with the RP there are no established means to signal where to direct the request for an available Self-Issued OP application. Even if possible, such signals may be susceptible to fingerprinting and passive tracking of the End-user.</t>
+<t>The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice oto select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.</t>
+<t>Alternatively the RP MAY belong to at least one trust framework. The trust framework is then responsible for hosting a public website that maintains the latest platform specific metadata for all supported Self-Issued OP applications, known as app-link or universal link at the time of publication. The RP forms the request URL to that shared website and any of the supported installed applications will instead be launched and given the request to process. If none are available, the website will be displayed with the static list for the End-user to choose from to install or use.</t>
+<t>The trust framework MAY be operated by just one RP, but due to the required maintenance of every application's metadata (which may change frequently) this burden SHOULD be shared across multiple RPs. The same trust framework MAY also be used to host metadata about the supported RPs such that the Self-Issued OP applications can verify the origin of the incoming request as part of the framework as well.</t>
+<t>The legacy usage of custom protocol schemas such as <tt>openid:</tt> as a way to invoke any installed Self-Issued OP is NOT RECOMMENDED due to the security issues (see (invocation-using-custom-schema) in Privacy Considerations section).</t>
+
+<section anchor="self-issued-openid-provider-discovery-metadata"><name>Self-Issued OpenID Provider Discovery Metadata</name>
+<t>If the input identifier for the discovery process contains the domain self-issued.me, dynamic discovery is not performed. Instead, then the following static configuration values are used:</t>
+
+<ul>
+<li><t>authorization_endpoint</t>
+
+<ul>
+<li><t>REQUIRED. MUST include <tt>openid:</tt>, could also include additional custom schema.</t>
+</li>
+</ul></li>
+<li><t>issuer</t>
+
+<ul>
+<li><t>REQUIRED. MUST be <tt>https://self-issued.me/v2</tt></t>
+</li>
+</ul></li>
+<li><t>response<em>types</em>supported</t>
+
+<ul>
+<li><t>REQUIRED. MUST be <tt>id_token</tt></t>
+</li>
+</ul></li>
+<li><t>scopes_supported</t>
+
+<ul>
+<li><t>REQUIRED. A JSON array of strings representing supported scopes. Valid values include <tt>openid</tt>, <tt>profile</tt>, <tt>email</tt>, <tt>address</tt>, and <tt>phone</tt>.</t>
+</li>
+</ul></li>
+<li><t>subject<em>types</em>supported</t>
+
+<ul>
+<li><t>REQUIRED. A JSON array of strings representing supported subject types. Valid values include <tt>pairwise</tt> and <tt>public</tt>.</t>
+</li>
+</ul></li>
+<li><t>id<em>token</em>signing<em>alg</em>values_supported</t>
+
+<ul>
+<li><t>REQUIRED. ID token signing alg values supported. Valid values include <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
+</li>
+</ul></li>
+<li><t>request<em>object</em>signing<em>alg</em>values_supported</t>
+
+<ul>
+<li><t>REQUIRED. Request object signing alg values supported. Valid values include <tt>none</tt>, <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
+</li>
+</ul></li>
+</ul>
+<t>The following is a non-normative example of the supported Self-issued OP Discovery metadata values:</t>
+
+<artwork>  {
+   &quot;authorization_endpoint&quot;:
+    &quot;openid:&quot;,
+   &quot;issuer&quot;:
+    &quot;https://self-issued.me/v2&quot;,
+   &quot;response_types_supported&quot;:
+    [&quot;id_token&quot;],
+   &quot;scopes_supported&quot;:
+    [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;, &quot;address&quot;, &quot;phone&quot;],
+   &quot;subject_types_supported&quot;:
+    [&quot;pairwise&quot;],
+    &quot;id_token_signing_alg_values_supported&quot;:
+    [&quot;ES256&quot;, &quot;ES256K&quot;],
+   &quot;request_object_signing_alg_values_supported&quot;:
+    [&quot;ES256&quot;, &quot;ES256K&quot;]
+  }
+</artwork>
+</section>
 </section>
 
 <section anchor="relying-party-registration"><name>Relying Party Registration</name>
@@ -185,92 +262,32 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 <t>This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:</t>
 
 <ul>
-<li><t>authorization_endpoint</t>
-
-<ul>
-<li><t>REQUIRED. MUST include <tt>openid:</tt>, could also include additional custom schema.</t>
-</li>
-</ul></li>
-<li><t>issuer</t>
-
-<ul>
-<li><t>REQUIRED. MUST be <tt>https://self-issued.me/v2</tt></t>
-</li>
-</ul></li>
-<li><t>response<em>types</em>supported</t>
-
-<ul>
-<li><t>REQUIRED. MUST be <tt>id_token</tt></t>
-</li>
-</ul></li>
-<li><t>scopes_supported</t>
-
-<ul>
-<li><t>REQUIRED. A JSON array of strings representing supported scopes. Valid values include <tt>openid</tt>, <tt>profile</tt>, <tt>email</tt>, <tt>address</tt>, and <tt>phone</tt>.</t>
-</li>
-</ul></li>
-<li><t>subject<em>types</em>supported</t>
-
-<ul>
-<li><t>REQUIRED. A JSON array of strings representing supported subject types. Valid values include <tt>pairwise</tt> and <tt>public</tt>.</t>
-</li>
-</ul></li>
 <li><t>subject<em>identifier</em>types_supported</t>
 
 <ul>
-<li><t>REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include <tt>jkt</tt> and concrete did methods supported. DID methods supported must take the value of <tt>Method Name</tt> in Chapter 9 of <eref target="https://w3c.github.io/did-spec-registries/#did-methods">did-spec-registries</eref>, such as <tt>did:peer:</tt></t>
+<li><t>REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include <tt>jkt</tt> and <tt>did</tt>.</t>
 </li>
 </ul></li>
 <li><t>did<em>methods</em>supported</t>
 
 <ul>
-<li><t>OPTIONAL. A JSON array of strings representing supported DID methods. Valid values include DID method names expressed following [DID] specification, for example <tt>did:web</tt>. RP can indicate support for any DID method by omitting <tt>did_methods_supported</tt>, While including <tt>did</tt> in `subject<em>identifier</em>types_supported'.</t>
-</li>
-</ul></li>
-<li><t>credential<em>formats</em>supported</t>
-
-<ul>
-<li><t>REQUIRED. A JSON array of strings representing supported credential formats. Valid values include <tt>jwt</tt>, <tt>jwt_vc</tt>, <tt>jwt_vp</tt>, <tt>ldp_vc</tt>, and <tt>ldp_vp</tt>.</t>
-</li>
-</ul></li>
-<li><t>id<em>token</em>signing<em>alg</em>values_supported</t>
-
-<ul>
-<li><t>REQUIRED. ID token signing alg values supported. Valid values include <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
-</li>
-</ul></li>
-<li><t>request<em>object</em>signing<em>alg</em>values_supported</t>
-
-<ul>
-<li><t>REQUIRED. Request object signing alg values supported. Valid values include <tt>none</tt>, <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
+<li><t>OPTIONAL. A JSON array of strings representing supported DID methods. Valid values must take the value of <tt>Method Name</tt> in Chapter 9 of <eref target="https://w3c.github.io/did-spec-registries/#did-methods">did-spec-registries</eref>, such as <tt>did:peer:</tt> RP can indicate support for any DID method by omitting <tt>did_methods_supported</tt>, while including <tt>did</tt> in `subject<em>identifier</em>types_supported'.</t>
 </li>
 </ul></li>
 </ul>
 <t>Other registration parameters defined in [OpenID.Registration] could be used. Examples are explanatory parameters such as policy<em>uri, tos</em>uri, and logo<em>uri. If the RP uses more than one Redirection URI, the redirect</em>uris parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the jwks<em>uri, id</em>token<em>encrypted</em>response<em>alg and id</em>token<em>encrypted</em>response_enc parameters.</t>
 <t>Registration parameter may include decentralized identifier of the RP.</t>
-<t>The following is a non-normative example of RP Registration Metadata Values supported by Self-Issued OP:</t>
+<t>The following is a non-normative example of the supported RP Registration Metadata Values:</t>
 
 <artwork>  {
-   &quot;authorization_endpoint&quot;:
-    &quot;openid:&quot;,
-   &quot;issuer&quot;:
-    &quot;https://self-issued.me/v2&quot;,
-   &quot;response_types_supported&quot;:
-    [&quot;id_token&quot;],
-   &quot;scopes_supported&quot;:
-    [&quot;openid&quot;, &quot;profile&quot;, &quot;email&quot;, &quot;address&quot;, &quot;phone&quot;],
-   &quot;subject_types_supported&quot;:
-    [&quot;pairwise&quot;],
    &quot;subject_identifier_types_supported&quot;:
-    [&quot;did:web:&quot;, &quot;did:ion:&quot;],
-    &quot;credential_formats_supported&quot;:
-    [&quot;jwt&quot;,&quot;jwt_vp&quot;],
-    &quot;id_token_signing_alg_values_supported&quot;:
-    [&quot;ES256&quot;, &quot;ES256K&quot;],
-   &quot;request_object_signing_alg_values_supported&quot;:
-    [&quot;ES256&quot;, &quot;ES256K&quot;]
+    [&quot;did&quot;, &quot;jkt&quot;],
+    &quot;did_methods_supported&quot;:
+    [&quot;did:key:&quot;, &quot;did:example:&quot;]
   }
 </artwork>
+</section>
+</section>
 
 <section anchor="sub-types"><name>Sub Types</name>
 <t>A sub type is used by Self-Issued OP to advertise which types of identifiers are supported for the <tt>sub</tt> claim. Two types are defined by this specification:</t>
@@ -290,7 +307,6 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 </ul></li>
 </ul>
 <t>NOTE: Consider adding a subject type for OpenID Connect Federation entity statements.</t>
-</section>
 </section>
 
 <section anchor="relying-party-registration-metadata-error-response"><name>Relying Party Registration Metadata Error Response</name>
@@ -339,7 +355,6 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 </section>
 
 <section anchor="identifier-portability-and-verifiable-presentation-support"><name>Identifier Portability and Verifiable Presentation Support</name>
-</section>
 
 <section anchor="self-issued-openid-provider-request"><name>Self-Issued OpenID Provider Request</name>
 <t>The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:</t>
@@ -407,7 +422,7 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 </li>
 </ul></li>
 </ul>
-<t>When <tt>request</tt> or <tt>reques_uri</tt> parameters are NOT present, <tt>registration</tt> or <tt>registration_uri</tt> parameters MUST be present in the request. When <tt>request</tt> or <tt>reques_uri</tt> parameters are present, <tt>registration</tt> or <tt>registration_uri</tt> parameters MUST be included in either of those parameters.</t>
+<t>When <tt>request</tt> or <tt>request_uri</tt> parameters are NOT present, <tt>registration</tt> or <tt>registration_uri</tt> parameters MUST be present in the request. When <tt>request</tt> or <tt>request_uri</tt> parameters are present, <tt>registration</tt> or <tt>registration_uri</tt> parameters MUST be included in either of those parameters.</t>
 <t>Other parameters MAY be sent. Note that all Claims are returned in the ID Token.</t>
 <t>The entire URL MUST NOT exceed 2048 ASCII characters.</t>
 <t>The following is a non-normative example HTTP 302 redirect response by the RP, which triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):</t>
@@ -442,15 +457,7 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 <li><t>REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <tt>did</tt>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
 </li>
 </ul></li>
-<li><t>vp</t>
-
-<ul>
-<li><t>OPTIONAL. A JSON object, that represents a JWT verifiable presentation, following W3C Verifiable Credentials Specification [VC-DATA-MODEL]. Verifiable Credentials must be embedded in the Verifiable Presentation following W3C Verifiable Credentials Specification [VC-DATA-MODEL]</t>
-</li>
-</ul></li>
 </ul>
-<t>Verifiable Presentation is data derived from one or more Verifiable Credentials, issued by one or more issuers, that is shared with a specific verifier. Verifiable Credential is a set of one or more claims made by an issuer.</t>
-<t>Self-Issued OP may present credentials to the RP using Verifiable Presentation credential format by including it in the <tt>vp</tt> claim inside the ID token.</t>
 <t>Whether the Self-Issued OP is a mobile client or a web client, response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.</t>
 
 <ol>
@@ -463,6 +470,12 @@ Second mechanism defined is the usage of Decentralized Identifiers (DID). DID is
 <li><t>No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.</t>
 </li>
 </ol>
+</section>
+
+<section anchor="verifiable-presentation-support"><name>Verifiable Presentation Support</name>
+<t>Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations <xref target="OIDC4VP"></xref> and W3C Verifiable Credentials Specification [VC-DATA-MODEL].</t>
+<t>Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA-MODEL]</t>
+<t>See <xref target="OIDC4VP"></xref> on how to support multiple credential formats such as JWT and Linked Data Proofs.</t>
 </section>
 
 <section anchor="self-issued-id-token-validation"><name>Self-Issued ID Token Validation</name>
@@ -503,18 +516,56 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
      SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
      w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw&quot;,
      &quot;e&quot;:&quot;AQAB&quot;
-    },
-    &quot;vp&quot;: {
-     &quot;@context&quot;: [
-      &quot;https://www.w3.org/2018/credentials/v1&quot;,
-      &quot;https://www.w3.org/2018/credentials/examples/v1&quot;
-     ],
-     &quot;type&quot;: [&quot;VerifiablePresentation&quot;],
-     &quot;verifiableCredential&quot;: [&quot;...&quot;]
     }
 　}
-  
 </artwork>
+<t>The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only):</t>
+
+<artwork>  {
+   &quot;iss&quot;: &quot;https://self-issued.me/v2&quot;,
+   &quot;sub&quot;: &quot;NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs&quot;,
+   &quot;aud&quot;: &quot;https://client.example.org/cb&quot;,
+   &quot;nonce&quot;: &quot;n-0S6_WzA2Mj&quot;,
+   &quot;exp&quot;: 1311281970,
+   &quot;iat&quot;: 1311280970,
+   &quot;sub_jwk&quot;: {
+     &quot;kty&quot;:&quot;RSA&quot;,
+     &quot;n&quot;: &quot;0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx
+     4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs
+     tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2
+     QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
+     SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
+     w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw&quot;,
+     &quot;e&quot;:&quot;AQAB&quot;
+    },
+    &quot;verifiable_presentations&quot;:[
+      {
+         &quot;format&quot;:&quot;vp_jwt&quot;,
+         &quot;presentation&quot;:&quot;ewogICAgImlzcyI6Imh0dHBzOi8vYm9vay5pdHNvdXJ3ZWIub...IH0=&quot;
+      }
+   ],
+　}
+</artwork>
+<t>Note: Further processing steps are required if the authentication response contains verifiable presentations - see <xref target="OIDC4VP"></xref>.</t>
+</section>
+
+<section anchor="security-considerations"><name>Security Considerations</name>
+
+<section anchor="invocation-using-custom-schema-invocation-using-custom-schema"><name>Invocation using Custom Schema {invocation-using-custom-schema}</name>
+<t>Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior.</t>
+<t>Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.</t>
+<t>Any malicious app can register the custom schema already used by another app, imitate the user interface and impersonate a good app.</t>
+<t>When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined.</t>
+</section>
+</section>
+
+<section anchor="privacy-considerations"><name>Privacy Considerations</name>
+
+<section anchor="selective-disclosure-and-un-linkable-presentations"><name>Selective disclosure and un-linkable presentations</name>
+<t>Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.</t>
+<t>Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.</t>
+</section>
+</section>
 </section>
 
 <section anchor="references"><name>References</name>
@@ -547,6 +598,8 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 <li><t>[draft-jones-self<em>issued</em>identifier] <eref target="https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md">https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md</eref></t>
 </li>
 <li><t>[siop-requirements] <eref target="https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md">https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md</eref></t>
+</li>
+<li><t>[OIX] <eref target="https://openidentityexchange.org/networks/87/item.html?id=365">https://openidentityexchange.org/networks/87/item.html?id=365</eref></t>
 </li>
 </ul>
 </section>
@@ -581,6 +634,29 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 </middle>
 
 <back>
+<references><name>Normative References</name>
+<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Oliver Terbu" initials="O." surname="Terbu">
+      <organization>ConsenSys Mesh</organization>
+    </author>
+    <author fullname="Torsten Lodderstedt" initials="T." surname="Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author fullname="Kristina Yasuda" initials="K." surname="Yasuda">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Adam Lemmon" initials="A." surname="Lemmon">
+      <organization>Convergence.tech</organization>
+    </author>
+    <author fullname="Tobias Looker" initials="T." surname="Looker">
+      <organization>Mattr</organization>
+    </author>
+    <date year="2021" month="May" day="20"></date>
+  </front>
+</reference>
+</references>
 
 </back>
 

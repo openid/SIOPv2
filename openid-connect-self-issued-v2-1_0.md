@@ -336,6 +336,8 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
     
 When `request` or `request_uri` parameters are NOT present, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
+Since it is an Implicit Flow response, `nonce` Claim MUST be present.
+
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
@@ -399,7 +401,7 @@ To validate the ID Token received, the RP MUST do the following:
 1. The RP MUST validate that the`sub` claim is bound to the `sub_jwk` value. When sub type is`jkt`, the RP MUST validate that the sub Claim value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in Section 6. When sub type is `did`, the RP MUST validate that the `kid` of the `sub_jwk` claim matches the verification method from the DID Document that is obtained by resolving decentralized identifier included in `sub` claim.
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP specific.
-1. If a `nonce` value was sent in the Authentication Request, a `nonce` Claim MUST be present and its value checked to verify that it is the same value as the one that was sent in the Authentication Request. The RP SHOULD check the `nonce `value for replay attacks. The precise method for detecting replay attacks is RP specific.
+2. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the nonce value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 The following is a non-normative example of a base64url decoded Self-Issued ID Token (with line wraps within values for display purposes only):
 
