@@ -105,7 +105,10 @@ Out of Scope:
 
 Common terms in this document come from four primary sources: DID-CORE, VC-DATA, RFC6749 and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.
 
-# Abbreviations 
+- Trust framework
+    -  a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements. [OIX]
+
+## Abbreviations 
 
 * Self-Issued OP: Self-Issued OpenID Provider
 * RP: Relying Party
@@ -139,11 +142,17 @@ Figure: Self-Issued Op Protocol Flow
 
 ## Self-Issued OpenID Provider Discovery
 
-Self-Issued OP MUST associate a custom schema `openid://` with itself. Relying Party MUST call `openid://` when sending a request to a Self-Issued OP.
+When the End-user first interacts with the RP there are no established means to signal where to direct the request for an available Self-Issued OP application. Even if possible, such signals may be susceptible to fingerprinting and passive tracking of the End-user.
 
-Note: Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.
+The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice oto select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.
 
-Note: When more than one Self-issued OP with the same custom schema has been installed on one device, there could be confusion over which Self-Issued OP gets invoked. 
+Alternatively the RP MAY belong to at least one trust framework. The trust framework is then responsible for hosting a public website that maintains the latest platform specific metadata for all supported Self-Issued OP applications, known as app-link or universal link at the time of publication. The RP forms the request URL to that shared website and any of the supported installed applications will instead be launched and given the request to process. If none are available, the website will be displayed with the static list for the End-user to choose from to install or use.
+
+The trust framework MAY be operated by just one RP, but due to the required maintenance of every application's metadata (which may change frequently) this burden SHOULD be shared across multiple RPs. The same trust framework MAY also be used to host metadata about the supported RPs such that the Self-Issued OP applications can verify the origin of the incoming request as part of the framework as well.
+
+The legacy usage of custom protocol schemas such as `openid:` as a way to invoke any installed Self-Issued OP is NOT RECOMMENDED due to the security issues (see (invocation-using-custom-schema) in Privacy Considerations section).
+
+### Self-Issued OpenID Provider Discovery Metadata
 
 If the input identifier for the discovery process contains the domain self-issued.me, dynamic discovery is not performed. Instead, then the following static configuration values are used:
 
@@ -348,9 +357,9 @@ This extension defines the following claims to be included in the ID token for u
 Whether the Self-Issued OP is a mobile client or a web client, response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
 1. The `iss` (issuer) Claim Value is `https://self-issued.me/v2`.
-2. A `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
-3. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a decentralized identifier. 
-4. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
+1. A `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
+1. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a decentralized identifier. 
+1. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
 
 ## Verifiable Presentation Support
 
@@ -426,10 +435,29 @@ The following is a non-normative example of an ID token containing a verfiable p
 
 Note: Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
+## Security Considerations
+ 
+### Invocation using Custom Schema {invocation-using-custom-schema}
+
+Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior. 
+
+Custom schema is a mechanism offered by Mobile Operating System providers. If an application developer registers custom schema with the application, that application will be invoked when a request containing custom schema is received by the device.
+
+Any malicious app can register the custom schema already used by another app, imitate the user interface and impersonate a good app. 
+
+When more than one Self-issued OP with the same custom schema has been installed on one device, the behavior of Self-Issued OP is undefined. 
+
+## Privacy Considerations
+ 
+### Selective disclosure and un-linkable presentations
+Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.
+
+Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
+    
 # References
-
+ 
 ## Normative References
-
+ 
 * [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
 * [VC-DATA] https://www.w3.org/TR/vc-data-model/
 * [RFC6749] https://tools.ietf.org/html/rfc6749
@@ -438,19 +466,20 @@ Note: Further processing steps are required if the authentication response conta
 * [RFC7638] https://tools.ietf.org/html/rfc7638
 * [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
 * [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
-
+ 
 ## Non-Normative References
-
+ 
 * [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
 * [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
-
-
+* [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
+ 
+ 
 # Relationships to other documents 
-
+ 
 The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
-
+ 
 # IANA Considerations
-
+ 
 TBD
 
 # Notices
