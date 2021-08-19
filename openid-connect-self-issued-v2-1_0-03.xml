@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl" -->
-<rfc version="3" ipr="none" submissionType="IETF" category="std" xml:lang="en" consensus="true" xmlns:xi="http://www.w3.org/2001/XInclude">
+<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
+<rfc version="3" ipr="none" docName="openid-connect-self-issued-v2-1_0-03" submissionType="IETF" category="std" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" consensus="true">
 
 <front>
-<title abbrev="siop-v2">Self-Issued OpenID Provider V2, draft 02</title><seriesInfo value="openid-connect-self-issued-v2-1_0-02" status="standard" name="Internet-Draft"></seriesInfo>
+<title abbrev="siop-v2">Self-Issued OpenID Provider V2, draft 03</title><seriesInfo value="openid-connect-self-issued-v2-1_0-03" status="standard" name="Internet-Draft"></seriesInfo>
 <author initials="K." surname="Yasuda" fullname="Kristina Yasuda"><organization>Microsoft</organization><address><postal><street></street>
 </postal><email>kristina.yasuda@microsoft.com</email>
 </address></author>
@@ -243,7 +243,7 @@
 <t><tt>registration</tt> <bcp14>OPTIONAL</bcp14>. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values.</t>
 <t><tt>registration_uri</tt> <bcp14>OPTIONAL</bcp14>. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request_uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values.</t>
 <t>RP MUST use either of there parameters, but if one of these parameters is used, the other MUST NOT be used in the same request.</t>
-<t>RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [OpenID.Registration] specification.</t>
+<t>RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 <xref target="OpenID.Registration"></xref> specification.</t>
 <t>If Self-Issued OP supports the same parameters, Self-Issued OpenID Provider flow continues, if Self-Issued OP does not support, it returns an error.</t>
 <t>If no error is returned, the RP must proceed as if it had obtained the following Client Registration Response:</t>
 
@@ -279,68 +279,20 @@
 <t>This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:</t>
 
 <ul>
-<li><t><tt>authorization_endpoint</tt></t>
-
-<ul>
-<li><t>REQUIRED. MUST include <tt>openid:</tt>, could also include additional custom schema.</t>
-</li>
-</ul></li>
-<li><t><tt>issuer</tt></t>
-
-<ul>
-<li><t>REQUIRED. MUST be <tt>https://self-issued.me/v2</tt></t>
-</li>
-</ul></li>
-<li><t><tt>response_types_supported</tt></t>
-
-<ul>
-<li><t>REQUIRED. MUST be <tt>id_token</tt></t>
-</li>
-</ul></li>
-<li><t><tt>scopes_supported</tt></t>
-
-<ul>
-<li><t>REQUIRED. A JSON array of strings representing supported scopes. Valid values include <tt>openid</tt>, <tt>profile</tt>, <tt>email</tt>, <tt>address</tt>, and <tt>phone</tt>.</t>
-</li>
-</ul></li>
-<li><t><tt>subject_types_supported</tt></t>
-
-<ul>
-<li><t>REQUIRED. A JSON array of strings representing supported subject types. Valid values include <tt>pairwise</tt> and <tt>public</tt>.</t>
-</li>
-</ul></li>
-<li><t><tt>subject_identifier_types_supported</tt></t>
+<li><t>subject<em>identifier</em>types_supported</t>
 
 <ul>
 <li><t>REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include <tt>jkt</tt> and <tt>did</tt>.</t>
 </li>
 </ul></li>
-<li><t><tt>did_methods_supported</tt></t>
+<li><t>did<em>methods</em>supported</t>
 
 <ul>
-<li><t>OPTIONAL. A JSON array of strings representing supported DID methods. Valid values must take the value of <tt>Method Name</tt> in Chapter 9 of <eref target="https://w3c.github.io/did-spec-registries/#did-methods">did-spec-registries</eref>, such as <tt>did:peer:</tt> RP can indicate support for any DID method by omitting <tt>did_methods_supported</tt>, while including <tt>did</tt> in `subject<em>identifier</em>types_supported'.</t>
-</li>
-</ul></li>
-<li><t><tt>credential_formats_supported</tt></t>
-
-<ul>
-<li><t>REQUIRED. A JSON array of strings representing supported credential formats. Valid values include <tt>jwt</tt>, <tt>jwt_vc</tt>, <tt>jwt_vp</tt>, <tt>ldp_vc</tt>, and <tt>ldp_vp</tt>.</t>
-</li>
-</ul></li>
-<li><t><tt>id_token_signing_alg_values_supported</tt></t>
-
-<ul>
-<li><t>REQUIRED. ID token signing alg values supported. Valid values include <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
-</li>
-</ul></li>
-<li><t><tt>request_object_signing_alg_values_supported</tt></t>
-
-<ul>
-<li><t>REQUIRED. Request object signing alg values supported. Valid values include <tt>none</tt>, <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
+<li><t>OPTIONAL. A JSON array of strings representing supported DID methods. Valid values must take the value of <tt>Method Name</tt> in Chapter 9 of <xref target="did-spec-registries"></xref>, such as <tt>did:peer:</tt> RP can indicate support for any DID method by omitting <tt>did_methods_supported</tt>, while including <tt>did</tt> in `subject<em>identifier</em>types_supported'.</t>
 </li>
 </ul></li>
 </ul>
-<t>Other registration parameters defined in [OpenID.Registration] could be used. Examples are explanatory parameters such as <tt>policy_uri</tt>, <tt>tos_uri</tt>, and <tt>logo_uri</tt>. If the RP uses more than one Redirection URI, the <tt>redirect_uris</tt> parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the <tt>jwks_uri</tt>, <tt>id_token_encrypted_response_alg</tt> and <tt>id_token_encrypted_response_enc</tt> parameters.</t>
+<t>Other registration parameters defined in <xref target="OpenID.Registration"></xref> could be used. Examples are explanatory parameters such as policy<em>uri, tos</em>uri, and logo<em>uri. If the RP uses more than one Redirection URI, the redirect</em>uris parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the jwks<em>uri, id</em>token<em>encrypted</em>response<em>alg and id</em>token<em>encrypted</em>response_enc parameters.</t>
 <t>Registration parameter may include decentralized identifier of the RP.</t>
 <t>The following is a non-normative example of the supported RP Registration Metadata Values:</t>
 
@@ -367,7 +319,7 @@
 <li><t><tt>did</tt></t>
 
 <ul>
-<li><t>Decentralized Identifier sub type. When this subject type is used,  the <tt>sub</tt> value MUST be a DID defined in [DID-CORE], and <tt>sub_jwk</tt> MUST NOT be included in the Self-Issed OP response. The subject type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.<br />
+<li><t>Decentralized Identifier sub type. When this subject type is used,  the <tt>sub</tt> value MUST be a DID defined in <xref target="DID-CORE"></xref>, and <tt>sub_jwk</tt> MUST NOT be included in the Self-Issed OP response. The subject type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.<br />
 </t>
 </li>
 </ul></li>
@@ -524,15 +476,7 @@
 <li><t>REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <tt>did</tt>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
 </li>
 </ul></li>
-<li><t>vp</t>
-
-<ul>
-<li><t>OPTIONAL. A JSON object, that represents a JWT verifiable presentation, following W3C Verifiable Credentials Specification [VC-DATA-MODEL]. Verifiable Credentials must be embedded in the Verifiable Presentation following W3C Verifiable Credentials Specification [VC-DATA-MODEL]</t>
-</li>
-</ul></li>
 </ul>
-<t>Verifiable Presentation is data derived from one or more Verifiable Credentials, issued by one or more issuers, that is shared with a specific verifier. Verifiable Credential is a set of one or more claims made by an issuer.</t>
-<t>Self-Issued OP may present credentials to the RP using Verifiable Presentation credential format by including it in the <tt>vp</tt> claim inside the ID token.</t>
 <t>Whether the Self-Issued OP is a mobile client or a web client, response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.</t>
 
 <ol>
@@ -561,11 +505,11 @@
 </li>
 <li><t>The RP MUST validate that the <tt>aud</tt> (audience) Claim contains the value of the <tt>redirect_uri</tt> that the RP sent in the Authentication Request as an audience.</t>
 </li>
-<li><t>The RP MUST validate the signature of the ID Token. When sub type is<tt>jkt</tt>, validation is done according to JWS [JWS] using the algorithm specified in the alg Header Parameter of the JOSE Header, using the key in the <tt>sub_jwk</tt> Claim. When sub type is<tt>did</tt>, validation is done using the key derived as a result of DID Resolution as defined in [DID-CORE]. The key is a bare key in JWK format (not an X.509 certificate value) when sub type is<tt>jkt</tt> or may be another key format when sub type is <tt>did</tt>.</t>
+<li><t>The RP MUST validate the signature of the ID Token. When sub type is<tt>jkt</tt>, validation is done according to JWS [JWS] using the algorithm specified in the alg Header Parameter of the JOSE Header, using the key in the <tt>sub_jwk</tt> Claim. When sub type is<tt>did</tt>, validation is done using the key derived as a result of DID Resolution as defined in <xref target="DID-CORE"></xref>. The key is a bare key in JWK format (not an X.509 certificate value) when sub type is<tt>jkt</tt> or may be another key format when sub type is <tt>did</tt>.</t>
 </li>
 <li><t>Default <tt>alg</tt> value is RS256. It MAY also be ES256, ES256K or EdDSA.</t>
 </li>
-<li><t>The RP MUST validate the<tt>sub</tt> value. When sub type is<tt>jkt</tt>, the RP MUST validate that the <tt>sub</tt> claim value equals to the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim, as specified in Section 6 of [OpenID.Core]. When sub type is <tt>did</tt>, the RP MUST validate that <tt>sub</tt> claim value equals to the key in the verification method property of the DID Document. Since DID Document can contain mulitple keys, the validation MUST be performed against the key identified by the <tt>kid</tt> in the header. DID Document MUST be obtained by resolving decentralized identifier included in the <tt>sub</tt> claim.</t>
+<li><t>The RP MUST validate the<tt>sub</tt> value. When sub type is<tt>jkt</tt>, the RP MUST validate that the <tt>sub</tt> claim value equals to the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim, as specified in Section 6 of <xref target="OpenID"></xref>. When sub type is <tt>did</tt>, the RP MUST validate that <tt>sub</tt> claim value equals to the key in the verification method property of the DID Document. Since DID Document can contain mulitple keys, the validation MUST be performed against the key identified by the <tt>kid</tt> in the header. DID Document MUST be obtained by resolving decentralized identifier included in the <tt>sub</tt> claim.</t>
 </li>
 <li><t>The current time MUST be before the time represented by the <tt>exp</tt> Claim (possibly allowing for some small leeway to account for clock skew).
 The <tt>iat</tt> Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP specific.</t>
@@ -575,7 +519,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 </ol>
 <t>The following is a non-normative example of a base64url decoded Self-Issued ID Token (with line wraps within values for display purposes only):</t>
 
-<artwork>  {
+<sourcecode type="json">  {
    &quot;iss&quot;: &quot;https://self-issued.me/v2&quot;,
    &quot;sub&quot;: &quot;NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs&quot;,
    &quot;aud&quot;: &quot;https://client.example.org/cb&quot;,
@@ -593,10 +537,10 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
      &quot;e&quot;:&quot;AQAB&quot;
     }
 　}
-</artwork>
+</sourcecode>
 <t>The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only):</t>
 
-<artwork>  {
+<sourcecode type="json">  {
    &quot;iss&quot;: &quot;https://self-issued.me/v2&quot;,
    &quot;sub&quot;: &quot;NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs&quot;,
    &quot;aud&quot;: &quot;https://client.example.org/cb&quot;,
@@ -620,7 +564,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
       }
    ],
 　}
-</artwork>
+</sourcecode>
 <t>Note: Further processing steps are required if the authentication response contains verifiable presentations - see <xref target="OIDC4VP"></xref>.</t>
 </section>
 
@@ -643,67 +587,8 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 </section>
 </section>
 
-<section anchor="references"><name>References</name>
-
-<section anchor="normative-references"><name>Normative References</name>
-
-<ul>
-<li><t>[DID-CORE] <eref target="https://github.com/w3c/did-core">https://github.com/w3c/did-core</eref> (not yet a ratified draft)</t>
-</li>
-<li><t>[VC-DATA] <eref target="https://www.w3.org/TR/vc-data-model/">https://www.w3.org/TR/vc-data-model/</eref></t>
-</li>
-<li><t>[RFC6749] <eref target="https://tools.ietf.org/html/rfc6749">https://tools.ietf.org/html/rfc6749</eref></t>
-</li>
-<li><t>[RFC6750] <eref target="https://tools.ietf.org/html/rfc6750">https://tools.ietf.org/html/rfc6750</eref></t>
-</li>
-<li><t>[OpenID.Core] <eref target="https://openid.net/specs/openid-connect-core-1_0.html">https://openid.net/specs/openid-connect-core-1_0.html</eref></t>
-</li>
-<li><t>[RFC7638] <eref target="https://tools.ietf.org/html/rfc7638">https://tools.ietf.org/html/rfc7638</eref></t>
-</li>
-<li><t>[OpenID.Registration] <eref target="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</eref></t>
-</li>
-<li><t>[did-spec-registries] <eref target="https://w3c.github.io/did-spec-registries/#did-methods">https://w3c.github.io/did-spec-registries/#did-methods</eref></t>
-</li>
-</ul>
-</section>
-
-<section anchor="non-normative-references"><name>Non-Normative References</name>
-
-<ul>
-<li><t>[draft-jones-self<em>issued</em>identifier] <eref target="https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md">https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md</eref></t>
-</li>
-<li><t>[siop-requirements] <eref target="https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md">https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md</eref></t>
-</li>
-<li><t>[OIX] <eref target="https://openidentityexchange.org/networks/87/item.html?id=365">https://openidentityexchange.org/networks/87/item.html?id=365</eref></t>
-</li>
-</ul>
-</section>
-</section>
-
 <section anchor="relationships-to-other-documents"><name>Relationships to other documents</name>
 <t>The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.</t>
-</section>
-
-<section anchor="iana-considerations"><name>IANA Considerations</name>
-<t>TBD</t>
-</section>
-
-<section anchor="notices"><name>Notices</name>
-<t>Copyright (c) 2020 The OpenID Foundation.</t>
-<t>The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.</t>
-<t>The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.</t>
-</section>
-
-<section anchor="document-history"><name>Document History</name>
-
-<ul>
-<li><t>01</t>
-
-<ul>
-<li><t>Version proposed for working group adoption</t>
-</li>
-</ul></li>
-</ul>
 </section>
 
 </middle>
@@ -731,7 +616,104 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
     <date year="2021" month="May" day="20"></date>
   </front>
 </reference>
+<reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
+  <front>
+    <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
+<reference anchor="did-spec-registries" target="https://w3c.github.io/did-spec-registries/#did-methods">
+  <front>
+    <title>Decentralized Identifiers (DIDs) v1.0</title>
+    <author fullname="Orie Steele">
+      <organization>Transmute</organization>
+    </author>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <date year="2021" month="Aug" day="3"></date>
+  </front>
+</reference>
+<reference anchor="DID-CORE" target="https://www.w3.org/TR/did-core/">
+  <front>
+    <title>Decentralized Identifiers (DIDs) v1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Amy Guy">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Markus Sabadello">
+      <organization>Danube Tech</organization>
+    </author>
+    <author fullname="Drummond Reed">
+      <organization>Evernym</organization>
+    </author>
+    <date year="2021" month="Aug" day="3"></date>
+  </front>
+</reference>
+<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+      <organization>Salesforce</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
 </references>
+
+<section anchor="iana-considerations"><name>IANA Considerations</name>
+<t>TBD</t>
+</section>
+
+<section anchor="notices"><name>Notices</name>
+<t>Copyright (c) 2020 The OpenID Foundation.</t>
+<t>The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.</t>
+<t>The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.</t>
+</section>
+
+<section anchor="document-history"><name>Document History</name>
+
+<artwork>[[ To be removed from the final specification ]]
+
+* 03
+    * sub_jwk made optional for sub type DID and mandatory for subtype jwk thumbprint
+    * Added text that nonce is mandatory
+    * Replaced vp claim with reference to OIDC4VP draft
+    * Adopted SIOP chooser as SIOP Discovery
+    * Deprecated openid:// for SIOP Discovery as not recommended
+    * Clarified Discovery and Registration metadata
+    * Formatted Normative Reference Section to mmarkdown
+
+* 02
+    * Converted into mmarkdown
+
+* 01
+    * Version proposed for working group adoption
+</artwork>
+</section>
 
 </back>
 
