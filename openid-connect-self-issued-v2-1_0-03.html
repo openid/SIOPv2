@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Self-Issued OpenID Provider V2, draft 02</title>
+<title>Self-Issued OpenID Provider V2, draft 03</title>
 <meta content="Kristina Yasuda" name="author">
 <meta content="Michael B. Jones" name="author">
 <meta content="Tobias Looker" name="author">
@@ -12,30 +12,12 @@
        OpenID Connect defines mechanism by which an End-user can leverage an OpenID Provider (OP) to release identity information (such as authentication and attributes) to a Relying Party (RP) which can act on that information. 
        This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User's local control. End-users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the Relying Parties. This allows users to interact with RPs directly, without relying on a third-party provider or requiring the End-User to operate their own hosted infrastructure. 
     " name="description">
-<meta content="xml2rfc 3.9.1" name="generator">
+<meta content="xml2rfc 2.40.1" name="generator">
 <meta content="security" name="keyword">
 <meta content="openid" name="keyword">
 <meta content="ssi" name="keyword">
-<meta name="ietf.draft">
-<!-- Generator version information:
-  xml2rfc 3.9.1
-    Python 3.9.6
-    appdirs 1.4.4
-    ConfigArgParse 1.5.1
-    google-i18n-address 2.5.0
-    html5lib 1.1
-    intervaltree 3.1.0
-    Jinja2 2.11.3
-    kitchen 1.2.6
-    lxml 4.6.3
-    pycountry 20.7.3
-    pyflakes 2.3.1
-    PyYAML 5.4
-    requests 2.25.1
-    setuptools 57.0.0
-    six 1.16.0
--->
-<link href="/Users/david/Projects/UserCentric/oidc-prototype/connect-wg/openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0-02.xml" rel="alternate" type="application/rfc+xml">
+<meta content="openid-connect-self-issued-v2-1_0-03" name="ietf.draft">
+<link href="./openid-connect-self-issued-v2-1_0-03.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">/*
 
@@ -202,9 +184,6 @@ ul.empty, .ulEmpty {
 }
 ul.empty li, .ulEmpty li {
   margin-top: 0.5em;
-}
-ul.ulBare, li.ulBare {
-  margin-left: 0em !important;
 }
 ul.compact, .ulCompact,
 ol.compact, .olCompact {
@@ -939,6 +918,12 @@ caption a[href] {
   }
 
 }
+/* Avoid wrapping of URLs in references */
+@media screen {
+  .references a {
+    white-space: nowrap;
+  }
+}
 /* Tweak the bcp14 keyword presentation */
 .bcp14 {
   font-variant: small-caps;
@@ -1009,7 +994,7 @@ h1#rfcnum {
 }
 /* Make .olPercent look the same as <ol><li> */
 dl.olPercent > dd {
-  margin-bottom: 0.25em;
+  margin: 0 0 0.25em 0;
   min-height: initial;
 }
 /* Give aside some styling to set it apart */
@@ -1047,6 +1032,14 @@ aside > p {
     margin-bottom: 1em;
   }
 }
+/*
+  The margin-left: 0 on <dd> removes all distinction
+  between levels from nested <dl>s.  Undo that.
+*/
+dl.olPercent > dd,
+dd {
+  margin-left: revert;
+}
 /* Avoid narrow tables forcing too narrow table captions, which may render badly */
 table {
   min-width: 20em;
@@ -1072,111 +1065,8 @@ tr:nth-child(2n+1) > td {
   #toc nav { display: none; }
   #toc.active nav { display: block; }
 }
-/* Add support for keepWithNext */
-.keepWithNext {
-  break-after: avoid-page;
-  break-after: avoid-page;
-}
-/* Add support for keepWithPrevious */
-.keepWithPrevious {
-  break-before: avoid-page;
-}
-/* Change the approach to avoiding breaks inside artwork etc. */
-figure, pre, table, .artwork, .sourcecode  {
-  break-before: avoid-page;
-  break-after: auto;
-}
-/* Avoid breaks between <dt> and <dd> */
-dl {
-  break-before: auto;
-  break-inside: auto;
-}
-dt {
-  break-before: auto;
-  break-after: avoid-page;
-}
-dd {
-  break-before: avoid-page;
-  break-after: auto;
-  orphans: 3;
-  widows: 3
-}
-span.break, dd.break {
-  margin-bottom: 0;
-  min-height: 0;
-  break-before: auto;
-  break-inside: auto;
-  break-after: auto;
-}
-/* Undo break-before ToC */
-@media print {
-  #toc {
-    break-before: auto;
-  }
-}
-/* Text in compact lists should not get extra bottim margin space,
-   since that would makes the list not compact */
-ul.compact p, .ulCompact p,
-ol.compact p, .olCompact p {
- margin: 0;
-}
-/* But the list as a whole needs the extra space at the end */
-section ul.compact,
-section .ulCompact,
-section ol.compact,
-section .olCompact {
-  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
-}
-/* The tt and code background above interferes with for instance table cell
-   backgrounds.  Changed to something a bit more selective. */
-tt, code {
-  background-color: transparent;
-}
-p tt, p code, li tt, li code {
-  background-color: #f8f8f8;
-}
-/* Tweak the pre margin -- 0px doesn't come out well */
-pre {
-   margin-top: 0.5px;
-}
-/* Tweak the comact list text */
-ul.compact, .ulCompact,
-ol.compact, .olCompact,
-dl.compact, .dlCompact {
-  line-height: normal;
-}
-/* Don't add top margin for nested lists */
-li > ul, li > ol, li > dl,
-dd > ul, dd > ol, dd > dl,
-dl > dd > dl {
-  margin-top: initial;
-}
-/* Elements that should not be rendered on the same line as a <dt> */
-/* This should match the element list in writer.text.TextWriter.render_dl() */
-dd > div.artwork:first-child,
-dd > aside:first-child,
-dd > figure:first-child,
-dd > ol:first-child,
-dd > div:first-child > pre.sourcecode,
-dd > table:first-child,
-dd > ul:first-child {
-  clear: left;
-}
-/* fix for weird browser behaviour when <dd/> is empty */
-dt+dd:empty::before{
-  content: "\00a0";
-}
-/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
-li > p {
-  margin-bottom: 0.5em
-}
-/* Don't let p margin spill out from inside list items */
-li > p:last-of-type {
-  margin-bottom: 0;
-}
 </style>
 <link href="rfc-local.css" rel="stylesheet" type="text/css">
-<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
 </head>
 <body>
 <script src="metadata.min.js"></script>
@@ -1197,6 +1087,14 @@ li > p:last-of-type {
 <dl id="identifiers">
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">connect</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">openid-connect-self-issued-v2-1_0-03</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2021-08-19" class="published">19 August 2021</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1214,7 +1112,7 @@ li > p:last-of-type {
 </dd>
 </dl>
 </div>
-<h1 id="title">Self-Issued OpenID Provider V2, draft 02</h1>
+<h1 id="title">Self-Issued OpenID Provider V2, draft 03</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">OpenID Connect defines mechanism by which an End-user can leverage an OpenID Provider (OP) to release identity information (such as authentication and attributes) to a Relying Party (RP) which can act on that information.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
@@ -1225,137 +1123,126 @@ li > p:last-of-type {
         <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
 <a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
         </h2>
-<nav class="toc"><ul class="toc ulBare compact ulEmpty">
-<li class="toc ulBare compact ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
+<nav class="toc"><ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a><a href="#section-toc.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-use-cases" class="xref">Use-cases</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="xref">2.1</a>.  <a href="#name-resilience-against-sudden-o" class="xref">Resilience against Sudden or Planned OP Unavailability</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-use-cases" class="xref">Use-cases</a><a href="#section-toc.1-1.2.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="xref">2.1</a>.  <a href="#name-resilience-against-sudden-o" class="xref">Resilience against Sudden or Planned OP Unavailability</a><a href="#section-toc.1-1.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1" class="keepWithNext"><a href="#section-2.2" class="xref">2.2</a>.  <a href="#name-authentication-at-the-edge" class="xref">Authentication at the edge</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="xref">2.2</a>.  <a href="#name-authentication-at-the-edge" class="xref">Authentication at the edge</a><a href="#section-toc.1-1.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="xref">2.3</a>.  <a href="#name-sharing-credentials-from-se" class="xref">Sharing credentials from several issuers in one transaction</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="xref">2.3</a>.  <a href="#name-sharing-credentials-from-se" class="xref">Sharing credentials from several issuers in one transaction</a><a href="#section-toc.1-1.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.2.2.4">
-                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="xref">2.4</a>.  <a href="#name-aggregation-of-multiple-per" class="xref">Aggregation of multiple personas under one Self-Issued OP</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.2.2.4">
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="xref">2.4</a>.  <a href="#name-aggregation-of-multiple-per" class="xref">Aggregation of multiple personas under one Self-Issued OP</a><a href="#section-toc.1-1.2.2.4.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-scope" class="xref">Scope</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-scope" class="xref">Scope</a><a href="#section-toc.1-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-terms-and-definitions" class="xref">Terms and definitions</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-abbreviations" class="xref">Abbreviations</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-terms-and-definitions" class="xref">Terms and definitions</a><a href="#section-toc.1-1.4.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-abbreviations" class="xref">Abbreviations</a><a href="#section-toc.1-1.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-protocol-flow" class="xref">Protocol Flow</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-protocol-flow" class="xref">Protocol Flow</a><a href="#section-toc.1-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-discovery-and-negotiation" class="xref">Discovery and Negotiation</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="xref">6.1</a>.  <a href="#name-self-issued-openid-provider" class="xref">Self-Issued OpenID Provider Discovery</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.1.2.1">
-                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="xref">6.1.1</a>.  <a href="#name-self-issued-openid-provider-" class="xref">Self-Issued OpenID Provider Discovery Metadata</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-discovery-and-negotiation" class="xref">Discovery and Negotiation</a><a href="#section-toc.1-1.6.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="xref">6.1</a>.  <a href="#name-self-issued-openid-provider" class="xref">Self-Issued OpenID Provider Discovery</a><a href="#section-toc.1-1.6.2.1.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.1.2.1">
+                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="xref">6.1.1</a>.  <a href="#name-self-issued-openid-provider-" class="xref">Self-Issued OpenID Provider Discovery Metadata</a><a href="#section-toc.1-1.6.2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+</ul>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="xref">6.2</a>.  <a href="#name-relying-party-registration" class="xref">Relying Party Registration</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.2.2.1">
-                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="xref">6.2.1</a>.  <a href="#name-passing-relying-party-regis" class="xref">Passing Relying Party Registration Metadata by Value</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="xref">6.2</a>.  <a href="#name-relying-party-registration" class="xref">Relying Party Registration</a><a href="#section-toc.1-1.6.2.2.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.2.2.1">
+                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="xref">6.2.1</a>.  <a href="#name-passing-relying-party-regis" class="xref">Passing Relying Party Registration Metadata by Value</a><a href="#section-toc.1-1.6.2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.2.2.2">
-                    <p id="section-toc.1-1.6.2.2.2.2.1"><a href="#section-6.2.2" class="xref">6.2.2</a>.  <a href="#name-passing-relying-party-regist" class="xref">Passing Relying Party Registration Metadata by Reference</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.2.2.2">
+                    <p id="section-toc.1-1.6.2.2.2.2.1"><a href="#section-6.2.2" class="xref">6.2.2</a>.  <a href="#name-passing-relying-party-regist" class="xref">Passing Relying Party Registration Metadata by Reference</a><a href="#section-toc.1-1.6.2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.2.2.3">
-                    <p id="section-toc.1-1.6.2.2.2.3.1"><a href="#section-6.2.3" class="xref">6.2.3</a>.  <a href="#name-relying-party-registration-" class="xref">Relying Party Registration Metadata Values</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.2.2.3">
+                    <p id="section-toc.1-1.6.2.2.2.3.1"><a href="#section-6.2.3" class="xref">6.2.3</a>.  <a href="#name-relying-party-registration-" class="xref">Relying Party Registration Metadata Values</a><a href="#section-toc.1-1.6.2.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+</ul>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.3">
-                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="xref">6.3</a>.  <a href="#name-sub-types" class="xref">Sub Types</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="xref">6.3</a>.  <a href="#name-sub-types" class="xref">Sub Types</a><a href="#section-toc.1-1.6.2.3.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.6.2.4">
-                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="xref">6.4</a>.  <a href="#name-relying-party-registration-m" class="xref">Relying Party Registration Metadata Error Response</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.6.2.4">
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="xref">6.4</a>.  <a href="#name-relying-party-registration-m" class="xref">Relying Party Registration Metadata Error Response</a><a href="#section-toc.1-1.6.2.4.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-identifier-portability-and-" class="xref">Identifier Portability and Verifiable Presentation Support</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="xref">7.1</a>.  <a href="#name-self-issued-openid-provider-r" class="xref">Self-Issued OpenID Provider Request</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-identifier-portability-and-" class="xref">Identifier Portability and Verifiable Presentation Support</a><a href="#section-toc.1-1.7.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="xref">7.1</a>.  <a href="#name-self-issued-openid-provider-r" class="xref">Self-Issued OpenID Provider Request</a><a href="#section-toc.1-1.7.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="xref">7.2</a>.  <a href="#name-self-issued-openid-provider-re" class="xref">Self-Issued OpenID Provider Response</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="xref">7.2</a>.  <a href="#name-self-issued-openid-provider-re" class="xref">Self-Issued OpenID Provider Response</a><a href="#section-toc.1-1.7.2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.3">
-                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="xref">7.3</a>.  <a href="#name-verifiable-presentation-sup" class="xref">Verifiable Presentation Support</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="xref">7.3</a>.  <a href="#name-verifiable-presentation-sup" class="xref">Verifiable Presentation Support</a><a href="#section-toc.1-1.7.2.3.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.4">
-                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="xref">7.4</a>.  <a href="#name-self-issued-id-token-valida" class="xref">Self-Issued ID Token Validation</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.4">
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="xref">7.4</a>.  <a href="#name-self-issued-id-token-valida" class="xref">Self-Issued ID Token Validation</a><a href="#section-toc.1-1.7.2.4.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.5">
-                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="xref">7.5</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.5.2.1">
-                    <p id="section-toc.1-1.7.2.5.2.1.1"><a href="#section-7.5.1" class="xref">7.5.1</a>.  <a href="#name-invocation-using-custom-sch" class="xref">Invocation using Custom Schema {invocation-using-custom-schema}</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.5">
+                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="xref">7.5</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a><a href="#section-toc.1-1.7.2.5.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.5.2.1">
+                    <p id="section-toc.1-1.7.2.5.2.1.1"><a href="#section-7.5.1" class="xref">7.5.1</a>.  <a href="#name-invocation-using-custom-sch" class="xref">Invocation using Custom Schema {invocation-using-custom-schema}</a><a href="#section-toc.1-1.7.2.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+</ul>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.6">
-                <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="xref">7.6</a>.  <a href="#name-privacy-considerations" class="xref">Privacy Considerations</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.7.2.6.2.1">
-                    <p id="section-toc.1-1.7.2.6.2.1.1"><a href="#section-7.6.1" class="xref">7.6.1</a>.  <a href="#name-selective-disclosure-and-un" class="xref">Selective disclosure and un-linkable presentations</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.6">
+                <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="xref">7.6</a>.  <a href="#name-privacy-considerations" class="xref">Privacy Considerations</a><a href="#section-toc.1-1.7.2.6.1" class="pilcrow">¶</a></p>
+<ul class="toc ulEmpty">
+<li class="toc ulEmpty" id="section-toc.1-1.7.2.6.2.1">
+                    <p id="section-toc.1-1.7.2.6.2.1.1"><a href="#section-7.6.1" class="xref">7.6.1</a>.  <a href="#name-selective-disclosure-and-un" class="xref">Selective disclosure and un-linkable presentations</a><a href="#section-toc.1-1.7.2.6.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                </ul>
+</ul>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-references" class="xref">References</a></p>
-<ul class="ulBare toc compact ulEmpty">
-<li class="ulBare toc compact ulEmpty" id="section-toc.1-1.8.2.1">
-                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="xref">8.1</a>.  <a href="#name-normative-references" class="xref">Normative References</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-relationships-to-other-docu" class="xref">Relationships to other documents</a><a href="#section-toc.1-1.8.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulBare toc compact ulEmpty" id="section-toc.1-1.8.2.2">
-                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="xref">8.2</a>.  <a href="#name-non-normative-references" class="xref">Non-Normative References</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="xref">9</a>.  <a href="#name-normative-references" class="xref">Normative References</a><a href="#section-toc.1-1.9.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+<li class="toc ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-appendix.a" class="xref">Appendix A</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a><a href="#section-toc.1-1.10.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="xref">9</a>.  <a href="#name-relationships-to-other-docu" class="xref">Relationships to other documents</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-appendix.b" class="xref">Appendix B</a>.  <a href="#name-notices" class="xref">Notices</a><a href="#section-toc.1-1.11.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="xref">10</a>. <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-appendix.c" class="xref">Appendix C</a>.  <a href="#name-document-history" class="xref">Document History</a><a href="#section-toc.1-1.12.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="xref">11</a>. <a href="#name-notices" class="xref">Notices</a></p>
+<li class="toc ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-appendix.d" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a><a href="#section-toc.1-1.13.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#section-12" class="xref">12</a>. <a href="#name-document-history" class="xref">Document History</a></p>
-</li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#section-13" class="xref">13</a>. <a href="#name-normative-references-2" class="xref">Normative References</a></p>
-</li>
-          <li class="toc ulBare compact ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#appendix-A" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a></p>
-</li>
-        </ul>
+</ul>
 </nav>
 </section>
 </div>
@@ -1420,48 +1307,48 @@ li > p:last-of-type {
 <p id="section-3-1">As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect to communicate with such locally-running OP, and extends OpenID Connect Discovery to represent the differences from traditional OPs.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">This document is scoped for a deployment model where Self-Issued OP is deployed on an End-user's device.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">This specification defines:<a href="#section-3-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-4.1">
+<ul>
+<li id="section-3-4.1">
           <p id="section-3-4.1.1">Invocation of Self-Issued OP<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
+</ul>
 <p id="section-3-5">This specification defines extensions to the OpenID Connect implicit flow to invoke a Self-Issued OP from a Relying Party. It also proposes user experience behavior when no appropriate Self-Issued Op is available locally.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-6.1">
+<ul>
+<li id="section-3-6.1">
           <p id="section-3-6.1.1">Automatic Registration of supported functionality between a RP and Self-Issued OP<a href="#section-3-6.1.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
+</ul>
 <p id="section-3-7">OpenID Connect typically leverages a registration between a Client (acting as a RP) and the OP, which pre-establishes supported functionality before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and OpenID Connect Dynamic Client Registration.<a href="#section-3-7" class="pilcrow">¶</a></p>
 <p id="section-3-8">Relying Parties typically cannot pre-establish registration with a Self-Issued OP, as each End-user might be represented by a different, locally-controlled Self-Issued OP instance. This specification extends the authentication request with a mechanism with additional dynamic registration techniques for feature negotiation.<a href="#section-3-8" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-9.1">
+<ul>
+<li id="section-3-9.1">
           <p id="section-3-9.1.1">Additional claims and processing requirements of Self-Issued ID Tokens<a href="#section-3-9.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-3-9.2">
+<li id="section-3-9.2">
           <p id="section-3-9.2.1">Including self-asserted (non-verifiable) claims within a Self-Issued ID Token<a href="#section-3-9.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-3-9.3">
+<li id="section-3-9.3">
           <p id="section-3-9.3.1">Usage of cryptographically-verifiable identifiers as a way for RPs to identify the Authenticated user<a href="#section-3-9.3.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
+</ul>
 <p id="section-3-10">A <em>cryptographically-verifiable identifier</em> is an identifier which is either based upon or can be resolved to cryptographic key material. Self-Issued OPs can prove possession of the underlying key during the OpenID message exchange with the RP. Future exchanges based on the same identifier serve to strongly re-authenticate the End-user.<a href="#section-3-10" class="pilcrow">¶</a></p>
 <p id="section-3-11">This specification defines a subject identifier which is a thumbprint of the public key material. The public key itself is shared within the id_token as a <em>JSON Web Key</em> (JWK). The cryptographic algorithm needs to be supported by both the Self-Issued OP and RP.<a href="#section-3-11" class="pilcrow">¶</a></p>
 <p id="section-3-12">This specification also allows for <em>resolvable identifiers</em>, which are URI which can resolve various types of authoritative data underneath an appropriate <em>resolution method</em>. Resolvable identifiers may be used as the subject identifier when they can be resolved to a set one or more of cryptographic keys that identify the subject. In addition to cryptographic algorithms, both the Self-Issued OP and RP need to support the resolution method. The resolution method is based on a the URI itself, such as a "https" resolution method. One example of such a resolvable identifier would be a <em>Decentralized Identifier</em> (DID), where resolution methods would typically also include the <em>DID Method</em>, e.g. "did:web".<a href="#section-3-12" class="pilcrow">¶</a></p>
 <p id="section-3-13">For compatibility with the existing JWS/JWE-based cryptography of OpenID Connect, it is assumed such resolved cryptographic identities are representable as a <em>JSON Web Key Set</em> (JWKS). Each key in the set would have a cryptographic algorithm, key identifier, and associated key material.<a href="#section-3-13" class="pilcrow">¶</a></p>
 <p id="section-3-14">The following are considered out of scope of this document:<a href="#section-3-14" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-15.1">
+<ul>
+<li id="section-3-15.1">
           <p id="section-3-15.1.1">Presentation of aggregated credentials<a href="#section-3-15.1.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
+</ul>
 <p id="section-3-16">A traditional OP could release additional claims about the user within an ID Token such as a verified email address. The trust in the validity of the claim is based on the trust between the RP and OP.<a href="#section-3-16" class="pilcrow">¶</a></p>
 <p id="section-3-17">A Self-Issued OP can present two types of claims - self-attested claims and claims from a third-party issuer which are cryptographically verifiable.<a href="#section-3-17" class="pilcrow">¶</a></p>
 <p id="section-3-18">This specification relies on other specifications to define the method to present credentials from third-party issuers. One such example is <span>[<a href="#OIDC4VP" class="xref">OIDC4VP</a>]</span>, which describes the usage of Verifiable Credentials and Verifiable Presentations with OpenID Connect.<a href="#section-3-18" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-19.1">
+<ul>
+<li id="section-3-19.1">
           <p id="section-3-19.1.1">Provisioning of aggregated credentials<a href="#section-3-19.1.1" class="pilcrow">¶</a></p>
 </li>
-      </ul>
+</ul>
 <p id="section-3-20">The mechanism for a Self-Issued OP to acquire credentials which can be presented is out of scope of this document. Similar to presentation, a traditional OP may also wish to acquire third-party credentials to present to Relying Parties. One mechanism to provision credentials is being defined within the Claims Aggregation specification.<a href="#section-3-20" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1471,40 +1358,40 @@ li > p:last-of-type {
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-terms-and-definitions" class="section-name selfRef">Terms and definitions</a>
       </h2>
 <p id="section-4-1">Common terms in this document come from four primary sources: DID-CORE, VC-DATA, RFC6749 and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.1">
+<ul>
+<li id="section-4-2.1">
           <p id="section-4-2.1.1">Trust framework<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.1.2.1">
+<ul>
+<li id="section-4-2.1.2.1">
               <p id="section-4-2.1.2.1.1">a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements. [OIX]<a href="#section-4-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
+</ul>
 </li>
-        <li class="normal" id="section-4-2.2">
+<li id="section-4-2.2">
           <p id="section-4-2.2.1">Cryptographically-verifiable identifier<a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-2.2.2.1">
+<ul>
+<li id="section-4-2.2.2.1">
               <p id="section-4-2.2.2.1.1">an identifier which is either based upon or resolves to cryptographic key material.<a href="#section-4-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-          </ul>
+</ul>
 </li>
-      </ul>
+</ul>
 <div id="abbreviations">
 <section id="section-4.1">
         <h3 id="name-abbreviations">
 <a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-abbreviations" class="section-name selfRef">Abbreviations</a>
         </h3>
-<ul class="normal">
-<li class="normal" id="section-4.1-1.1">
+<ul>
+<li id="section-4.1-1.1">
             <p id="section-4.1-1.1.1">Self-Issued OP: Self-Issued OpenID Provider<a href="#section-4.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-1.2">
+<li id="section-4.1-1.2">
             <p id="section-4.1-1.2.1">RP: Relying Party<a href="#section-4.1-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.1-1.3">
+<li id="section-4.1-1.3">
             <p id="section-4.1-1.3.1">OP: OpenID Provider<a href="#section-4.1-1.3.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
+</ul>
 </section>
 </div>
 </section>
@@ -1560,64 +1447,64 @@ li > p:last-of-type {
 <a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-self-issued-openid-provider-" class="section-name selfRef">Self-Issued OpenID Provider Discovery Metadata</a>
           </h4>
 <p id="section-6.1.1-1">If the input identifier for the discovery process contains the domain self-issued.me, dynamic discovery is not performed. Instead, then the following static configuration values are used:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.1">
+<ul>
+<li id="section-6.1.1-2.1">
               <p id="section-6.1.1-2.1.1">authorization_endpoint<a href="#section-6.1.1-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.1.2.1">
+<ul>
+<li id="section-6.1.1-2.1.2.1">
                   <p id="section-6.1.1-2.1.2.1.1">REQUIRED. MUST include <code>openid:</code>, could also include additional custom schema.<a href="#section-6.1.1-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.1.1-2.2">
+<li id="section-6.1.1-2.2">
               <p id="section-6.1.1-2.2.1">issuer<a href="#section-6.1.1-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.2.2.1">
+<ul>
+<li id="section-6.1.1-2.2.2.1">
                   <p id="section-6.1.1-2.2.2.1.1">REQUIRED. MUST be <code>https://self-issued.me/v2</code><a href="#section-6.1.1-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.1.1-2.3">
+<li id="section-6.1.1-2.3">
               <p id="section-6.1.1-2.3.1">response<em>types</em>supported<a href="#section-6.1.1-2.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.3.2.1">
+<ul>
+<li id="section-6.1.1-2.3.2.1">
                   <p id="section-6.1.1-2.3.2.1.1">REQUIRED. MUST be <code>id_token</code><a href="#section-6.1.1-2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.1.1-2.4">
+<li id="section-6.1.1-2.4">
               <p id="section-6.1.1-2.4.1">scopes_supported<a href="#section-6.1.1-2.4.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.4.2.1">
+<ul>
+<li id="section-6.1.1-2.4.2.1">
                   <p id="section-6.1.1-2.4.2.1.1">REQUIRED. A JSON array of strings representing supported scopes. Valid values include <code>openid</code>, <code>profile</code>, <code>email</code>, <code>address</code>, and <code>phone</code>.<a href="#section-6.1.1-2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.1.1-2.5">
+<li id="section-6.1.1-2.5">
               <p id="section-6.1.1-2.5.1">subject<em>types</em>supported<a href="#section-6.1.1-2.5.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.5.2.1">
+<ul>
+<li id="section-6.1.1-2.5.2.1">
                   <p id="section-6.1.1-2.5.2.1.1">REQUIRED. A JSON array of strings representing supported subject types. Valid values include <code>pairwise</code> and <code>public</code>.<a href="#section-6.1.1-2.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.1.1-2.6">
+<li id="section-6.1.1-2.6">
               <p id="section-6.1.1-2.6.1">id<em>token</em>signing<em>alg</em>values_supported<a href="#section-6.1.1-2.6.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.6.2.1">
+<ul>
+<li id="section-6.1.1-2.6.2.1">
                   <p id="section-6.1.1-2.6.2.1.1">REQUIRED. ID token signing alg values supported. Valid values include <code>RS256</code>, <code>ES256</code>, <code>ES256K</code>, and <code>EdDSA</code>.<a href="#section-6.1.1-2.6.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.1.1-2.7">
+<li id="section-6.1.1-2.7">
               <p id="section-6.1.1-2.7.1">request<em>object</em>signing<em>alg</em>values_supported<a href="#section-6.1.1-2.7.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.1.1-2.7.2.1">
+<ul>
+<li id="section-6.1.1-2.7.2.1">
                   <p id="section-6.1.1-2.7.2.1.1">REQUIRED. Request object signing alg values supported. Valid values include <code>none</code>, <code>RS256</code>, <code>ES256</code>, <code>ES256K</code>, and <code>EdDSA</code>.<a href="#section-6.1.1-2.7.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-          </ul>
+</ul>
 <p id="section-6.1.1-3">The following is a non-normative example of the supported Self-issued OP Discovery metadata values:<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-6.1.1-4">
 <pre>  {
@@ -1652,27 +1539,27 @@ li > p:last-of-type {
 <p id="section-6.2-3"><code>registration</code> <span class="bcp14">OPTIONAL</span>. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.2-4"><code>registration_uri</code> <span class="bcp14">OPTIONAL</span>. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request_uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
 <p id="section-6.2-5">RP MUST use either of there parameters, but if one of these parameters is used, the other MUST NOT be used in the same request.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
-<p id="section-6.2-6">RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [OpenID.Registration] specification.<a href="#section-6.2-6" class="pilcrow">¶</a></p>
+<p id="section-6.2-6">RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 <span>[<a href="#OpenID.Registration" class="xref">OpenID.Registration</a>]</span> specification.<a href="#section-6.2-6" class="pilcrow">¶</a></p>
 <p id="section-6.2-7">If Self-Issued OP supports the same parameters, Self-Issued OpenID Provider flow continues, if Self-Issued OP does not support, it returns an error.<a href="#section-6.2-7" class="pilcrow">¶</a></p>
 <p id="section-6.2-8">If no error is returned, the RP must proceed as if it had obtained the following Client Registration Response:<a href="#section-6.2-8" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2-9.1">
+<ul>
+<li id="section-6.2-9.1">
             <p id="section-6.2-9.1.1">client_id<a href="#section-6.2-9.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2-9.1.2.1">
+<ul>
+<li id="section-6.2-9.1.2.1">
                 <p id="section-6.2-9.1.2.1.1"><code>redirect_uri</code> value of the Client.<a href="#section-6.2-9.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.2-9.2">
+<li id="section-6.2-9.2">
             <p id="section-6.2-9.2.1">client<em>secret</em>expires_at<a href="#section-6.2-9.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2-9.2.2.1">
+<ul>
+<li id="section-6.2-9.2.2.1">
                 <p id="section-6.2-9.2.2.1.1">0<a href="#section-6.2-9.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-        </ul>
+</ul>
 <p id="section-6.2-10">Metadata parameters should preferably be sent by reference as a URI using <code>registration_uri</code> parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using <code>registration</code> parameter.<a href="#section-6.2-10" class="pilcrow">¶</a></p>
 <p id="section-6.2-11"><code>registration</code> and <code>registration_uri</code> parameters SHOULD NOT be used when the OP is not a Self-Issued OP.<a href="#section-6.2-11" class="pilcrow">¶</a></p>
 <div id="passing-relying-party-registration-metadata-by-value">
@@ -1700,89 +1587,25 @@ li > p:last-of-type {
 <a href="#section-6.2.3" class="section-number selfRef">6.2.3. </a><a href="#name-relying-party-registration-" class="section-name selfRef">Relying Party Registration Metadata Values</a>
           </h4>
 <p id="section-6.2.3-1">This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.1">
-              <p id="section-6.2.3-2.1.1"><code>authorization_endpoint</code><a href="#section-6.2.3-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.1.2.1">
-                  <p id="section-6.2.3-2.1.2.1.1">REQUIRED. MUST include <code>openid:</code>, could also include additional custom schema.<a href="#section-6.2.3-2.1.2.1.1" class="pilcrow">¶</a></p>
+<ul>
+<li id="section-6.2.3-2.1">
+              <p id="section-6.2.3-2.1.1">subject<em>identifier</em>types_supported<a href="#section-6.2.3-2.1.1" class="pilcrow">¶</a></p>
+<ul>
+<li id="section-6.2.3-2.1.2.1">
+                  <p id="section-6.2.3-2.1.2.1.1">REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include <code>jkt</code> and <code>did</code>.<a href="#section-6.2.3-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.2.3-2.2">
-              <p id="section-6.2.3-2.2.1"><code>issuer</code><a href="#section-6.2.3-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.2.2.1">
-                  <p id="section-6.2.3-2.2.2.1.1">REQUIRED. MUST be <code>https://self-issued.me/v2</code><a href="#section-6.2.3-2.2.2.1.1" class="pilcrow">¶</a></p>
+<li id="section-6.2.3-2.2">
+              <p id="section-6.2.3-2.2.1">did<em>methods</em>supported<a href="#section-6.2.3-2.2.1" class="pilcrow">¶</a></p>
+<ul>
+<li id="section-6.2.3-2.2.2.1">
+                  <p id="section-6.2.3-2.2.2.1.1">OPTIONAL. A JSON array of strings representing supported DID methods. Valid values must take the value of <code>Method Name</code> in Chapter 9 of <span>[<a href="#did-spec-registries" class="xref">did-spec-registries</a>]</span>, such as <code>did:peer:</code> RP can indicate support for any DID method by omitting <code>did_methods_supported</code>, while including <code>did</code> in `subject<em>identifier</em>types_supported'.<a href="#section-6.2.3-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              </ul>
+</ul>
 </li>
-            <li class="normal" id="section-6.2.3-2.3">
-              <p id="section-6.2.3-2.3.1"><code>response_types_supported</code><a href="#section-6.2.3-2.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.3.2.1">
-                  <p id="section-6.2.3-2.3.2.1.1">REQUIRED. MUST be <code>id_token</code><a href="#section-6.2.3-2.3.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.4">
-              <p id="section-6.2.3-2.4.1"><code>scopes_supported</code><a href="#section-6.2.3-2.4.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.4.2.1">
-                  <p id="section-6.2.3-2.4.2.1.1">REQUIRED. A JSON array of strings representing supported scopes. Valid values include <code>openid</code>, <code>profile</code>, <code>email</code>, <code>address</code>, and <code>phone</code>.<a href="#section-6.2.3-2.4.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.5">
-              <p id="section-6.2.3-2.5.1"><code>subject_types_supported</code><a href="#section-6.2.3-2.5.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.5.2.1">
-                  <p id="section-6.2.3-2.5.2.1.1">REQUIRED. A JSON array of strings representing supported subject types. Valid values include <code>pairwise</code> and <code>public</code>.<a href="#section-6.2.3-2.5.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.6">
-              <p id="section-6.2.3-2.6.1"><code>subject_identifier_types_supported</code><a href="#section-6.2.3-2.6.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.6.2.1">
-                  <p id="section-6.2.3-2.6.2.1.1">REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include <code>jkt</code> and <code>did</code>.<a href="#section-6.2.3-2.6.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.7">
-              <p id="section-6.2.3-2.7.1"><code>did_methods_supported</code><a href="#section-6.2.3-2.7.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.7.2.1">
-                  <p id="section-6.2.3-2.7.2.1.1">OPTIONAL. A JSON array of strings representing supported DID methods. Valid values must take the value of <code>Method Name</code> in Chapter 9 of <a href="https://w3c.github.io/did-spec-registries/#did-methods">did-spec-registries</a>, such as <code>did:peer:</code> RP can indicate support for any DID method by omitting <code>did_methods_supported</code>, while including <code>did</code> in `subject<em>identifier</em>types_supported'.<a href="#section-6.2.3-2.7.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.8">
-              <p id="section-6.2.3-2.8.1"><code>credential_formats_supported</code><a href="#section-6.2.3-2.8.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.8.2.1">
-                  <p id="section-6.2.3-2.8.2.1.1">REQUIRED. A JSON array of strings representing supported credential formats. Valid values include <code>jwt</code>, <code>jwt_vc</code>, <code>jwt_vp</code>, <code>ldp_vc</code>, and <code>ldp_vp</code>.<a href="#section-6.2.3-2.8.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.9">
-              <p id="section-6.2.3-2.9.1"><code>id_token_signing_alg_values_supported</code><a href="#section-6.2.3-2.9.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.9.2.1">
-                  <p id="section-6.2.3-2.9.2.1.1">REQUIRED. ID token signing alg values supported. Valid values include <code>RS256</code>, <code>ES256</code>, <code>ES256K</code>, and <code>EdDSA</code>.<a href="#section-6.2.3-2.9.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li class="normal" id="section-6.2.3-2.10">
-              <p id="section-6.2.3-2.10.1"><code>request_object_signing_alg_values_supported</code><a href="#section-6.2.3-2.10.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.2.3-2.10.2.1">
-                  <p id="section-6.2.3-2.10.2.1.1">REQUIRED. Request object signing alg values supported. Valid values include <code>none</code>, <code>RS256</code>, <code>ES256</code>, <code>ES256K</code>, and <code>EdDSA</code>.<a href="#section-6.2.3-2.10.2.1.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-          </ul>
-<p id="section-6.2.3-3">Other registration parameters defined in [OpenID.Registration] could be used. Examples are explanatory parameters such as <code>policy_uri</code>, <code>tos_uri</code>, and <code>logo_uri</code>. If the RP uses more than one Redirection URI, the <code>redirect_uris</code> parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the <code>jwks_uri</code>, <code>id_token_encrypted_response_alg</code> and <code>id_token_encrypted_response_enc</code> parameters.<a href="#section-6.2.3-3" class="pilcrow">¶</a></p>
+</ul>
+<p id="section-6.2.3-3">Other registration parameters defined in <span>[<a href="#OpenID.Registration" class="xref">OpenID.Registration</a>]</span> could be used. Examples are explanatory parameters such as policy<em>uri, tos</em>uri, and logo<em>uri. If the RP uses more than one Redirection URI, the redirect</em>uris parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the jwks<em>uri, id</em>token<em>encrypted</em>response<em>alg and id</em>token<em>encrypted</em>response_enc parameters.<a href="#section-6.2.3-3" class="pilcrow">¶</a></p>
 <p id="section-6.2.3-4">Registration parameter may include decentralized identifier of the RP.<a href="#section-6.2.3-4" class="pilcrow">¶</a></p>
 <p id="section-6.2.3-5">The following is a non-normative example of the supported RP Registration Metadata Values:<a href="#section-6.2.3-5" class="pilcrow">¶</a></p>
 <div id="section-6.2.3-6">
@@ -1804,24 +1627,24 @@ li > p:last-of-type {
 <a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-sub-types" class="section-name selfRef">Sub Types</a>
         </h3>
 <p id="section-6.3-1">A sub type is used by Self-Issued OP to advertise which types of identifiers are supported for the <code>sub</code> claim. Two types are defined by this specification:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.3-2.1">
+<ul>
+<li id="section-6.3-2.1">
             <p id="section-6.3-2.1.1"><code>jkt</code><a href="#section-6.3-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.3-2.1.2.1">
+<ul>
+<li id="section-6.3-2.1.2.1">
                 <p id="section-6.3-2.1.2.1.1">JWK Thumbprint Subject sub type. When this subject sub type is used, the <code>sub</code> claim value MUST be the base64url encoded representation of the thumbprint of the key in the <code>sub_jwk</code> claim [RFC7638], and <code>sub_jwk</code> MUST be included in the Self-Issed OP response.<a href="#section-6.3-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.3-2.2">
+<li id="section-6.3-2.2">
             <p id="section-6.3-2.2.1"><code>did</code><a href="#section-6.3-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.3-2.2.2.1">
-                <p id="section-6.3-2.2.2.1.1">Decentralized Identifier sub type. When this subject type is used,  the <code>sub</code> value MUST be a DID defined in [DID-CORE], and <code>sub_jwk</code> MUST NOT be included in the Self-Issed OP response. The subject type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.<br><a href="#section-6.3-2.2.2.1.1" class="pilcrow">¶</a></p>
+<ul>
+<li id="section-6.3-2.2.2.1">
+                <p id="section-6.3-2.2.2.1.1">Decentralized Identifier sub type. When this subject type is used,  the <code>sub</code> value MUST be a DID defined in <span>[<a href="#DID-CORE" class="xref">DID-CORE</a>]</span>, and <code>sub_jwk</code> MUST NOT be included in the Self-Issed OP response. The subject type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.<br><a href="#section-6.3-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-        </ul>
+</ul>
 <p id="section-6.3-3">NOTE: Consider adding a subject type for OpenID Connect Federation entity statements.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1831,56 +1654,56 @@ li > p:last-of-type {
 <a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-relying-party-registration-m" class="section-name selfRef">Relying Party Registration Metadata Error Response</a>
         </h3>
 <p id="section-6.4-1">This extension defines the following error codes that MUST be returned when Self-Issued OP does not support all of the Relying Party Registration metadata values received from the Relying Party in the registration parameter:<a href="#section-6.4-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.1">
+<ul>
+<li id="section-6.4-2.1">
             <p id="section-6.4-2.1.1"><code>did_methods_not_supported</code><a href="#section-6.4-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.1.2.1">
+<ul>
+<li id="section-6.4-2.1.2.1">
                 <p id="section-6.4-2.1.2.1.1">The Self-Issued OP does not support all of the DID methods included in <code>did_methods_supported</code> parameter.<a href="#section-6.4-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.4-2.2">
+<li id="section-6.4-2.2">
             <p id="section-6.4-2.2.1"><code>subject_identifier_types_not_supported</code><a href="#section-6.4-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.2.2.1">
+<ul>
+<li id="section-6.4-2.2.2.1">
                 <p id="section-6.4-2.2.2.1.1">The Self-Issued OP does not support all of the subject identifier types included in <code>subject_identifier_types_supported</code> parameter.<a href="#section-6.4-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.4-2.3">
+<li id="section-6.4-2.3">
             <p id="section-6.4-2.3.1"><code>credential_formats_not_supported</code><a href="#section-6.4-2.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.3.2.1">
+<ul>
+<li id="section-6.4-2.3.2.1">
                 <p id="section-6.4-2.3.2.1.1">The Self-Issued OP does not support all of the credential formats included in <code>credential_formats_supported</code> parameter.<a href="#section-6.4-2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.4-2.4">
+<li id="section-6.4-2.4">
             <p id="section-6.4-2.4.1"><code>value_not_supported</code><a href="#section-6.4-2.4.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.4.2.1">
+<ul>
+<li id="section-6.4-2.4.2.1">
                 <p id="section-6.4-2.4.2.1.1">The Self-Issued OP does not support more than one of the RP Registration Metadata values defined in Section 4.3. When not supported metadata values are DID methods, subject identifier types, or credential formats, more specific error message must be used.<a href="#section-6.4-2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.4-2.5">
+<li id="section-6.4-2.5">
             <p id="section-6.4-2.5.1"><code>invalid_registration_uri</code><a href="#section-6.4-2.5.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.5.2.1">
+<ul>
+<li id="section-6.4-2.5.2.1">
                 <p id="section-6.4-2.5.2.1.1">The registration_uri in the Self-Issued OpenID Provider request returns an error or contains invalid data.<a href="#section-6.4-2.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-6.4-2.6">
+<li id="section-6.4-2.6">
             <p id="section-6.4-2.6.1"><code>invalid_registration_object</code><a href="#section-6.4-2.6.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-6.4-2.6.2.1">
+<ul>
+<li id="section-6.4-2.6.2.1">
                 <p id="section-6.4-2.6.2.1.1">The registration parameter contains an invalid RP Registration Metadata Object.<a href="#section-6.4-2.6.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-        </ul>
+</ul>
 <p id="section-6.4-3">Error response must be made in the same manner as defined in Section 3.1.2.6.<a href="#section-6.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1897,88 +1720,88 @@ li > p:last-of-type {
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-self-issued-openid-provider-r" class="section-name selfRef">Self-Issued OpenID Provider Request</a>
         </h3>
 <p id="section-7.1-1">The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.1">
+<ul>
+<li id="section-7.1-2.1">
             <p id="section-7.1-2.1.1"><code>scope</code><a href="#section-7.1-2.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.1.2.1">
+<ul>
+<li id="section-7.1-2.1.2.1">
                 <p id="section-7.1-2.1.2.1.1">REQUIRED. <code>scope</code> parameter value, as specified in Section 3.1.2.<a href="#section-7.1-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.2">
+<li id="section-7.1-2.2">
             <p id="section-7.1-2.2.1"><code>response_type</code><a href="#section-7.1-2.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.2.2.1">
+<ul>
+<li id="section-7.1-2.2.2.1">
                 <p id="section-7.1-2.2.2.1.1">REQUIRED. Constant string value <code>id_token</code>.<a href="#section-7.1-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.3">
+<li id="section-7.1-2.3">
             <p id="section-7.1-2.3.1"><code>client_id</code><a href="#section-7.1-2.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.3.2.1">
+<ul>
+<li id="section-7.1-2.3.2.1">
                 <p id="section-7.1-2.3.2.1.1">REQUIRED. Client ID value for the Client, which in this case contains the <code>redirect_uri</code> value of the RP.<a href="#section-7.1-2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.4">
+<li id="section-7.1-2.4">
             <p id="section-7.1-2.4.1"><code>redirect_uri</code><a href="#section-7.1-2.4.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.4.2.1">
+<ul>
+<li id="section-7.1-2.4.2.1">
                 <p id="section-7.1-2.4.2.1.1">REQUIRED. MUST equal to <code>client_id</code> value. MUST be included for compatibility reasons.<a href="#section-7.1-2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.5">
+<li id="section-7.1-2.5">
             <p id="section-7.1-2.5.1"><code>id_token_hint</code><a href="#section-7.1-2.5.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.5.2.1">
+<ul>
+<li id="section-7.1-2.5.2.1">
                 <p id="section-7.1-2.5.2.1.1">OPTIONAL. id<em>token</em>hint parameter value, as specified in Section 3.1.2. If the ID Token is encrypted to the Self-Issued OP, the sub (subject) of the signed ID Token MUST be sent as the kid (Key ID) of the JWE.<a href="#section-7.1-2.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.6">
+<li id="section-7.1-2.6">
             <p id="section-7.1-2.6.1"><code>claims</code><a href="#section-7.1-2.6.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.6.2.1">
+<ul>
+<li id="section-7.1-2.6.2.1">
                 <p id="section-7.1-2.6.2.1.1">OPTIONAL. claims parameter value, as specified in Section 5.5.<a href="#section-7.1-2.6.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.7">
+<li id="section-7.1-2.7">
             <p id="section-7.1-2.7.1"><code>registration</code><a href="#section-7.1-2.7.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.7.2.1">
+<ul>
+<li id="section-7.1-2.7.2.1">
                 <p id="section-7.1-2.7.2.1.1">OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in Section 2.2.1.<br><a href="#section-7.1-2.7.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.8">
+<li id="section-7.1-2.8">
             <p id="section-7.1-2.8.1"><code>registration_uri</code><a href="#section-7.1-2.8.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.8.2.1">
+<ul>
+<li id="section-7.1-2.8.2.1">
                 <p id="section-7.1-2.8.2.1.1">OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in Section 2.2.2.<a href="#section-7.1-2.8.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.9">
+<li id="section-7.1-2.9">
             <p id="section-7.1-2.9.1"><code>request</code><a href="#section-7.1-2.9.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.9.2.1">
+<ul>
+<li id="section-7.1-2.9.2.1">
                 <p id="section-7.1-2.9.2.1.1">OPTIONAL. Request Object value, as specified in Section 6.1. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the sub (subject) of a previously issued ID Token for this RP MUST be sent as the kid (Key ID) of the JWE.<a href="#section-7.1-2.9.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.1-2.10">
+<li id="section-7.1-2.10">
             <p id="section-7.1-2.10.1"><code>request_uri</code><a href="#section-7.1-2.10.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.1-2.10.2.1">
+<ul>
+<li id="section-7.1-2.10.2.1">
                 <p id="section-7.1-2.10.2.1.1">OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2.<a href="#section-7.1-2.10.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-        </ul>
+</ul>
 <p id="section-7.1-3">When <code>request</code> or <code>request_uri</code> parameters are NOT present, <code>registration</code> or <code>registration_uri</code> parameters MUST be present in the request. When <code>request</code> or <code>request_uri</code> parameters are present, <code>registration</code> or <code>registration_uri</code> parameters MUST be included in either of those parameters.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
 <p id="section-7.1-4">Since it is an Implicit Flow response, <code>nonce</code> Claim MUST be present.<a href="#section-7.1-4" class="pilcrow">¶</a></p>
 <p id="section-7.1-5">Other parameters MAY be sent. Note that all Claims are returned in the ID Token.<a href="#section-7.1-5" class="pilcrow">¶</a></p>
@@ -2006,49 +1829,39 @@ li > p:last-of-type {
         </h3>
 <p id="section-7.2-1">Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all of the Relying Party Registration metadata values received from the Relying Party in the registration parameter. If even one of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to Section 4.4.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
 <p id="section-7.2-2">This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:<a href="#section-7.2-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.2-3.1">
+<ul>
+<li id="section-7.2-3.1">
             <p id="section-7.2-3.1.1"><code>sub</code><a href="#section-7.2-3.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.2-3.1.2.1">
+<ul>
+<li id="section-7.2-3.1.2.1">
                 <p id="section-7.2-3.1.2.1.1">REQUIRED. Subject identifier value, represented by a URI. When sub type is <code>jkt</code>, the value is the base64url encoded representation of the thumbprint of the key in the <code>sub_jwk</code> Claim. When sub type is <code>did</code>, the value is a decentralized identifier. The thumbprint value is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the kty value is RSA, the member names e, kty, and n are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the kty value is EC, the member names crv, kty, x, and y are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.<a href="#section-7.2-3.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.2-3.2">
+<li id="section-7.2-3.2">
             <p id="section-7.2-3.2.1"><code>sub_jwk</code><a href="#section-7.2-3.2.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.2-3.2.2.1">
+<ul>
+<li id="section-7.2-3.2.2.1">
                 <p id="section-7.2-3.2.2.1.1">REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is <code>jkt</code>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <code>did</code>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <code>sub_jwk</code> Claim is NOT RECOMMENDED when the OP is not Self-Issued.<a href="#section-7.2-3.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+</ul>
 </li>
-          <li class="normal" id="section-7.2-3.3">
-            <p id="section-7.2-3.3.1">vp<a href="#section-7.2-3.3.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7.2-3.3.2.1">
-                <p id="section-7.2-3.3.2.1.1">OPTIONAL. A JSON object, that represents a JWT verifiable presentation, following W3C Verifiable Credentials Specification [VC-DATA-MODEL]. Verifiable Credentials must be embedded in the Verifiable Presentation following W3C Verifiable Credentials Specification [VC-DATA-MODEL]<a href="#section-7.2-3.3.2.1.1" class="pilcrow">¶</a></p>
+</ul>
+<p id="section-7.2-4">Whether the Self-Issued OP is a mobile client or a web client, response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-7.2-5">
+          <li id="section-7.2-5.1">
+            <p id="section-7.2-5.1.1">The <code>iss</code> (issuer) Claim Value is <code>https://self-issued.me/v2</code>.<a href="#section-7.2-5.1.1" class="pilcrow">¶</a></p>
 </li>
-            </ul>
+<li id="section-7.2-5.2">
+            <p id="section-7.2-5.2.1">The <code>sub</code> (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the <code>sub_jwk</code> Claim or a decentralized identifier.<a href="#section-7.2-5.2.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
-<p id="section-7.2-4">Verifiable Presentation is data derived from one or more Verifiable Credentials, issued by one or more issuers, that is shared with a specific verifier. Verifiable Credential is a set of one or more claims made by an issuer.<a href="#section-7.2-4" class="pilcrow">¶</a></p>
-<p id="section-7.2-5">Self-Issued OP may present credentials to the RP using Verifiable Presentation credential format by including it in the <code>vp</code> claim inside the ID token.<a href="#section-7.2-5" class="pilcrow">¶</a></p>
-<p id="section-7.2-6">Whether the Self-Issued OP is a mobile client or a web client, response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.<a href="#section-7.2-6" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-7.2-7">
-<li id="section-7.2-7.1">
-            <p id="section-7.2-7.1.1">The <code>iss</code> (issuer) Claim Value is <code>https://self-issued.me/v2</code>.<a href="#section-7.2-7.1.1" class="pilcrow">¶</a></p>
+<li id="section-7.2-5.3">
+            <p id="section-7.2-5.3.1">When <code>sub</code> Claim value is the base64url encoded representation of the thumbprint, a <code>sub_jwk</code> Claim is present, with its value being the public key used to check the signature of the ID Token.<a href="#section-7.2-5.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.2-7.2">
-            <p id="section-7.2-7.2.1">The <code>sub</code> (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the <code>sub_jwk</code> Claim or a decentralized identifier.<a href="#section-7.2-7.2.1" class="pilcrow">¶</a></p>
+<li id="section-7.2-5.4">
+            <p id="section-7.2-5.4.1">No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.<a href="#section-7.2-5.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.2-7.3">
-            <p id="section-7.2-7.3.1">When <code>sub</code> Claim value is the base64url encoded representation of the thumbprint, a <code>sub_jwk</code> Claim is present, with its value being the public key used to check the signature of the ID Token.<a href="#section-7.2-7.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li id="section-7.2-7.4">
-            <p id="section-7.2-7.4.1">No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.<a href="#section-7.2-7.4.1" class="pilcrow">¶</a></p>
-</li>
-        </ol>
+</ol>
 </section>
 </div>
 <div id="verifiable-presentation-support">
@@ -2068,32 +1881,32 @@ li > p:last-of-type {
         </h3>
 <p id="section-7.4-1">To validate the ID Token received, the RP MUST do the following:<a href="#section-7.4-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-7.4-2">
-<li id="section-7.4-2.1">
+          <li id="section-7.4-2.1">
             <p id="section-7.4-2.1.1">The Relying Party (RP) MUST validate that the value of the <code>iss</code> (issuer) Claim is <code>https://self-isued.me</code>. If iss contains a different value, the ID Token is not Self-Issued, and instead it MUST be validated according to Section 3.1.3.<a href="#section-7.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.4-2.2">
+<li id="section-7.4-2.2">
             <p id="section-7.4-2.2.1">The RP MUST validate that the <code>aud</code> (audience) Claim contains the value of the <code>redirect_uri</code> that the RP sent in the Authentication Request as an audience.<a href="#section-7.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.4-2.3">
-            <p id="section-7.4-2.3.1">The RP MUST validate the signature of the ID Token. When sub type is<code>jkt</code>, validation is done according to JWS [JWS] using the algorithm specified in the alg Header Parameter of the JOSE Header, using the key in the <code>sub_jwk</code> Claim. When sub type is<code>did</code>, validation is done using the key derived as a result of DID Resolution as defined in [DID-CORE]. The key is a bare key in JWK format (not an X.509 certificate value) when sub type is<code>jkt</code> or may be another key format when sub type is <code>did</code>.<a href="#section-7.4-2.3.1" class="pilcrow">¶</a></p>
+<li id="section-7.4-2.3">
+            <p id="section-7.4-2.3.1">The RP MUST validate the signature of the ID Token. When sub type is<code>jkt</code>, validation is done according to JWS [JWS] using the algorithm specified in the alg Header Parameter of the JOSE Header, using the key in the <code>sub_jwk</code> Claim. When sub type is<code>did</code>, validation is done using the key derived as a result of DID Resolution as defined in <span>[<a href="#DID-CORE" class="xref">DID-CORE</a>]</span>. The key is a bare key in JWK format (not an X.509 certificate value) when sub type is<code>jkt</code> or may be another key format when sub type is <code>did</code>.<a href="#section-7.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.4-2.4">
+<li id="section-7.4-2.4">
             <p id="section-7.4-2.4.1">Default <code>alg</code> value is RS256. It MAY also be ES256, ES256K or EdDSA.<a href="#section-7.4-2.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.4-2.5">
-            <p id="section-7.4-2.5.1">The RP MUST validate the<code>sub</code> value. When sub type is<code>jkt</code>, the RP MUST validate that the <code>sub</code> claim value equals to the base64url encoded representation of the thumbprint of the key in the <code>sub_jwk</code> Claim, as specified in Section 6 of [OpenID.Core]. When sub type is <code>did</code>, the RP MUST validate that <code>sub</code> claim value equals to the key in the verification method property of the DID Document. Since DID Document can contain mulitple keys, the validation MUST be performed against the key identified by the <code>kid</code> in the header. DID Document MUST be obtained by resolving decentralized identifier included in the <code>sub</code> claim.<a href="#section-7.4-2.5.1" class="pilcrow">¶</a></p>
+<li id="section-7.4-2.5">
+            <p id="section-7.4-2.5.1">The RP MUST validate the<code>sub</code> value. When sub type is<code>jkt</code>, the RP MUST validate that the <code>sub</code> claim value equals to the base64url encoded representation of the thumbprint of the key in the <code>sub_jwk</code> Claim, as specified in Section 6 of <span>[<a href="#OpenID" class="xref">OpenID</a>]</span>. When sub type is <code>did</code>, the RP MUST validate that <code>sub</code> claim value equals to the key in the verification method property of the DID Document. Since DID Document can contain mulitple keys, the validation MUST be performed against the key identified by the <code>kid</code> in the header. DID Document MUST be obtained by resolving decentralized identifier included in the <code>sub</code> claim.<a href="#section-7.4-2.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.4-2.6">
+<li id="section-7.4-2.6">
             <p id="section-7.4-2.6.1">The current time MUST be before the time represented by the <code>exp</code> Claim (possibly allowing for some small leeway to account for clock skew).
 The <code>iat</code> Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP specific.<a href="#section-7.4-2.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-7.4-2.7">
+<li id="section-7.4-2.7">
             <p id="section-7.4-2.7.1">The RP MUST validate that a <code>nonce</code> Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the nonce value for replay attacks. The precise method for detecting replay attacks is RP specific.<a href="#section-7.4-2.7.1" class="pilcrow">¶</a></p>
 </li>
-        </ol>
+</ol>
 <p id="section-7.4-3">The following is a non-normative example of a base64url decoded Self-Issued ID Token (with line wraps within values for display purposes only):<a href="#section-7.4-3" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-7.4-4">
-<pre>  {
+<div id="section-7.4-4">
+<pre class="sourcecode lang-json">  {
    "iss": "https://self-issued.me/v2",
    "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
    "aud": "https://client.example.org/cb",
@@ -2110,12 +1923,12 @@ The <code>iat</code> Claim can be used to reject tokens that were issued too far
      w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
      "e":"AQAB"
     }
-　}
+&amp;#12288;}
 </pre><a href="#section-7.4-4" class="pilcrow">¶</a>
 </div>
 <p id="section-7.4-5">The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only):<a href="#section-7.4-5" class="pilcrow">¶</a></p>
-<div class="artwork art-text alignLeft" id="section-7.4-6">
-<pre>  {
+<div id="section-7.4-6">
+<pre class="sourcecode lang-json">  {
    "iss": "https://self-issued.me/v2",
    "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
    "aud": "https://client.example.org/cb",
@@ -2138,7 +1951,7 @@ The <code>iat</code> Claim can be used to reject tokens that were issued too far
          "presentation":"ewogICAgImlzcyI6Imh0dHBzOi8vYm9vay5pdHNvdXJ3ZWIub...IH0="
       }
    ],
-　}
+&amp;#12288;}
 </pre><a href="#section-7.4-6" class="pilcrow">¶</a>
 </div>
 <p id="section-7.4-7">Note: Further processing steps are required if the authentication response contains verifiable presentations - see <span>[<a href="#OIDC4VP" class="xref">OIDC4VP</a>]</span>.<a href="#section-7.4-7" class="pilcrow">¶</a></p>
@@ -2180,120 +1993,82 @@ The <code>iat</code> Claim can be used to reject tokens that were issued too far
 </div>
 </section>
 </div>
-<div id="references">
-<section id="section-8">
-      <h2 id="name-references">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
-      </h2>
-<div id="normative-references">
-<section id="section-8.1">
-        <h3 id="name-normative-references">
-<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
-        </h3>
-<ul class="normal">
-<li class="normal" id="section-8.1-1.1">
-            <p id="section-8.1-1.1.1">[DID-CORE] <a href="https://github.com/w3c/did-core">https://github.com/w3c/did-core</a> (not yet a ratified draft)<a href="#section-8.1-1.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.2">
-            <p id="section-8.1-1.2.1">[VC-DATA] <a href="https://www.w3.org/TR/vc-data-model/">https://www.w3.org/TR/vc-data-model/</a><a href="#section-8.1-1.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.3">
-            <p id="section-8.1-1.3.1">[RFC6749] <a href="https://tools.ietf.org/html/rfc6749">https://tools.ietf.org/html/rfc6749</a><a href="#section-8.1-1.3.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.4">
-            <p id="section-8.1-1.4.1">[RFC6750] <a href="https://tools.ietf.org/html/rfc6750">https://tools.ietf.org/html/rfc6750</a><a href="#section-8.1-1.4.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.5">
-            <p id="section-8.1-1.5.1">[OpenID.Core] <a href="https://openid.net/specs/openid-connect-core-1_0.html">https://openid.net/specs/openid-connect-core-1_0.html</a><a href="#section-8.1-1.5.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.6">
-            <p id="section-8.1-1.6.1">[RFC7638] <a href="https://tools.ietf.org/html/rfc7638">https://tools.ietf.org/html/rfc7638</a><a href="#section-8.1-1.6.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.7">
-            <p id="section-8.1-1.7.1">[OpenID.Registration] <a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a><a href="#section-8.1-1.7.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.1-1.8">
-            <p id="section-8.1-1.8.1">[did-spec-registries] <a href="https://w3c.github.io/did-spec-registries/#did-methods">https://w3c.github.io/did-spec-registries/#did-methods</a><a href="#section-8.1-1.8.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-</section>
-</div>
-<div id="non-normative-references">
-<section id="section-8.2">
-        <h3 id="name-non-normative-references">
-<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-non-normative-references" class="section-name selfRef">Non-Normative References</a>
-        </h3>
-<ul class="normal">
-<li class="normal" id="section-8.2-1.1">
-            <p id="section-8.2-1.1.1">[draft-jones-self<em>issued</em>identifier] <a href="https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md">https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md</a><a href="#section-8.2-1.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.2-1.2">
-            <p id="section-8.2-1.2.1">[siop-requirements] <a href="https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md">https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md</a><a href="#section-8.2-1.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-8.2-1.3">
-            <p id="section-8.2-1.3.1">[OIX] <a href="https://openidentityexchange.org/networks/87/item.html?id=365">https://openidentityexchange.org/networks/87/item.html?id=365</a><a href="#section-8.2-1.3.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-</section>
-</div>
-</section>
-</div>
 <div id="relationships-to-other-documents">
-<section id="section-9">
+<section id="section-8">
       <h2 id="name-relationships-to-other-docu">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-relationships-to-other-docu" class="section-name selfRef">Relationships to other documents</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-relationships-to-other-docu" class="section-name selfRef">Relationships to other documents</a>
       </h2>
-<p id="section-9-1">The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.<a href="#section-8-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="iana-considerations">
-<section id="section-10">
-      <h2 id="name-iana-considerations">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
-      </h2>
-<p id="section-10-1">TBD<a href="#section-10-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="notices">
-<section id="section-11">
-      <h2 id="name-notices">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-notices" class="section-name selfRef">Notices</a>
-      </h2>
-<p id="section-11-1">Copyright (c) 2020 The OpenID Foundation.<a href="#section-11-1" class="pilcrow">¶</a></p>
-<p id="section-11-2">The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.<a href="#section-11-2" class="pilcrow">¶</a></p>
-<p id="section-11-3">The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.<a href="#section-11-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="document-history">
-<section id="section-12">
-      <h2 id="name-document-history">
-<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-document-history" class="section-name selfRef">Document History</a>
-      </h2>
-<ul class="normal">
-<li class="normal" id="section-12-1.1">
-          <p id="section-12-1.1.1">01<a href="#section-12-1.1.1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-12-1.1.2.1">
-              <p id="section-12-1.1.2.1.1">Version proposed for working group adoption<a href="#section-12-1.1.2.1.1" class="pilcrow">¶</a></p>
-</li>
-          </ul>
-</li>
-      </ul>
-</section>
-</div>
-<section id="section-13">
-      <h2 id="name-normative-references-2">
-<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-normative-references-2" class="section-name selfRef">Normative References</a>
+<section id="section-9">
+      <h2 id="name-normative-references">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
 <dt id="OIDC4VP">[OIDC4VP]</dt>
-    <dd>
-<span class="refAuthor">Terbu, O.</span>, <span class="refAuthor">Lodderstedt, T.</span>, <span class="refAuthor">Yasuda, K.</span>, <span class="refAuthor">Lemmon, A.</span>, and <span class="refAuthor">T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20" class="refDate">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
-<dd class="break"></dd>
+<dd>
+<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
+<dt id="OpenID.Registration">[OpenID.Registration]</dt>
+<dd>
+<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, and M. Jones</span>, <span class="refTitle">"OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>&gt;</span>. </dd>
+<dt id="did-spec-registries">[did-spec-registries]</dt>
+<dd>
+<span class="refAuthor">Steele, O.</span><span class="refAuthor"> and M. Sporny</span>, <span class="refTitle">"Decentralized Identifiers (DIDs) v1.0"</span>, <time datetime="2021-08-03">3 August 2021</time>, <span>&lt;<a href="https://w3c.github.io/did-spec-registries/#did-methods">https://w3c.github.io/did-spec-registries/#did-methods</a>&gt;</span>. </dd>
+<dt id="DID-CORE">[DID-CORE]</dt>
+<dd>
+<span class="refAuthor">Sporny, M.</span><span class="refAuthor">, Guy, A.</span><span class="refAuthor">, Sabadello, M.</span><span class="refAuthor">, and D. Reed</span>, <span class="refTitle">"Decentralized Identifiers (DIDs) v1.0"</span>, <time datetime="2021-08-03">3 August 2021</time>, <span>&lt;<a href="https://www.w3.org/TR/did-core/">https://www.w3.org/TR/did-core/</a>&gt;</span>. </dd>
+<dt id="OpenID">[OpenID]</dt>
+<dd>
+<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, de Medeiros, B.</span><span class="refAuthor">, and C. Mortimore</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="http://openid.net/specs/openid-connect-core-1_0.html">http://openid.net/specs/openid-connect-core-1_0.html</a>&gt;</span>. </dd>
 </dl>
 </section>
+<div id="iana-considerations">
+<section id="section-appendix.a">
+      <h2 id="name-iana-considerations">
+<a href="#section-appendix.a" class="section-number selfRef">Appendix A. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-appendix.a-1">TBD<a href="#section-appendix.a-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="notices">
+<section id="section-appendix.b">
+      <h2 id="name-notices">
+<a href="#section-appendix.b" class="section-number selfRef">Appendix B. </a><a href="#name-notices" class="section-name selfRef">Notices</a>
+      </h2>
+<p id="section-appendix.b-1">Copyright (c) 2020 The OpenID Foundation.<a href="#section-appendix.b-1" class="pilcrow">¶</a></p>
+<p id="section-appendix.b-2">The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.<a href="#section-appendix.b-2" class="pilcrow">¶</a></p>
+<p id="section-appendix.b-3">The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.<a href="#section-appendix.b-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="document-history">
+<section id="section-appendix.c">
+      <h2 id="name-document-history">
+<a href="#section-appendix.c" class="section-number selfRef">Appendix C. </a><a href="#name-document-history" class="section-name selfRef">Document History</a>
+      </h2>
+<div class="artwork art-text alignLeft" id="section-appendix.c-1">
+<pre>[[ To be removed from the final specification ]]
+
+* 03
+    * sub_jwk made optional for sub type DID and mandatory for subtype jwk thumbprint
+    * Added text that nonce is mandatory
+    * Replaced vp claim with reference to OIDC4VP draft
+    * Adopted SIOP chooser as SIOP Discovery
+    * Deprecated openid:// for SIOP Discovery as not recommended
+    * Clarified Discovery and Registration metadata
+    * Formatted Normative Reference Section to mmarkdown
+
+* 02
+    * Converted into mmarkdown
+
+* 01
+    * Version proposed for working group adoption
+</pre><a href="#section-appendix.c-1" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
 <div id="authors-addresses">
-<section id="appendix-A">
+<section id="section-appendix.d">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
