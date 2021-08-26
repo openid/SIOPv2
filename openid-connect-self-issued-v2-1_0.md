@@ -362,7 +362,7 @@ The following is a non-normative example HTTP 302 redirect response by the RP, w
 ```
   HTTP/1.1 302 Found
   Location: openid://?
-    response_type=id_token
+    &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
@@ -371,7 +371,6 @@ The following is a non-normative example HTTP 302 redirect response by the RP, w
     &registration=%7B%22logo_uri%22%3A%22https%3A%2F%2F
       client.example.org%2Flogo.png%22%7D
 ```
-
 
 # Self-Issued OpenID Provider Response {#siop-authentication-response}
 
@@ -473,7 +472,7 @@ Note: Such an authentication request might result in a large QR code, especially
 
 ## Authentication Response
 
-The SIOP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request. The authentication response contains the parameters as defined in (#siop-authentication-response).
+The SIOP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
 Here is an example: 
 
