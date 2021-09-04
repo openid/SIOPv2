@@ -538,7 +538,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
     }
 　}
 </sourcecode>
-<t>The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only):</t>
+<t>The following is a non-normative example of an ID token containing a verifiable presentation (with line wraps within values for display purposes only):</t>
 
 <sourcecode type="json">  {
    &quot;iss&quot;: &quot;https://self-issued.me/v2&quot;,
