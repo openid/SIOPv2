@@ -473,7 +473,7 @@
 <li><t><tt>sub_jwk</tt></t>
 
 <ul>
-<li><t>REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <tt>did</tt>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
+<li><t>REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When sub type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <tt>did</tt>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
 </li>
 </ul></li>
 </ul>
