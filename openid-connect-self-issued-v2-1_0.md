@@ -460,7 +460,7 @@ Here is an example of an authentication request URL:
 ```
     openid://?
     response_type=id_token
-    response_mode=post
+    &response_mode=post
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
