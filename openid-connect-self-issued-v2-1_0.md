@@ -121,6 +121,11 @@ The following are considered out of scope of this document:
 
   This specification relies on other specifications to define the method to present credentials from third-party issuers. One such example is [@!OIDC4VP], which describes the usage of Verifiable Credentials and Verifiable Presentations with OpenID Connect.
 
+* Use of a SIOP even if the SIOP and RP reside on different devices.
+
+The user might want to use her SIOP, run on her smartphone, to login to or share claims with an RP she is using on a dfferent device, e.g. a tablet or workstation.
+
+Out of Scope:
 * Provisioning of aggregated credentials
 
   The mechanism for a Self-Issued OP to acquire credentials which can be presented is out of scope of this document. Similar to presentation, a traditional OP may also wish to acquire third-party credentials to present to Relying Parties. One mechanism to provision credentials is being defined within the Claims Aggregation specification.
@@ -319,7 +324,7 @@ Error response must be made in the same manner as defined in Section 3.1.2.6.
 
 # Identifier Portability and Verifiable Presentation Support
 
-## Self-Issued OpenID Provider Request
+# Self-Issued OpenID Provider Request {#siop_authentication_request}
 
 The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:
 
@@ -367,10 +372,11 @@ The following is a non-normative example HTTP 302 redirect response by the RP, w
       client.example.org%2Flogo.png%22%7D
 ```
 
-
-## Self-Issued OpenID Provider Response
+# Self-Issued OpenID Provider Response {#siop-authentication-response}
 
 Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all of the Relying Party Registration metadata values received from the Relying Party in the registration parameter. If even one of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to Section 4.4.
+
+The response contains an ID Token and, if applicable, further response parameters as defined in extensions. As an example, the response MAY also include a VP token as defined in [OIDC4VP].
 
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:
 
@@ -392,9 +398,8 @@ Self-Issued OP and the RP that wish to support request and presentation of Verif
 
 Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA-MODEL]
 
+# Self-Issued ID Token Validation {#siop-id_token-validation}
 See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
-
-## Self-Issued ID Token Validation
 
 To validate the ID Token received, the RP MUST do the following:
 
@@ -429,6 +434,65 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
     }
 　}
 ```
+
+# Cross Device SIOP
+
+This section describes how SIOP is used in cross device scenarios. In contrast to on device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through an user agent. The flow is therefore modfied as follows:
+
+1. The RP prepares a SIOP request and renders it as a QR code.
+2. The user scans the QR code with her smartphone's camera app.
+3. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the openid custom scheme)
+4. The SIOP processes the authentication request.
+5. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP
+
+Note: the request in step 5 is not a form post request where the SIOP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The SIOP sends this request directly to the RP's endpoint.
+
+## Authentication Request
+
+The cross device authentication request differs from the on-device variant as defined in (#siop_authentication_request) as follows:
+
+* This specification introduces a new response mode `post` in accordance with [OIDM]. This response mode is used to request the SIOP to deliver the result of the authentication process to a certain endpoint. The additional parameter `response_mode` is used to carry this value.
+* This endpoint the SIOP shall deliver the authentication result to is conveyed in the standard parameter `redirect_uri`.
+* The RP MUST ensure the `nonce` value used for a particular transaction is available at this endpoint for security checks.
+
+Here is an example of an authentication request URL:
+
+```
+    openid://?
+    response_type=id_token
+    &response_mode=post
+    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=openid%20profile
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
+    &registration=%7B%22subject_identifier_types_supported%22:%5B%22jkt%22%5D,
+    %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
+```
+
+Note: Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case.
+
+## Authentication Response
+
+The SIOP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
+
+Here is an example:
+
+```http
+  POST /cb HTTP/1.1
+  Host: client.example.com
+  Content-Type: application/x-www-form-urlencoded
+
+  &id_token=eyJ0 ... NiJ9.eyJ1c ... I6IjIifX0.DeWt4Qu ... ZXso
+```
+
+## ID Token Validation
+
+The RP MUST perform all the check as defined in (#siop-id_token-validation)
+
+Additionally, the RP MUST check whether the `nonce` claim value provided in the ID Token is known to the RP and was not used before in an authentication response.
+
+# References
 
 The following is a non-normative example of an ID token containing a verifiable presentation (with line wraps within values for display purposes only):
 ```json
@@ -478,6 +542,27 @@ When more than one Self-issued OP with the same custom schema has been installed
 Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.
 
 Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
+
+# References
+
+## Normative References
+
+* [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
+* [VC-DATA] https://www.w3.org/TR/vc-data-model/
+* [RFC6749] https://tools.ietf.org/html/rfc6749
+* [RFC6750] https://tools.ietf.org/html/rfc6750
+* [OpenID.Core] https://openid.net/specs/openid-connect-core-1_0.html
+* [RFC7638] https://tools.ietf.org/html/rfc7638
+* [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
+* [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
+* [OIDM] https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
+
+## Non-Normative References
+
+* [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
+* [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
+* [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
+
 
 # Relationships to other documents
 
