@@ -1,5 +1,5 @@
 %%%
-title = "Self-Issued OpenID Provider V2, draft 03"
+title = "Self-Issued OpenID Provider V2, draft 04"
 abbrev = "siop-v2"
 ipr = "none"
 workgroup = "connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-03"
+value = "openid-connect-self-issued-v2-1_0-04"
 status = "standard"
 
 [[author]]
