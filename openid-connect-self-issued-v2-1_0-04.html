@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Self-Issued OpenID Provider V2, draft 03</title>
+<title>Self-Issued OpenID Provider V2, draft 04</title>
 <meta content="Kristina Yasuda" name="author">
 <meta content="Michael B. Jones" name="author">
 <meta content="Tobias Looker" name="author">
@@ -16,8 +16,8 @@
 <meta content="security" name="keyword">
 <meta content="openid" name="keyword">
 <meta content="ssi" name="keyword">
-<meta content="openid-connect-self-issued-v2-1_0-03" name="ietf.draft">
-<link href="./openid-connect-self-issued-v2-1_0-03.xml" rel="alternate" type="application/rfc+xml">
+<meta content="openid-connect-self-issued-v2-1_0-04" name="ietf.draft">
+<link href="./openid-connect-self-issued-v2-1_0-04.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">/*
 
@@ -1074,7 +1074,7 @@ tr:nth-child(2n+1) > td {
 <thead><tr>
 <td class="left"></td>
 <td class="center">siop-v2</td>
-<td class="right">August 2021</td>
+<td class="right">September 2021</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Yasuda, et al.</td>
@@ -1088,10 +1088,10 @@ tr:nth-child(2n+1) > td {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">connect</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">openid-connect-self-issued-v2-1_0-03</dd>
+<dd class="internet-draft">openid-connect-self-issued-v2-1_0-04</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2021-08-19" class="published">19 August 2021</time>
+<time datetime="2021-09-10" class="published">10 September 2021</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
@@ -1112,7 +1112,7 @@ tr:nth-child(2n+1) > td {
 </dd>
 </dl>
 </div>
-<h1 id="title">Self-Issued OpenID Provider V2, draft 03</h1>
+<h1 id="title">Self-Issued OpenID Provider V2, draft 04</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">OpenID Connect defines mechanism by which an End-user can leverage an OpenID Provider (OP) to release identity information (such as authentication and attributes) to a Relying Party (RP) which can act on that information.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
@@ -2006,12 +2006,6 @@ The <code>iat</code> Claim can be used to reject tokens that were issued too far
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
-<dt id="OIDC4VP">[OIDC4VP]</dt>
-<dd>
-<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
-<dt id="OpenID.Registration">[OpenID.Registration]</dt>
-<dd>
-<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, and M. Jones</span>, <span class="refTitle">"OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>&gt;</span>. </dd>
 <dt id="did-spec-registries">[did-spec-registries]</dt>
 <dd>
 <span class="refAuthor">Steele, O.</span><span class="refAuthor"> and M. Sporny</span>, <span class="refTitle">"Decentralized Identifiers (DIDs) v1.0"</span>, <time datetime="2021-08-03">3 August 2021</time>, <span>&lt;<a href="https://w3c.github.io/did-spec-registries/#did-methods">https://w3c.github.io/did-spec-registries/#did-methods</a>&gt;</span>. </dd>
@@ -2021,6 +2015,12 @@ The <code>iat</code> Claim can be used to reject tokens that were issued too far
 <dt id="OpenID">[OpenID]</dt>
 <dd>
 <span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, de Medeiros, B.</span><span class="refAuthor">, and C. Mortimore</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="http://openid.net/specs/openid-connect-core-1_0.html">http://openid.net/specs/openid-connect-core-1_0.html</a>&gt;</span>. </dd>
+<dt id="OIDC4VP">[OIDC4VP]</dt>
+<dd>
+<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
+<dt id="OpenID.Registration">[OpenID.Registration]</dt>
+<dd>
+<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, and M. Jones</span>, <span class="refTitle">"OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>&gt;</span>. </dd>
 </dl>
 </section>
 <div id="iana-considerations">
