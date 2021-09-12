@@ -678,17 +678,25 @@ The technology described in this specification was made available from contribut
 
     [[ To be removed from the final specification ]]
 
-    * 03
-        * sub_jwk made optional for sub type DID and mandatory for subtype jwk thumbprint
-        * Added text that nonce is mandatory
-        * Replaced vp claim with reference to OIDC4VP draft
-        * Adopted SIOP chooser as SIOP Discovery
-        * Deprecated openid:// for SIOP Discovery as not recommended
-        * Clarified Discovery and Registration metadata
-        * Formatted Normative Reference Section to mmarkdown
+    -04
 
-    * 02
-        * Converted into mmarkdown
+    * added cross device flow
+    * clarified sub handling for did-based sub and sub_jwk
+    * Revising of introductory text and scope of SIOPv2
+    * corrected typos and reworked registration example data
 
-    * 01
-        * Version proposed for working group adoption
+    -03
+    
+    * sub_jwk made optional for sub type DID and mandatory for subtype jwk thumbprint
+    * Added text that nonce is mandatory
+    * Replaced vp claim with reference to OIDC4VP draft
+    * Adopted SIOP chooser as SIOP Discovery
+    * Deprecated openid:// for SIOP Discovery as not recommended
+    * Clarified Discovery and Registration metadata
+    * Formatted Normative Reference Section to mmarkdown
+
+    -02
+     * Converted into mmarkdown
+
+    -01
+     * Version proposed for working group adoption
