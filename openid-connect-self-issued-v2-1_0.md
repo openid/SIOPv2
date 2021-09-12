@@ -1,5 +1,5 @@
 %%%
-title = "Self-Issued OpenID Provider V2, draft 04"
+title = "Self-Issued OpenID Provider v2"
 abbrev = "siop-v2"
 ipr = "none"
 workgroup = "connect"
@@ -441,9 +441,9 @@ This section describes how SIOP is used in cross device scenarios. In contrast t
 
 1. The RP prepares a SIOP request and renders it as a QR code.
 2. The user scans the QR code with her smartphone's camera app.
-3. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the openid custom scheme)
+3. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the openid custom scheme).
 4. The SIOP processes the authentication request.
-5. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP
+5. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
 Note: the request in step 5 is not a form post request where the SIOP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The SIOP sends this request directly to the RP's endpoint.
 
