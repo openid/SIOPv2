@@ -163,7 +163,7 @@
 
 <section anchor="self-issued-openid-provider-discovery"><name>Self-Issued OpenID Provider Discovery</name>
 <t>When the End-user first interacts with the RP there are no established means to signal where to direct the request for an available Self-Issued OP application. Even if possible, such signals may be susceptible to fingerprinting and passive tracking of the End-user.</t>
-<t>The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice oto select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.</t>
+<t>The RP is therefore responsible for selecting where to direct the request URL. When the RP wants to support the End-user's choice to select from multiple possible Self-Issued OP applications, it MAY present a static list of the available choices. This is very similar to the process of supporting multiple different social networks.</t>
 <t>Alternatively the RP MAY belong to at least one trust framework. The trust framework is then responsible for hosting a public website that maintains the latest platform specific metadata for all supported Self-Issued OP applications, known as app-link or universal link at the time of publication. The RP forms the request URL to that shared website and any of the supported installed applications will instead be launched and given the request to process. If none are available, the website will be displayed with the static list for the End-user to choose from to install or use.</t>
 <t>The trust framework MAY be operated by just one RP, but due to the required maintenance of every application's metadata (which may change frequently) this burden SHOULD be shared across multiple RPs. The same trust framework MAY also be used to host metadata about the supported RPs such that the Self-Issued OP applications can verify the origin of the incoming request as part of the framework as well.</t>
 <t>The legacy usage of custom protocol schemas such as <tt>openid:</tt> as a way to invoke any installed Self-Issued OP is NOT RECOMMENDED due to the security issues (see (invocation-using-custom-schema) in Privacy Considerations section).</t>
@@ -473,7 +473,7 @@
 <li><t><tt>sub_jwk</tt></t>
 
 <ul>
-<li><t>REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When subr type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <tt>did</tt>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
+<li><t>REQUIRED. a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When sub type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is <tt>did</tt>, sub<em>jwk MUST contain a kid that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the id</em>token directly or indirectly. The sub_jwk value is a JSON object. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
 </li>
 </ul></li>
 </ul>
@@ -501,7 +501,7 @@
 <t>To validate the ID Token received, the RP MUST do the following:</t>
 
 <ol>
-<li><t>The Relying Party (RP) MUST validate that the value of the <tt>iss</tt> (issuer) Claim is <tt>https://self-isued.me</tt>. If iss contains a different value, the ID Token is not Self-Issued, and instead it MUST be validated according to Section 3.1.3.</t>
+<li><t>The Relying Party (RP) MUST validate that the value of the <tt>iss</tt> (issuer) Claim is <tt>https://self-issued.me</tt>. If iss contains a different value, the ID Token is not Self-Issued, and instead it MUST be validated according to Section 3.1.3.</t>
 </li>
 <li><t>The RP MUST validate that the <tt>aud</tt> (audience) Claim contains the value of the <tt>redirect_uri</tt> that the RP sent in the Authentication Request as an audience.</t>
 </li>
@@ -538,7 +538,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
     }
 　}
 </sourcecode>
-<t>The following is a non-normative example of an ID token containing a verfiable presentation (with line wraps within values for display purposes only):</t>
+<t>The following is a non-normative example of an ID token containing a verifiable presentation (with line wraps within values for display purposes only):</t>
 
 <sourcecode type="json">  {
    &quot;iss&quot;: &quot;https://self-issued.me/v2&quot;,
