@@ -239,17 +239,11 @@ RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the
 
 If Self-Issued OP supports the same parameters, Self-Issued OpenID Provider flow continues, if Self-Issued OP does not support, it returns an error.
 
-If no error is returned, the RP must proceed as if it had obtained the following Client Registration Response:
-
-* client_id
-    * `redirect_uri` value of the Client.
-* client_secret_expires_at
-    * 0
+Note that in Self-Issued OP flow no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
 Metadata parameters should preferably be sent by reference as a URI using `registration_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `registration` parameter.
 
 `registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
-
 
 ### Passing Relying Party Registration Metadata by Value
 
