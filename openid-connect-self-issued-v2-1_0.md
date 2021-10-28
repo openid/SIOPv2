@@ -290,8 +290,6 @@ This extension defines the following RP Registration Metadata values, used by th
 
 Other registration parameters defined in [@!OpenID.Registration] could be used. Examples are explanatory parameters such as policy_uri, tos_uri, and logo_uri. If the RP uses more than one Redirection URI, the redirect_uris parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the jwks_uri, id_token_encrypted_response_alg and id_token_encrypted_response_enc parameters.
 
-Registration parameter may include decentralized identifier of the RP.
-
 The following is a non-normative example of the supported RP Registration Metadata Values:
 
 ```json
