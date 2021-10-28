@@ -269,15 +269,15 @@ Other resolution methods may be defined in the future versions of this specifica
 
 When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [OpenID.Federation] MUST be used. 
 
-The Relying Party's Entity Identifier defined in section 1.2 of OpenID.Federation] **MUST** be `client_id`. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in section 3.1 of [OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
+The Relying Party's Entity Identifier defined in section 1.2 of OpenID.Federation] MUST be `client_id`. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in section 3.1 of [OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
 
-Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the native app clients.
+Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
 
 #### Decentralized Identifier Resolution
 
-When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@!DID-CORE], public key MUST be obtained from the `verificationMethod` property of a DID Document. DID Resolution defined by the DID method must be used by the RP to obtain the DID Document.
+When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@!DID-CORE], a public key used to sign the request MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
 
-RP metadata other than the public keys **MUST** be obtained from the `registration` parameter as defined in {#rp-registration-parameter}.
+RP metadata other than the public key MUST be obtained from the `registration` parameter as defined in {#rp-registration-parameter}.
 
 ### Relying Party Registration Metadata Values
 
