@@ -181,7 +181,7 @@ The legacy usage of custom protocol schemas such as `openid:` as a way to invoke
 
 ### Self-Issued OpenID Provider Discovery Metadata
 
-If the input identifier for the discovery process contains the domain self-issued.me, dynamic discovery is not performed. Instead, then the following static configuration values are used:
+If the input identifier for the discovery process is the identifier `https://self-issued.me/v2`, dynamic discovery is not performed. Instead, then the following static configuration values are used:
 
 * `authorization_endpoint`
     * REQUIRED. MUST include `openid:`, could also include additional custom schema.
@@ -407,7 +407,7 @@ See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Li
 
 To validate the ID Token received, the RP MUST do the following:
 
-1. The Relying Party (RP) MUST validate that the value of the `iss` (issuer) Claim is `https://self-issued.me`. If `iss` contains a different value, the ID Token is not Self-Issued, and instead it MUST be validated according to Section 3.1.3.7 of [@!OpenID].
+1. The Relying Party (RP) MUST validate that the value of the `iss` (issuer) Claim is `https://self-issued.me/v2`. If `iss` contains a different value, the ID Token is not Self-Issued, and instead it MUST be validated according to Section 3.1.3.7 of [@!OpenID].
 1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `redirect_uri` that the RP sent in the Authentication Request as an audience.
 1. The RP MUST validate the signature of the ID Token. When sub type is `jkt`, validation is done according to JWS [JWS] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When sub type is `did`, validation is done using the key derived as a result of DID Resolution as defined in [@!DID-CORE]. The key is a bare key in JWK format (not an X.509 certificate value) when sub type is`jkt` or may be another key format when sub type is `did`.
 2. The RP MUST validate the `sub` value. When sub type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When sub type is `did`, the RP MUST validate that the `sub` claim value equals the key in the verification method property of the DID Document. Since a DID Document can contain mulitple keys, the validation MUST be performed against the key identified by the `kid` in the header. DID Document MUST be obtained by resolving decentralized identifier included in the `sub` claim.
