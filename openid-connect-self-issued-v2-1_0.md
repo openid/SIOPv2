@@ -192,7 +192,7 @@ If the input identifier for the discovery process is the identifier `https://sel
 * `scopes_supported`
     * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
 * `subject_types_supported`
-    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`. Valid values include `pairwise` and `public` as defined in section 8 of [@!OpenID].
+    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public` as defined in section 8 of [@!OpenID].
 * `id_token_signing_alg_values_supported`
     * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `request_object_signing_alg_values_supported`
@@ -386,7 +386,7 @@ The response contains an ID Token and, if applicable, further response parameter
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:
 
 * `sub`
-    * REQUIRED. Subject identifier value. When sub_type is `jkt`, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When sub_type is `did`, the value is a Decentralized Identifier. The thumbprint value of ID Token Sub Identifier Type `jkt` is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.
+    * REQUIRED. Subject identifier value. When ID Token Sub Identifier Type is `jkt`, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When ID Token Sub Identifier Type is `did`, the value is a Decentralized Identifier. The thumbprint value of ID Token Sub Identifier Type `jkt` is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.
 * `sub_jwk`
     * REQUIRED. A JSON object for a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When ID Token Sub Identifier Type is `jkt`, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When ID Token Sub Identifier Type is `did`, `sub_jwk` MUST contain a `kid` member that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the ID Token directly or indirectly. Use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 
@@ -692,7 +692,7 @@ The technology described in this specification was made available from contribut
 
     -03
     
-    * sub_jwk made optional for sub type DID and mandatory for subtype jwk thumbprint
+    * sub_jwk made optional for ID Token Sub Identifier Type DID and mandatory for subtype jwk thumbprint
     * Added text that nonce is mandatory
     * Replaced vp claim with reference to OIDC4VP draft
     * Adopted SIOP chooser as SIOP Discovery
