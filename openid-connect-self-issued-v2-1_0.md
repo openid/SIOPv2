@@ -81,7 +81,7 @@ Note: This specification replaces [Self-Issued OpenID Connect Provider DID Profi
 
 # Scope
 
-As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect to communicate with such locally-running OP, and extends OpenID Connect Discovery to represent the differences from traditional OPs.
+As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect defined in section 3.2 of [@!OpenID] to communicate with such locally-running OP, and extends OpenID Connect Discovery to represent the differences from traditional OPs.
 
 This document is scoped for a deployment model where the Self-Issued OP is deployed on an End-user's device.
 
@@ -192,7 +192,7 @@ If the input identifier for the discovery process is the identifier `https://sel
 * `scopes_supported`
     * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
 * `subject_types_supported`
-    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
+    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`. Valid values include `pairwise` and `public` as defined in section 8 of [@!OpenID].
 * `id_token_signing_alg_values_supported`
     * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `request_object_signing_alg_values_supported`
@@ -354,7 +354,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `request_uri`
     * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@OpenID].
 
-When `request` or `request_uri` parameters are NOT present, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
+To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
 Since it is an Implicit Flow response, `nonce` Claim MUST be present. 
 
