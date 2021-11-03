@@ -105,9 +105,9 @@ This specification defines:
 
   A _cryptographically verifiable identifier_ is an identifier which is either based upon or can be resolved to cryptographic key material. Self-Issued OPs can prove possession of the underlying key during the OpenID message exchange with the RP. Future exchanges based on the same identifier serve to strongly re-authenticate the End-user.
 
-  This specification defines a subject identifier which is a thumbprint of the public key material. The public key itself is shared within the ID Token as a _JSON Web Key_ (JWK). The cryptographic algorithm needs to be supported by both the Self-Issued OP and RP.
+  This specification defines a subject syntax type which is a thumbprint of the public key material. The public key itself is shared within the ID Token as a _JSON Web Key_ (JWK). The cryptographic algorithm needs to be supported by both the Self-Issued OP and RP.
 
-  This specification also allows for _resolvable identifiers_, which are URI which can resolve various types of authoritative data underneath an appropriate _resolution method_. Resolvable identifiers may be used as the subject identifier when they can be resolved to a set one or more of cryptographic keys that identify the subject. In addition to cryptographic algorithms, both the Self-Issued OP and RP need to support the resolution method. The resolution method is based on the URI itself, such as a "https" resolution method. One example of such a resolvable identifier would be a _Decentralized Identifier_ (DID), where resolution methods would typically also include the _DID Method_, e.g. "did:web".
+  This specification also allows for _resolvable identifiers_, which are URI which can resolve various types of authoritative data underneath an appropriate _resolution method_. Resolvable identifiers may be used as the subject identifiers, or `sub` Claim of the ID Token, when they can be resolved to a set one or more of cryptographic keys that identify the subject. In addition to cryptographic algorithms, both the Self-Issued OP and RP need to support the resolution method. The resolution method is based on the URI itself, such as a "https" resolution method. One example of such a resolvable identifier would be a _Decentralized Identifier_ (DID), where resolution methods would typically also include the _DID Method_, e.g. "did:web".
 
   For compatibility with the existing JWS/JWE-based cryptography of OpenID Connect, it is assumed such resolved cryptographic identities are representable as a _JSON Web Key Set_ (JWKS). Each key in the set would have a cryptographic algorithm, key identifier, and associated key material.
 
@@ -300,12 +300,12 @@ The following is a non-normative example of the supported RP Registration Metada
  Two types are defined by this specification to be used in RP Registration Metadata `subject_syntax_types_supported`:
 
 * `jkt`
-    * JWK Thumbprint sub identifier type. When this type is used, the `sub` claim value MUST be the base64url encoded representation of the thumbprint of the key in the `sub_jwk` claim [RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
+    * JWK Thumbprint subject syntax type. When this type is used, the `sub` claim value MUST be the base64url encoded representation of the thumbprint of the key in the `sub_jwk` claim [RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
 
 * `did`
-     * Decentralized Identifier sub identifier type. When this type is used,  the `sub` value MUST be a DID defined in [@!DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issued OP response. The subject type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.
+     * Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID defined in [@!DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issued OP response. The subject syntax type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.
 
-NOTE: Consider adding a subject type for OpenID Connect Federation entity statements.
+NOTE: Consider adding a subject syntax type for OpenID Connect Federation entity statements.
 
 ## Relying Party Registration Metadata Error Response {#rp-reg-error}
 
@@ -686,7 +686,7 @@ The technology described in this specification was made available from contribut
     -04
 
     * added cross device flow
-    * clarified sub handling for did-based sub and sub_jwk
+    * clarified handling for did-based sub and sub_jwk
     * Revising of introductory text and scope of SIOPv2
     * corrected typos and reworked registration example data
 
