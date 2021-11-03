@@ -187,7 +187,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 RP MUST use custom URL schema `openid://` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid://` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
-Note that the request using custom URL schema `openid://` will open only Self-Issued OPs as native apps. For other types of Self-Issued OP deployments, the usage of the universal links, or app links is recommended.
+Note that the request using custom URL schema `openid://` will open only Self-Issued OPs as native apps. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
 ```json
 {
@@ -219,22 +219,31 @@ Note that the request using custom URL schema `openid://` will open only Self-Is
 
 ### Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
 
+As an alternative mechanism to the (#static-siop-metadata), the RP can pre-obtain Self-Issued OP Discovery Metadata. First, the RP needs to obtain Self-Issued OPs issuer identifier How to obtain Self-Issued OP's issuer identifier is out of scope of this specification. 
+
+RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
+
+
+configuration values are used. Note that contrary to 
+
 * `authorization_endpoint`
-    * REQUIRED. MUST include `openid:`, could also include additional custom schema.
+    * REQUIRED. Can be custome URL schema, or Universal Links/App links. See (#choice-of-authoriation-endpoint).
 * `issuer`
-    * REQUIRED. MUST be `https://self-issued.me/v2`
+    * REQUIRED. MUST be identical to the `iss` Claim value in ID Tokens issued from this Self-Issued OP.
 * `response_types_supported`
     * REQUIRED. MUST be `id_token`
 * `scopes_supported`
-    * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
+    * REQUIRED. A JSON array of strings representing supported scopes. MUST support the `openid` scope value.
 * `subject_types_supported`
-    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
+    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`. 
 * `id_token_signing_alg_values_supported`
-    * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
+    * REQUIRED. JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. 
 * `request_object_signing_alg_values_supported`
     * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 
-#### Choice of `authorization_endpoint`
+Other Discovery parameters defined in [@!OpenID.Discovery] MAY be used. 
+
+#### Choice of `authorization_endpoint` {#choice-of-authoriation-endpoint}
 When the End-user first interacts with the RP, there are currently no established, robust means to signal which OpenID Providers to invoke, because applications cannot reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
 
 As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links ot App Links is **RECOMMENDED** over the use of custom URI schemas. 
@@ -589,6 +598,7 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 * [OpenID.Core] https://openid.net/specs/openid-connect-core-1_0.html
 * [RFC7638] https://tools.ietf.org/html/rfc7638
 * [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
+* [OpenID.Discovery] https://openid.net/specs/openid-connect-discovery-1_0.html
 * [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
 * [OIDM] https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
 
