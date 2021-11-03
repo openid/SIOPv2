@@ -264,6 +264,24 @@ The implementors are highly encouraged to explore other options before using cus
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
 
+```need to edit
+
+### Separate identifier per Self-Issued OP (better title needed)
+
+When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs. In this scenario, the Self-Issued OP implementations would have unique identifiers, which could be used to resolve unique metadata, such as custom URI schemes, or universal links and app links.
+
+### Common identifier for one or more Self-Issued OPs (better title needed)
+
+The RP can also enable End-User choice while using the same URI if Self-Issued OP implementations belong to a trust framework, and the trust framework may dictacte a common identifier for a set of implementations. This identifier should be communicated to the RP as an `authorization_endpoint` URI which every Self-Issued OP supports and has registered with the underlying browser or operating system. Invocation of this endpoint then delegates the act of selecting any appropriate Self-Issued OP to the underlying browser or operating system.
+
+### Currently known browser behavior
+
+The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and **MAY** be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
+If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
+Note: clarify why authoritative list is relevant
+Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
+```
+
 ## Relying Party Registration
 
 Each Relying Party must communicate, within the Self-Issued OpenID Provider Request, which metadata parameters it supports. If the Self-Issued OP and the RP mutually support a compatible set of parameters, the Self-Issued OP flow continues. If they do not, Self-Issued OP returns an error. 
