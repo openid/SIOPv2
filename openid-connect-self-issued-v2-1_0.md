@@ -169,51 +169,25 @@ Figure: Self-Issued OP Protocol Flow
 
 ## Self-Issued OpenID Provider Invocation
 
-When the End-user first interacts with the RP, there are currently no established, robust means to signal which OpenID Providers to invoke, because applications cannot reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
+When the RP sends the request to the Self-Issued OP, there are two scenarios how to reach and invoke an application that can process that request. 
 
-As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links ot App Links is **RECOMMENDED** over the use of custom URI schemas. 
+In the first scenario, request is encoded in a QR code, and the End-user scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specfiic `authorization_endpoint` of a Self-Issued OP. Note that this will not work in a same-device Self-Issued OP flow, when the RP and the Self-Issued OP are on the same device.
 
-However, when the Self-Issued OP does not belong to a Trust Framework and does not have an effective way to communicate its unique `authorization_endpoint` to the RP, it MAY use custom URL schema `openid:`. Due to the known security issues of the custom URI schemas, such as lack of controls to prevent unknown applications from attempting to service authentication requests, implementors are highly encouraged to explore other options outlined below before using `openid:`. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
+In the second scenario, request includes `authorization_endpoint` of a Self-Issued OP, and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to contruct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this flow would work both for the same-device Self-Issued OP flow and the cross-device Self-Issued OP flow.
 
-Note that this section is subject to changes in mobile OS and browser mechanisms.
+## Self-Issued OpenID Provider Discovery {#siop-discovery}
 
-### Separate identifier per Self-Issued OP (better title needed)
+RP can obtain `authorization_endpoint` of the Self-Issued OP to contruct a request targeted to a particular application either by using the static set of Self-Issued OP metadata as defined in (#siop-discovery), or by pre-obtaining `authorization_endpoint` as defined in (#dynamic-siop-metadata).
 
-When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs. In this scenario, the Self-Issued OP implementations would have unique identifiers, which could be used to resolve unique metadata, such as custom URI schemas, or universal links and app links.
+Value of the `iss` Claim in the ID Token serves as an indicator which Self-Issued OP Discovery Mechanism is used.
 
-### Common identifier for one or more Self-Issued OPs (better title needed)
+### Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-metadata}
 
-The RP can also enable End-User choice while using the same URI if Self-Issued OP implementations belong to a trust framework, and the trust framework may dictacte a common identifier for a set of implementations. This identifier should be communicated to the RP as an `authorization_endpoint` URI which every Self-Issued OP supports and has registered with the underlying browser or operating system. Invocation of this endpoint then delegates the act of selecting any appropriate Self-Issued OP to the underlying browser or operating system.
+When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used. 
 
-### Currently known browser behavior
+RP MUST use custom URL schema `openid://` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid://` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
-The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and **MAY** be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
-
-If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
-Note: clarify why authoritative list is relevant
-
-Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
-
-### Self-Issued OpenID Provider Discovery Metadata
-
-If the input identifier for the discovery process is the identifier `https://self-issued.me/v2`, dynamic discovery is not performed. Instead, then the following static configuration values are used:
-
-* `authorization_endpoint`
-    * REQUIRED. MUST include `openid:`, could also include additional custom schema.
-* `issuer`
-    * REQUIRED. MUST be `https://self-issued.me/v2`
-* `response_types_supported`
-    * REQUIRED. MUST be `id_token`
-* `scopes_supported`
-    * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
-* `subject_types_supported`
-    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
-* `id_token_signing_alg_values_supported`
-    * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
-* `request_object_signing_alg_values_supported`
-    * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
-
-The following is a non-normative example of the supported Self-issued OP Discovery metadata values:
+Note that the request using custom URL schema `openid://` will open only Self-Issued OPs as native apps. For other types of Self-Issued OP deployments, the usage of the universal links, or app links is recommended.
 
 ```json
 {
@@ -242,6 +216,49 @@ The following is a non-normative example of the supported Self-issued OP Discove
   ]
 }
 ```
+
+### Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
+
+* `authorization_endpoint`
+    * REQUIRED. MUST include `openid:`, could also include additional custom schema.
+* `issuer`
+    * REQUIRED. MUST be `https://self-issued.me/v2`
+* `response_types_supported`
+    * REQUIRED. MUST be `id_token`
+* `scopes_supported`
+    * REQUIRED. A JSON array of strings representing supported scopes. Valid values include `openid`, `profile`, `email`, `address`, and `phone`.
+* `subject_types_supported`
+    * REQUIRED. A JSON array of strings representing supported subject types. Valid values include `pairwise` and `public`.
+* `id_token_signing_alg_values_supported`
+    * REQUIRED. ID token signing alg values supported. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
+* `request_object_signing_alg_values_supported`
+    * REQUIRED. Request object signing alg values supported. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
+
+#### Choice of `authorization_endpoint`
+When the End-user first interacts with the RP, there are currently no established, robust means to signal which OpenID Providers to invoke, because applications cannot reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
+
+As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links ot App Links is **RECOMMENDED** over the use of custom URI schemas. 
+
+However, when the Self-Issued OP does not belong to a Trust Framework and does not have an effective way to communicate its unique `authorization_endpoint` to the RP, it MAY use custom URL schema `openid:`. Due to the known security issues of the custom URI schemas, such as lack of controls to prevent unknown applications from attempting to service authentication requests, implementors are highly encouraged to explore other options outlined below before using `openid:`. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
+
+Note that this section is subject to changes in mobile OS and browser mechanisms.
+
+### Separate identifier per Self-Issued OP (better title needed)
+
+When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs. In this scenario, the Self-Issued OP implementations would have unique identifiers, which could be used to resolve unique metadata, such as custom URI schemas, or universal links and app links.
+
+### Common identifier for one or more Self-Issued OPs (better title needed)
+
+The RP can also enable End-User choice while using the same URI if Self-Issued OP implementations belong to a trust framework, and the trust framework may dictacte a common identifier for a set of implementations. This identifier should be communicated to the RP as an `authorization_endpoint` URI which every Self-Issued OP supports and has registered with the underlying browser or operating system. Invocation of this endpoint then delegates the act of selecting any appropriate Self-Issued OP to the underlying browser or operating system.
+
+### Currently known browser behavior
+
+The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and **MAY** be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
+
+If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
+Note: clarify why authoritative list is relevant
+
+Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
 ## Relying Party Registration
 
