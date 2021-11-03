@@ -227,8 +227,6 @@ How the RP obtains Self-Issued OP's issuer identifier is out of scope of this sp
 
 When [OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Selc-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issed OP's Issuer Identifier.
 
-configuration values are used. 
-
 Note that contrary to [OpenID.Discovery], `jwks_uri` parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it, and use `sub` claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider. 
 Note: handling of `jwks_uri` needs to be discussed.
 
@@ -252,7 +250,7 @@ Note: handling of `jwks_uri` needs to be discussed.
     * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values are the Method Names listed in in Chapter 9 of [@!did-spec-registries], such as `did:peer:`. RPs can indicate support for any DID method by omitting `did_methods_supported`, while including `did` in `subject_identifier_types_supported`.
 
 Note: need to confirm valid alg values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
-Note: Make sure description of `subject_identifier_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
+Note: Make sure description of `subject_syntax_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
 
 Other Discovery parameters defined in section 3 of [@!OpenID.Discovery] MAY be used. 
 
@@ -262,7 +260,7 @@ The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery
 
 As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links ot App Links is **RECOMMENDED** over the use of custom URI schemes. 
 
-The implementors are highly encouraged to explore other options before using custom URI schemes due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
+The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid:` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
 
