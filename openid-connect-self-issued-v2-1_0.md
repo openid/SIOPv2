@@ -339,7 +339,7 @@ This extension defines the following RP Registration Metadata values, used by th
 * `subject_syntax_types_supported`
     * REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include `jkt` and `did`. For detailed description, see #sub-syntax-type.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values are the Method Names listed in in Chapter 9 of [@!did-spec-registries], such as `did:peer:`. RPs can indicate support for any DID method by omitting `did_methods_supported`, while including `did` in `subject_syntax_types_supported`.
+    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_identifier_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
 
 Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
 
@@ -617,7 +617,7 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 
 ## Normative References
 
-* [DID-CORE] https://github.com/w3c/did-core (not yet a ratified draft)
+* [DID-CORE] https://www.w3.org/TR/2021/PR-did-core-20210803/
 * [VC-DATA] https://www.w3.org/TR/vc-data-model/
 * [RFC6749] https://tools.ietf.org/html/rfc6749
 * [RFC6750] https://tools.ietf.org/html/rfc6750
@@ -625,7 +625,6 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 * [RFC7638] https://tools.ietf.org/html/rfc7638
 * [OpenID.Registration] https://openid.net/specs/openid-connect-registration-1_0.html
 * [OpenID.Discovery] https://openid.net/specs/openid-connect-discovery-1_0.html
-* [did-spec-registries] https://w3c.github.io/did-spec-registries/#did-methods
 * [OIDM] https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
 
 ## Non-Normative References
@@ -701,7 +700,7 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
       </front>
 </reference>
 
-<reference anchor="DID-CORE" target="https://www.w3.org/TR/did-core/">
+<reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
         <front>
         <title>Decentralized Identifiers (DIDs) v1.0</title>
         <author fullname="Manu Sporny">
@@ -718,19 +717,6 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
         </author>
         <date day="3" month="Aug" year="2021"/>
         </front>
-</reference>
-
-<reference anchor="did-spec-registries" target="https://w3c.github.io/did-spec-registries/#did-methods">
-        <front>
-            <title>Decentralized Identifiers (DIDs) v1.0</title>
-            <author fullname="Orie Steele">
-                <organization>Transmute</organization>
-            </author>
-            <author fullname="Manu Sporny">
-                <organization>Digital Bazaar</organization>
-            </author>
-            <date day="3" month="Aug" year="2021"/>
-            </front>
 </reference>
 
 # IANA Considerations
