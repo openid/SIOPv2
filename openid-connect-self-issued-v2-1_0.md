@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-04"
+value = "openid-connect-self-issued-v2-1_0-05"
 status = "standard"
 
 [[author]]
@@ -81,7 +81,7 @@ Note: This specification replaces [Self-Issued OpenID Connect Provider DID Profi
 
 # Scope
 
-As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect to communicate with such locally-running OP, and extends OpenID Connect Discovery to represent the differences from traditional OPs.
+As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect defined in section 3.2 of [@!OpenID] to communicate with such locally-running OP, and extends OpenID Connect Discovery to represent the differences from traditional OPs.
 
 This document is scoped for a deployment model where the Self-Issued OP is deployed on an End-user's device.
 
@@ -105,9 +105,9 @@ This specification defines:
 
   A _cryptographically verifiable identifier_ is an identifier which is either based upon or can be resolved to cryptographic key material. Self-Issued OPs can prove possession of the underlying key during the OpenID message exchange with the RP. Future exchanges based on the same identifier serve to strongly re-authenticate the End-user.
 
-  This specification defines a subject identifier which is a thumbprint of the public key material. The public key itself is shared within the ID Token as a _JSON Web Key_ (JWK). The cryptographic algorithm needs to be supported by both the Self-Issued OP and RP.
+  This specification defines a subject syntax type which is a thumbprint of the public key material. The public key itself is shared within the ID Token as a _JSON Web Key_ (JWK). The cryptographic algorithm needs to be supported by both the Self-Issued OP and RP.
 
-  This specification also allows for _resolvable identifiers_, which are URI which can resolve various types of authoritative data underneath an appropriate _resolution method_. Resolvable identifiers may be used as the subject identifier when they can be resolved to a set one or more of cryptographic keys that identify the subject. In addition to cryptographic algorithms, both the Self-Issued OP and RP need to support the resolution method. The resolution method is based on the URI itself, such as a "https" resolution method. One example of such a resolvable identifier would be a _Decentralized Identifier_ (DID), where resolution methods would typically also include the _DID Method_, e.g. "did:web".
+  This specification also allows for _resolvable identifiers_, which are URI which can resolve various types of authoritative data underneath an appropriate _resolution method_. Resolvable identifiers may be used as the subject identifiers, or `sub` Claim of the ID Token, when they can be resolved to a set one or more of cryptographic keys that identify the subject. In addition to cryptographic algorithms, both the Self-Issued OP and RP need to support the resolution method. The resolution method is based on the URI itself, such as a "https" resolution method. One example of such a resolvable identifier would be a _Decentralized Identifier_ (DID), where resolution methods would typically also include the _DID Method_, e.g. "did:web".
 
   For compatibility with the existing JWS/JWE-based cryptography of OpenID Connect, it is assumed such resolved cryptographic identities are representable as a _JSON Web Key Set_ (JWKS). Each key in the set would have a cryptographic algorithm, key identifier, and associated key material.
 
@@ -137,9 +137,9 @@ Common terms in this document come from four primary sources: DID-CORE, VC-DATA,
 
 ## Abbreviations
 
-* Self-Issued OP or SIOP: Self-Issued OpenID Provider
-* RP: Relying Party
 * OP: OpenID Provider
+* RP: Relying Party
+* Self-Issued OP or SIOP: Self-Issued OpenID Provider
 
 # Protocol Flow
 
@@ -165,7 +165,11 @@ Self-Issued OpenID Provider Request is an OpenID Connect Authentication Request 
 ~~~
 Figure: Self-Issued OP Protocol Flow
 
-# Discovery and Negotiation
+# Discovery and Registration
+
+In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [OpenID.Discovery] and [OpenID.Registration], or out-of-band mechanisms. 
+
+However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted, and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. Self-Issued OPs utilize registration parameter and/or resolve `client_id` to obtain Relying Party metadata.
 
 ## Self-Issued OpenID Provider Invocation
 
@@ -284,59 +288,66 @@ Operating systems also typically have a functionality by which native applicatio
 
 ## Relying Party Registration
 
-Each Relying Party must communicate, within the Self-Issued OpenID Provider Request, which metadata parameters it supports. If the Self-Issued OP and the RP mutually support a compatible set of parameters, the Self-Issued OP flow continues. If they do not, Self-Issued OP returns an error. 
+When Self-Issued OP request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id` as defined in {#rp-resolution}. The rest of the RP Registration metadata **SHOULD** be included in the `registration` parameter inside the Self-Issued OP request, or could be included in the Entity Statement if OpenID Federation 1.0 Automatic Registration method is used.
 
-Note that in the Self-Issued OP flow no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
+`registration` parameters **MUST NOT** include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP **MUST** ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
-OpenID Connect defines the following negotiation parameters to enable a Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:
+Note that in Self-Issued OP flow no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
- * `registration` 
-   * OPTIONAL. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values.
+### Relying Party Registration Parameter {#rp-registration-parameter}
 
- * `registration_uri` 
-   * OPTIONAL. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The `registration_uri` value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values.
+OpenID Connect defines the following negotiation parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:
 
-An RP MUST use either of these parameters, but if one of these parameters is used, the other MUST NOT be used in the same request.
+* `registration` 
+  * **OPTIONAL**. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values. The registration parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
 
-RP Registration Metadata should preferably be sent by reference using the `registration_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using the `registration` parameter.
+* `registration_uri` 
+  * **OPTIONAL**. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request_uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values. The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the `registration_uri` value MUST be https. The request_uri value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP. This parameter is used identically to the request parameter, other than that the Relying Party registration metadata value is retrieved from the resource at the specified URL.
 
-RP Negotiation metadata values are defined in (#rp-metadata) and in the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification.
+If one of these parameters is used, the other MUST NOT be used in the same request.
+
+RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification.
+
+Metadata parameters should preferably be sent by reference as a URI using `registration_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `registration` parameter.
 
 `registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
 
-### Passing Relying Party Registration Metadata by Value {#param-registration}
+### Relying Party Metadata Resolution Methods {rp-resolution}
 
-The `registration` SIOP Request parameter enables RP Registration Metadata to be passed in a single, self-contained parameter.
+This specification defines two methods of resolving `client_id` of the RP to obtain RP's public key and metadata. These methods are specific to different syntaxes that the `client_id` may utilize. 
 
-The `registration` parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1 of [@!OpenID], the JSON object is used as the value of the registration member.
+Other resolution methods may be defined in the future versions of this specification or by the Trust Frameworks.
 
+#### OpenID Federation 1.0 Automatic Registration
 
-### Passing Relying Party Registration Metadata by Reference {#param-registration-uri}
+When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [OpenID.Federation] MUST be used. 
 
-The `registration_uri` SIOP Request parameter enables RP Registration Metadata to be passed by reference.
+The Relying Party's Entity Identifier defined in section 1.2 of OpenID.Federation] MUST be `client_id`. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in section 3.1 of [OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
 
-This parameter is used identically to the request parameter, other than that the Relying Party registration metadata value is retrieved from the resource at the specified URL, rather than passed by value.
+Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
 
-The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the `registration_uri` value MUST be https. The `registration_uri` value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP.
+#### Decentralized Identifier Resolution
+
+When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@!DID-CORE], a public key used to sign the request MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
+
+RP metadata other than the public key MUST be obtained from the `registration` parameter as defined in {#rp-registration-parameter}.
 
 ### Relying Party Registration Metadata Values {#rp-metadata}
 
 This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:
 
-* `subject_identifier_types_supported`
-    * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and `did`.
+* `subject_syntax_types_supported`
+    * REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include `jkt` and `did`. For detailed description, see #sub-syntax-type.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values are the Method Names listed in in Chapter 9 of [@!did-spec-registries], such as `did:peer:`. RPs can indicate support for any DID method by omitting `did_methods_supported`, while including `did` in `subject_identifier_types_supported`.
+    * OPTIONAL. A JSON array of strings representing supported DID methods. Valid values are the Method Names listed in in Chapter 9 of [@!did-spec-registries], such as `did:peer:`. RPs can indicate support for any DID method by omitting `did_methods_supported`, while including `did` in `subject_syntax_types_supported`.
 
 Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
-
-Registration parameters MAY include decentralized identifier of the RP.
 
 The following is a non-normative example of the supported RP Registration Metadata Values:
 
 ```json
 {
-  "subject_identifier_types_supported": [
+  "subject_syntax_types_supported": [
     "did",
     "jkt"
   ],
@@ -347,34 +358,36 @@ The following is a non-normative example of the supported RP Registration Metada
 }
 ```
 
-## Sub Types
+#### Subject Syntax Types {#sub-syntax-type}
 
-A sub type is used by Self-Issued OP to advertise which types of identifiers are supported for the `sub` claim. Two types are defined by this specification:
+  Subject Syntax Type refers to a type of an identifier used in a `sub` claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.  
+
+ Two types are defined by this specification to be used in RP Registration Metadata `subject_syntax_types_supported`:
 
 * `jkt`
-    * JWK Thumbprint Subject sub type. When this subject sub type is used, the `sub` claim value MUST be the base64url encoded representation of the thumbprint of the key in the `sub_jwk` claim [RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
+    * JWK Thumbprint subject syntax type. When this type is used, the `sub` claim value MUST be the base64url encoded representation of the thumbprint of the key in the `sub_jwk` claim [RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
 
 * `did`
-     * Decentralized Identifier sub type. When this subject type is used,  the `sub` value MUST be a DID defined in [@!DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issed OP response. The subject type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.
+     * Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID defined in [@!DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issued OP response. The subject syntax type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.
 
-NOTE: Consider adding a subject type for OpenID Connect Federation entity statements.
+NOTE: Consider adding a subject syntax type for OpenID Connect Federation entity statements.
 
 ## Relying Party Registration Metadata Error Response {#rp-reg-error}
 
-This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some of the Relying Party Registration metadata values received from the Relying Party in the registration parameter:
+This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
 
 * `did_methods_not_supported`
-    * The Self-Issued OP does not support all of the DID methods included in `did_methods_supported` parameter.
-* `subject_identifier_types_not_supported`
-    * The Self-Issued OP does not support all of the subject identifier types included in `subject_identifier_types_supported` parameter.
+    * The Self-Issued OP does not support any DID methods included in `did_methods_supported` parameter.
+* `subject_syntax_types_not_supported`
+    * The Self-Issued OP does not support any Subject Syntax Types included in `subject_syntax_types_supported` parameter.
 * `credential_formats_not_supported`
-    * The Self-Issued OP does not support all of the credential formats included in `credential_formats_supported` parameter.
-* `value_not_supported`
-    * The Self-Issued OP does not support more than one of the RP Registration Metadata values defined in (#rp-metadata). When not supported metadata values are DID methods, subject identifier types, or credential formats, more specific error message must be used.
+    * The Self-Issued OP does not support any credential formats included in `credential_formats_supported` parameter.
 * `invalid_registration_uri`
     * The `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
 * `invalid_registration_object`
     * The `registration` parameter contains an invalid RP Registration Metadata Object.
+* `value_not_supported`
+    * The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in (#rp-metadata). When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.
 
 The error response must be made in the same manner as defined in Section 3.1.2.6 of [@OpenID].
 
@@ -406,9 +419,9 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `request_uri`
     * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@OpenID].
 
-When `request` or `request_uri` parameters are NOT present, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
+To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
-Since it is an Implicit Flow response, `nonce` Claim MUST be present.
+Since it is an Implicit Flow response, `nonce` Claim MUST be present. 
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
@@ -431,21 +444,21 @@ The following is a non-normative example HTTP 302 redirect response by the RP, w
 
 # Self-Issued OpenID Provider Response {#siop-authentication-response}
 
-A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all of the Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#rp-reg-error).
+A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#rp-reg-error).
 
 The response contains an ID Token and, if applicable, further response parameters as defined in extensions. As an example, the response MAY also include a VP token as defined in [OIDC4VP].
 
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:
 
 * `sub`
-    * REQUIRED. Subject identifier value. When sub type is `jkt`, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When sub type is `did`, the value is a decentralized identifier. The thumbprint value is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.
+    * REQUIRED. Subject identifier value. When Subject Syntax Type is `jkt`, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When Subject Syntax Type is `did`, the value is a Decentralized Identifier. The thumbprint value of Subject Syntax Type `jkt` is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.
 * `sub_jwk`
-    * REQUIRED. A JSON object for a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When sub type is `jkt`, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When sub type is `did`, `sub_jwk` MUST contain a `kid` member that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the ID Token directly or indirectly. Use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
+    * REQUIRED. A JSON object for a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When Subject Syntax Type is `jkt`, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When Subject Syntax Type is `did`, `sub_jwk` MUST contain a `kid` member that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the ID Token directly or indirectly. Use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 
 Whether the Self-Issued OP is a mobile client or a web client, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
 1. The `iss` (issuer) Claim Value is `https://self-issued.me/v2`.
-2. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a decentralized identifier.
+2. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a Decentralized Identifier.
 3. When `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
 4. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
 
@@ -453,7 +466,7 @@ Whether the Self-Issued OP is a mobile client or a web client, the response is t
 
 Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [VC-DATA].
 
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA]
+Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA]
 
 
 # Self-Issued ID Token Validation {#siop-id_token-validation}
@@ -463,8 +476,8 @@ To validate the ID Token received, the RP MUST do the following:
 
 1. The Relying Party (RP) MUST validate that the value of the `iss` (issuer) Claim equals to the `authorization_endpoint` in the Self-Issued OP metadata. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When dynamic Self-Issued OP Discovery metadata has been performed, `iss` MUST exactly match the `issuer` identifier pre-obtained by the RP.
 1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `redirect_uri` that the RP sent in the Authentication Request as an audience.
-1. The RP MUST validate the signature of the ID Token. When sub type is `jkt`, validation is done according to JWS [JWS] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When sub type is `did`, validation is done using the key derived as a result of DID Resolution as defined in [@!DID-CORE]. The key is a bare key in JWK format (not an X.509 certificate value) when sub type is`jkt` or may be another key format when sub type is `did`.
-2. The RP MUST validate the `sub` value. When sub type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When sub type is `did`, the RP MUST validate that the `sub` claim value equals the key in the verification method property of the DID Document. Since a DID Document can contain mulitple keys, the validation MUST be performed against the key identified by the `kid` in the header. DID Document MUST be obtained by resolving decentralized identifier included in the `sub` claim.
+1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is `jkt`, validation is done according to JWS [JWS] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is `did`, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contian multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
+2. The RP MUST validate the `sub` value. When Subject Syntax Type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is `did`, the RP MUST validate that the `sub` claim value equals the `id` property in the DID Document. 
 3. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
 2. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
@@ -523,7 +536,7 @@ Here is an example of an authentication request URL:
     &scope=openid%20profile
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_identifier_types_supported%22:%5B%22jkt%22%5D,
+    &registration=%7B%22subject_syntax_types_supported%22:%5B%22jkt%22%5D,
     %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 ```
 
@@ -736,16 +749,20 @@ The technology described in this specification was made available from contribut
 
     [[ To be removed from the final specification ]]
 
+    -05
+    * added RP Metadata resolution methods
+    * editorial - language in Relying Party Registration Metadata Error Response
+    
     -04
 
     * added cross device flow
-    * clarified sub handling for did-based sub and sub_jwk
+    * clarified handling for did-based sub and sub_jwk
     * Revising of introductory text and scope of SIOPv2
     * corrected typos and reworked registration example data
 
     -03
     
-    * sub_jwk made optional for sub type DID and mandatory for subtype jwk thumbprint
+    * sub_jwk made optional for Subject Syntax Type DID and mandatory for subtype jwk thumbprint
     * Added text that nonce is mandatory
     * Replaced vp claim with reference to OIDC4VP draft
     * Adopted SIOP chooser as SIOP Discovery
