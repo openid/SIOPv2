@@ -95,7 +95,9 @@ This specification defines:
 
   OpenID Connect typically leverages a registration between a Client (acting as a RP) and the OP, which pre-establishes supported functionality before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and OpenID Connect Dynamic Client Registration.
 
-  Relying Parties typically cannot pre-establish registration with a Self-Issued OP, as each End-user might be represented by a different, locally-controlled Self-Issued OP instance. This specification extends the authentication request with a mechanism with additional dynamic registration techniques for feature negotiation.
+  In a model where each End-user is represented by a different, locally-controlled Self-Issued OP instance, Relying Parties typically cannot pre-establish registration with a Self-Issued OP. In another model, when all instances of Sel-Issued OPs share the same RP registration data, it is possible for the RPs to pre-establish registration with that set of Self-Issued OPs. 
+  
+  This specification extends the authentication request with additional dynamic registration techniques.
 
 * Additional claims and processing requirements of Self-Issued ID Tokens
 
@@ -193,7 +195,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 RP MUST use custom URI scheme `openid://` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid://` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
-Note that the request using custom URI scheme `openid://` will open only Self-Issued OPs as native apps. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+Note that the request using custom URI scheme `openid://` will open only Self-Issued OPs as native apps, and does not support Self-Issued OPs as web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
 ```json
 {
@@ -270,13 +272,11 @@ Note that this section is subject to changes in mobile OS and browser mechanisms
 
 ```need to edit
 
-### Separate identifier per Self-Issued OP (better title needed)
+### Supporing multiple Self-Issued OPs (better title needed)
 
-When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs. In this scenario, the Self-Issued OP implementations would have unique identifiers, which could be used to resolve unique metadata, such as custom URI schemes, or universal links and app links.
+When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs.
 
-### Common identifier for one or more Self-Issued OPs (better title needed)
-
-The RP can also enable End-User choice while using the same URI if Self-Issued OP implementations belong to a trust framework, and the trust framework may dictacte a common identifier for a set of implementations. This identifier should be communicated to the RP as an `authorization_endpoint` URI which every Self-Issued OP supports and has registered with the underlying browser or operating system. Invocation of this endpoint then delegates the act of selecting any appropriate Self-Issued OP to the underlying browser or operating system.
+Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictacte a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-user to select a Self-Issued OP is handled by the underlying browser or operating system.
 
 ### Currently known browser behavior
 
@@ -286,9 +286,11 @@ Note: clarify why authoritative list is relevant
 Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 ```
 
-## Relying Party Registration
+## Relying Party Registration {#rp-resolution}
 
-When Self-Issued OP request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id` as defined in {#rp-resolution}. The rest of the RP Registration metadata **SHOULD** be included in the `registration` parameter inside the Self-Issued OP request, or could be included in the Entity Statement if OpenID Federation 1.0 Automatic Registration method is used.
+When Self-Issed OP request is not signed, all registration parameters **MUST** be passed using registration parameter defiend in (#rp-registration-parameter), and `client_id` **MUST** equal `redirect_uri`.
+
+When Self-Issued OP request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata **SHOULD** be included either in the `registration` parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. 
 
 `registration` parameters **MUST NOT** include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP **MUST** ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
@@ -457,7 +459,7 @@ This extension defines the following claims to be included in the ID token for u
 
 Whether the Self-Issued OP is a mobile client or a web client, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
-1. The `iss` (issuer) Claim Value is `https://self-issued.me/v2`.
+1. When static Self-Issued OP Discovery metadata has been used, the `iss` (issuer) Claim Value MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, `iss` Claim Value MUST be the issuer identifier specified in the Discovery Metadata.
 2. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a Decentralized Identifier.
 3. When `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
 4. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
@@ -505,7 +507,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 }
 ```
 
-# Cross Device SIOP
+# Cross-Device SIOP
 
 This section describes how SIOP is used in cross-device scenarios. In contrast to on-device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
@@ -539,6 +541,8 @@ Here is an example of an authentication request URL:
     &registration=%7B%22subject_syntax_types_supported%22:%5B%22jkt%22%5D,
     %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 ```
+
+Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, ther user must use particular Self-Issued OP application to scan the QR code with such request.
 
 Note: Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case.
 
@@ -741,7 +745,7 @@ The technology described in this specification was made available from contribut
     
     -04
 
-    * added cross device flow
+    * added cross-device flow
     * clarified handling for did-based sub and sub_jwk
     * Revising of introductory text and scope of SIOPv2
     * corrected typos and reworked registration example data
