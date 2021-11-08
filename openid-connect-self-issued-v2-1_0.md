@@ -171,7 +171,13 @@ Figure: Self-Issued OP Protocol Flow
 
 In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [OpenID.Discovery] and [OpenID.Registration], or out-of-band mechanisms. 
 
-However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted, and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. Self-Issued OPs utilize registration parameter and/or resolve `client_id` to obtain Relying Party metadata.
+However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted.  and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. 
+
+For Self-Issued OPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [OpenID.Fed], if `client_id` is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [DID-Core] and the rest of the metadata is obtained from the registration parameter.
+
+For the RPs, mechanisms to obtain Self-Issued OP metadata can be static or dynamic. A set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification. If the RP knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that the RP may formulate a request that does not include `authorization_endpoint` if the End-user will be receiving the request with a Self-Issued OP application whose metadata the RP knows.
+
+Note: how to mention requests not targeted at any authorization_endpoint. given the logic above, they would have to have performed dynamic SIOP discovery.
 
 ## Self-Issued OpenID Provider Invocation
 
