@@ -431,7 +431,7 @@ The following is a non-normative example of the supported RP Registration Metada
 <li><t><tt>value_not_supported</tt></t>
 
 <ul>
-<li><t>The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in <xref target="rp-metadata"></xref>. When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.</t>
+<li><t>The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in {#rp-metadata}. When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.</t>
 </li>
 </ul></li>
 </ul>
@@ -485,13 +485,13 @@ The following is a non-normative example of the supported RP Registration Metada
 <li><t><tt>registration</tt></t>
 
 <ul>
-<li><t>OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in <xref target="rp-registration-parameter"></xref>.</t>
+<li><t>OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.</t>
 </li>
 </ul></li>
 <li><t><tt>registration_uri</tt></t>
 
 <ul>
-<li><t>OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in <xref target="rp-registration-parameter"></xref>.</t>
+<li><t>OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.</t>
 </li>
 </ul></li>
 <li><t><tt>request</tt></t>
@@ -762,6 +762,24 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 
 <back>
 <references><name>Normative References</name>
+<reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
+  <front>
+    <title>Decentralized Identifiers (DIDs) v1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Amy Guy">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Markus Sabadello">
+      <organization>Danube Tech</organization>
+    </author>
+    <author fullname="Drummond Reed">
+      <organization>Evernym</organization>
+    </author>
+    <date year="2021" month="Aug" day="3"></date>
+  </front>
+</reference>
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
@@ -781,24 +799,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
       <organization>Mattr</organization>
     </author>
     <date year="2021" month="May" day="20"></date>
-  </front>
-</reference>
-<reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
-  <front>
-    <title>Decentralized Identifiers (DIDs) v1.0</title>
-    <author fullname="Manu Sporny">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Amy Guy">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Markus Sabadello">
-      <organization>Danube Tech</organization>
-    </author>
-    <author fullname="Drummond Reed">
-      <organization>Evernym</organization>
-    </author>
-    <date year="2021" month="Aug" day="3"></date>
   </front>
 </reference>
 </references>
