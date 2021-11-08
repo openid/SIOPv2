@@ -387,7 +387,7 @@ This extension defines the following error codes that MUST be returned when the 
 * `invalid_registration_object`
     * The `registration` parameter contains an invalid RP Registration Metadata Object.
 * `value_not_supported`
-    * The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in (#rp-metadata). When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.
+    * The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in {#rp-metadata}. When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.
 
 The error response must be made in the same manner as defined in Section 3.1.2.6 of [@OpenID].
 
@@ -411,9 +411,9 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `claims`
     * OPTIONAL. As specified in Section 5.5 of [@OpenID].
 * `registration`
-    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter).
+    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.
 * `registration_uri`
-    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter).
+    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.
 * `request`
     * OPTIONAL. Request Object value, as specified in Section 6.1 of [@OpenID]. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
 * `request_uri`
