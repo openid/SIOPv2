@@ -248,10 +248,10 @@ Note: handling of `jwks_uri` needs to be discussed.
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
-* `subject_identifier_types_supported`
+* `subject_syntax_types_supported
     * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and `did`.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_identifier_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
+    * OPTIONAL. A JSON array of strings representing supported DID methods, without a `did:` prefix and `:` suffix. For example, support for the DID method `did:example:` would be represented by `example` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
 
 Note: need to confirm valid `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
 Note: Make sure description of `subject_syntax_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
@@ -339,7 +339,7 @@ This extension defines the following RP Registration Metadata values, used by th
 * `subject_syntax_types_supported`
     * REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include `jkt` and `did`. For detailed description, see #sub-syntax-type.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_identifier_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
+    * OPTIONAL. A JSON array of strings representing supported DID methods without a `did:` prefix and `:` suffix. For example, support for the DID method `did:example:` would be represented by `example` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
 
 Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
 
@@ -352,8 +352,8 @@ The following is a non-normative example of the supported RP Registration Metada
     "jkt"
   ],
   "did_methods_supported": [
-    "did:key:",
-    "did:example:"
+    "key",
+    "example"
   ]
 }
 ```
