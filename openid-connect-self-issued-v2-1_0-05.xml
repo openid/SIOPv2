@@ -280,86 +280,90 @@ Note: Make sure description of <tt>subject_syntax_types_supported</tt> and <tt>d
 <t>As the <tt>authorization_endpoint</tt> of a Self-Issued OP, the use of Universal Links ot App Links is <bcp14>RECOMMENDED</bcp14> over the use of custom URI schemes.</t>
 <t>The implementors are highly encouraged to explore other options before using custom URI schemes such as <tt>openid:</tt> due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.</t>
 <t>Note that this section is subject to changes in mobile OS and browser mechanisms.</t>
-<t>```need to edit</t>
 </section>
 </section>
 
-<section anchor="separate-identifier-per-self-issued-op-better-title-needed"><name>Separate identifier per Self-Issued OP (better title needed)</name>
+<section anchor="separate-identifier-per-self-issued-op-need-to-decide-to-keep-or-not"><name>Separate identifier per Self-Issued OP (need to decide to keep or not)</name>
 <t>When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs. In this scenario, the Self-Issued OP implementations would have unique identifiers, which could be used to resolve unique metadata, such as custom URI schemes, or universal links and app links.</t>
 </section>
 
-<section anchor="common-identifier-for-one-or-more-self-issued-ops-better-title-needed"><name>Common identifier for one or more Self-Issued OPs (better title needed)</name>
+<section anchor="common-identifier-for-one-or-more-self-issued-ops-need-to-decide-to-keep-or-not"><name>Common identifier for one or more Self-Issued OPs (need to decide to keep or not)</name>
 <t>The RP can also enable End-User choice while using the same URI if Self-Issued OP implementations belong to a trust framework, and the trust framework may dictacte a common identifier for a set of implementations. This identifier should be communicated to the RP as an <tt>authorization_endpoint</tt> URI which every Self-Issued OP supports and has registered with the underlying browser or operating system. Invocation of this endpoint then delegates the act of selecting any appropriate Self-Issued OP to the underlying browser or operating system.</t>
 </section>
 
-<section anchor="currently-known-browser-behavior"><name>Currently known browser behavior</name>
+<section anchor="currently-known-browser-behavior-need-to-decide-to-keep-or-not"><name>Currently known browser behavior (need to decide to keep or not)</name>
 <t>The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including &quot;App Links&quot; and &quot;Universal Links&quot;, and <bcp14>MAY</bcp14> be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
 If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
 Note: clarify why authoritative list is relevant
 Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.</t>
+</section>
+</section>
 
-<artwork>
-## Relying Party Registration
+<section anchor="relying-party-registration"><name>Relying Party Registration</name>
+<t>When Self-Issued OP request is signed, the public key to verify the signature <bcp14>MUST</bcp14> be obtained by resolving Relying Party's <tt>client_id</tt> as defined in {#rp-resolution}. The rest of the RP Registration metadata <bcp14>SHOULD</bcp14> be included in the <tt>registration</tt> parameter inside the Self-Issued OP request, or could be included in the Entity Statement if OpenID Federation 1.0 Automatic Registration method is used.</t>
+<t><tt>registration</tt> parameters <bcp14>MUST NOT</bcp14> include <tt>redirect_uris</tt> to prevent attackers from inserting malicious Redirection URI. If <tt>registration</tt> parameter includes <tt>redirect_uris</tt>, Self-Issued OP <bcp14>MUST</bcp14> ignore it and only use <tt>redirect_uri</tt> directly supplied in the Self-Issued OP request.</t>
+<t>Note that in Self-Issued OP flow no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.</t>
 
-When Self-Issued OP request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id` as defined in {#rp-resolution}. The rest of the RP Registration metadata **SHOULD** be included in the `registration` parameter inside the Self-Issued OP request, or could be included in the Entity Statement if OpenID Federation 1.0 Automatic Registration method is used.
+<section anchor="rp-registration-parameter"><name>Relying Party Registration Parameter</name>
+<t>OpenID Connect defines the following negotiation parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:</t>
 
-`registration` parameters **MUST NOT** include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP **MUST** ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
+<ul>
+<li><t><tt>registration</tt></t>
 
-Note that in Self-Issued OP flow no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
+<ul>
+<li><t><bcp14>OPTIONAL</bcp14>. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values. The registration parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.</t>
+</li>
+</ul></li>
+<li><t><tt>registration_uri</tt></t>
 
-### Relying Party Registration Parameter {#rp-registration-parameter}
+<ul>
+<li><t><bcp14>OPTIONAL</bcp14>. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request<em>uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values. The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the <tt>registration_uri</tt> value MUST be https. The request</em>uri value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP. This parameter is used identically to the request parameter, other than that the Relying Party registration metadata value is retrieved from the resource at the specified URL.</t>
+</li>
+</ul></li>
+</ul>
+<t>If one of these parameters is used, the other MUST NOT be used in the same request.</t>
+<t>RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 <xref target="OpenID.Registration"></xref> specification.</t>
+<t>Metadata parameters should preferably be sent by reference as a URI using <tt>registration_uri</tt> parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using <tt>registration</tt> parameter.</t>
+<t><tt>registration</tt> and <tt>registration_uri</tt> parameters SHOULD NOT be used when the OP is not a Self-Issued OP.</t>
+</section>
 
-OpenID Connect defines the following negotiation parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:
+<section anchor="relying-party-metadata-resolution-methods-rp-resolution"><name>Relying Party Metadata Resolution Methods {rp-resolution}</name>
+<t>This specification defines two methods of resolving <tt>client_id</tt> of the RP to obtain RP's public key and metadata. These methods are specific to different syntaxes that the <tt>client_id</tt> may utilize.</t>
+<t>Other resolution methods may be defined in the future versions of this specification or by the Trust Frameworks.</t>
 
-* `registration` 
-  * **OPTIONAL**. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values. The registration parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
+<section anchor="openid-federation-1-0-automatic-registration"><name>OpenID Federation 1.0 Automatic Registration</name>
+<t>When Relying Party's <tt>client_id</tt> is expressed as an <tt>https</tt> URI, Automatic Registration defined in [OpenID.Federation] MUST be used.</t>
+<t>The Relying Party's Entity Identifier defined in section 1.2 of OpenID.Federation] MUST be <tt>client_id</tt>. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the <tt>jwks</tt> property in the Relying Party's Entity Statement defined in section 3.1 of [OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.</t>
+<t>Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.</t>
+</section>
 
-* `registration_uri` 
-  * **OPTIONAL**. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request_uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values. The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the `registration_uri` value MUST be https. The request_uri value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP. This parameter is used identically to the request parameter, other than that the Relying Party registration metadata value is retrieved from the resource at the specified URL.
+<section anchor="decentralized-identifier-resolution"><name>Decentralized Identifier Resolution</name>
+<t>When the Relying Party's <tt>client_id</tt> is expressed as a <tt>did</tt> URI as defined in <xref target="DID-CORE"></xref>, a public key used to sign the request MUST be obtained from the <tt>verificationMethod</tt> property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the <tt>kid</tt> in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.</t>
+<t>RP metadata other than the public key MUST be obtained from the <tt>registration</tt> parameter as defined in {#rp-registration-parameter}.</t>
+</section>
+</section>
 
-If one of these parameters is used, the other MUST NOT be used in the same request.
+<section anchor="rp-metadata"><name>Relying Party Registration Metadata Values</name>
+<t>This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:</t>
 
-RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification.
+<ul>
+<li><t><tt>subject_syntax_types_supported</tt></t>
 
-Metadata parameters should preferably be sent by reference as a URI using `registration_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `registration` parameter.
+<ul>
+<li><t>REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include <tt>jkt</tt> and <tt>did</tt>. For detailed description, see #sub-syntax-type.</t>
+</li>
+</ul></li>
+<li><t><tt>did_methods_supported</tt></t>
 
-`registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
+<ul>
+<li><t>OPTIONAL. A JSON array of strings representing supported DID methods, with a <tt>did:</tt> prefix and <tt>:</tt> suffix. For example, support for the DID method  <tt>example</tt> would be represented by <tt>did:example:</tt> as a string value. Specifying <tt>did</tt> as a supported option in <tt>subject_identifier_types_supported</tt> while omitting <tt>did_methods_supported</tt> indicates the Relying Party will attempt to support all DID methods.</t>
+</li>
+</ul></li>
+</ul>
+<t>Other registration parameters defined in <xref target="OpenID.Registration"></xref> MAY be used. Examples are explanatory parameters such as <tt>policy_uri</tt>, <tt>tos_uri</tt>, and <tt>logo_uri</tt>. If the RP uses more than one Redirection URI, the <tt>redirect_uris</tt> parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the <tt>jwks_uri</tt>, <tt>id_token_encrypted_response_alg</tt> and <tt>id_token_encrypted_response_enc</tt> parameters.</t>
+<t>The following is a non-normative example of the supported RP Registration Metadata Values:</t>
 
-### Relying Party Metadata Resolution Methods {rp-resolution}
-
-This specification defines two methods of resolving `client_id` of the RP to obtain RP's public key and metadata. These methods are specific to different syntaxes that the `client_id` may utilize. 
-
-Other resolution methods may be defined in the future versions of this specification or by the Trust Frameworks.
-
-#### OpenID Federation 1.0 Automatic Registration
-
-When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [OpenID.Federation] MUST be used. 
-
-The Relying Party's Entity Identifier defined in section 1.2 of OpenID.Federation] MUST be `client_id`. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in section 3.1 of [OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
-
-Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
-
-#### Decentralized Identifier Resolution
-
-When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@!DID-CORE], a public key used to sign the request MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
-
-RP metadata other than the public key MUST be obtained from the `registration` parameter as defined in {#rp-registration-parameter}.
-
-### Relying Party Registration Metadata Values {#rp-metadata}
-
-This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:
-
-* `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include `jkt` and `did`. For detailed description, see #sub-syntax-type.
-* `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_identifier_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
-
-Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
-
-The following is a non-normative example of the supported RP Registration Metadata Values:
-
-```json
-{
+<sourcecode type="json">{
   &quot;subject_syntax_types_supported&quot;: [
     &quot;did&quot;,
     &quot;jkt&quot;
@@ -369,7 +373,7 @@ The following is a non-normative example of the supported RP Registration Metada
     &quot;did:example:&quot;
   ]
 }
-</artwork>
+</sourcecode>
 
 <section anchor="sub-syntax-type"><name>Subject Syntax Types</name>
 <t>Subject Syntax Type refers to a type of an identifier used in a <tt>sub</tt> claim in the ID Token issued by a Self-Issued OP. <tt>sub</tt> in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.</t>
@@ -762,6 +766,39 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 
 <back>
 <references><name>Normative References</name>
+<reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
+  <front>
+    <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
+<reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
+  <front>
+    <title>Decentralized Identifiers (DIDs) v1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Amy Guy">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Markus Sabadello">
+      <organization>Danube Tech</organization>
+    </author>
+    <author fullname="Drummond Reed">
+      <organization>Evernym</organization>
+    </author>
+    <date year="2021" month="Aug" day="3"></date>
+  </front>
+</reference>
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
@@ -781,24 +818,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
       <organization>Mattr</organization>
     </author>
     <date year="2021" month="May" day="20"></date>
-  </front>
-</reference>
-<reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
-  <front>
-    <title>Decentralized Identifiers (DIDs) v1.0</title>
-    <author fullname="Manu Sporny">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Amy Guy">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Markus Sabadello">
-      <organization>Danube Tech</organization>
-    </author>
-    <author fullname="Drummond Reed">
-      <organization>Evernym</organization>
-    </author>
-    <date year="2021" month="Aug" day="3"></date>
   </front>
 </reference>
 </references>
