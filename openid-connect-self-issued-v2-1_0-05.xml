@@ -106,7 +106,7 @@
 </section>
 
 <section anchor="terms-and-definitions"><name>Terms and definitions</name>
-<t>Common terms in this document come from four primary sources: DID-CORE, VC-DATA, RFC6749 and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.</t>
+<t>Common terms in this document come from four primary sources: DID-CORE, VC-DATA and OpenID-Core. In the case where a term has a definition that differs, the definition below is authoritative.</t>
 
 <ul>
 <li><t>Trust framework</t>
@@ -161,7 +161,7 @@
 </section>
 
 <section anchor="discovery-and-registration"><name>Discovery and Registration</name>
-<t>In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [OpenID.Discovery] and [OpenID.Registration], or out-of-band mechanisms.</t>
+<t>In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using <xref target="OpenID.Discovery"></xref> and <xref target="OpenID.Registration"></xref>, or out-of-band mechanisms.</t>
 <t>However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted, and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. Self-Issued OPs utilize registration parameter and/or resolve <tt>client_id</tt> to obtain Relying Party metadata.</t>
 
 <section anchor="self-issued-openid-provider-invocation"><name>Self-Issued OpenID Provider Invocation</name>
@@ -209,10 +209,10 @@
 </section>
 
 <section anchor="dynamic-siop-metadata"><name>Dynamic Self-Issued OpenID Provider Discovery Metadata</name>
-<t>As an alternative mechanism to the <xref target="static-siop-metadata"></xref>, the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [OpenID.Discovery], or out-of-band mechanisms.</t>
-<t>How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip section 2 of [OpenID.Discovery].</t>
-<t>When [OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Selc-Issued OP made available at the path formed by concatenating the string <tt>/.well-known/openid-configuration</tt> to the Self-Issed OP's Issuer Identifier.</t>
-<t>Note that contrary to [OpenID.Discovery], <tt>jwks_uri</tt> parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it, and use <tt>sub</tt> claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider.
+<t>As an alternative mechanism to the <xref target="static-siop-metadata"></xref>, the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using <xref target="OpenID.Discovery"></xref>, or out-of-band mechanisms.</t>
+<t>How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip section 2 of <xref target="OpenID.Discovery"></xref>.</t>
+<t>When <xref target="OpenID.Discovery"></xref> is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Selc-Issued OP made available at the path formed by concatenating the string <tt>/.well-known/openid-configuration</tt> to the Self-Issed OP's Issuer Identifier.</t>
+<t>Note that contrary to <xref target="OpenID.Discovery"></xref>, <tt>jwks_uri</tt> parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it, and use <tt>sub</tt> claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider.
 Note: handling of <tt>jwks_uri</tt> needs to be discussed.</t>
 
 <ul>
@@ -273,7 +273,7 @@ Note: handling of <tt>jwks_uri</tt> needs to be discussed.</t>
 </ul>
 <t>Note: need to confirm valid <tt>alg</tt> values that we want to explicitly support for <tt>id_token_signing_alg_values_supported</tt> and  <tt>request_object_signing_alg_values_supported</tt>
 Note: Make sure description of <tt>subject_syntax_types_supported</tt> and <tt>did_methods_supported</tt> is consistent with that in the RP Registration section.</t>
-<t>Other Discovery parameters defined in section 3 of [OpenID.Discovery] MAY be used.</t>
+<t>Other Discovery parameters defined in section 3 of <xref target="OpenID.Discovery"></xref> MAY be used.</t>
 <t>The RP MUST use the <tt>authorization_endpoint</tt> defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or <tt>iss</tt> Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata.</t>
 
 <section anchor="choice-of-authoriation-endpoint"><name>Choice of <tt>authorization_endpoint</tt></name>
@@ -383,7 +383,7 @@ Operating systems also typically have a functionality by which native applicatio
 <li><t><tt>jkt</tt></t>
 
 <ul>
-<li><t>JWK Thumbprint subject syntax type. When this type is used, the <tt>sub</tt> claim value MUST be the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> claim [RFC7638], and <tt>sub_jwk</tt> MUST be included in the Self-Issued OP response.</t>
+<li><t>JWK Thumbprint subject syntax type. When this type is used, the <tt>sub</tt> claim value MUST be the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> claim <xref target="RFC7638"></xref>, and <tt>sub_jwk</tt> MUST be included in the Self-Issued OP response.</t>
 </li>
 </ul></li>
 <li><t><tt>did</tt></t>
@@ -539,7 +539,7 @@ Operating systems also typically have a functionality by which native applicatio
 <li><t><tt>sub</tt></t>
 
 <ul>
-<li><t>REQUIRED. Subject identifier value. When Subject Syntax Type is <tt>jkt</tt>, the value is the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim. When Subject Syntax Type is <tt>did</tt>, the value is a Decentralized Identifier. The thumbprint value of Subject Syntax Type <tt>jkt</tt> is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the <tt>kty</tt> value is <tt>RSA</tt>, the member names <tt>e</tt>, <tt>kty</tt>, and <tt>n</tt> are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the <tt>kty</tt> value is <tt>EC</tt>, the member names <tt>crv</tt>, <tt>kty</tt>, <tt>x</tt>, and <tt>y</tt> are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [RFC7638] specification.</t>
+<li><t>REQUIRED. Subject identifier value. When Subject Syntax Type is <tt>jkt</tt>, the value is the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim. When Subject Syntax Type is <tt>did</tt>, the value is a Decentralized Identifier. The thumbprint value of Subject Syntax Type <tt>jkt</tt> is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the <tt>kty</tt> value is <tt>RSA</tt>, the member names <tt>e</tt>, <tt>kty</tt>, and <tt>n</tt> are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the <tt>kty</tt> value is <tt>EC</tt>, the member names <tt>crv</tt>, <tt>kty</tt>, <tt>x</tt>, and <tt>y</tt> are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint <xref target="RFC7638"></xref> specification.</t>
 </li>
 </ul></li>
 <li><t><tt>sub_jwk</tt></t>
@@ -563,8 +563,8 @@ Operating systems also typically have a functionality by which native applicatio
 </ol>
 
 <section anchor="verifiable-presentation-support"><name>Verifiable Presentation Support</name>
-<t>Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations <xref target="OIDC4VP"></xref> and W3C Verifiable Credentials Specification [VC-DATA].</t>
-<t>Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA]</t>
+<t>Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations <xref target="OIDC4VP"></xref> and W3C Verifiable Credentials Specification <xref target="VC-DATA"></xref>.</t>
+<t>Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). <xref target="VC-DATA"></xref></t>
 </section>
 </section>
 
@@ -723,28 +723,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 
 <section anchor="references-1"><name>References</name>
 
-<section anchor="normative-references"><name>Normative References</name>
-
-<ul>
-<li><t>[DID-CORE] <eref target="https://www.w3.org/TR/2021/PR-did-core-20210803/">https://www.w3.org/TR/2021/PR-did-core-20210803/</eref></t>
-</li>
-<li><t>[VC-DATA] <eref target="https://www.w3.org/TR/vc-data-model/">https://www.w3.org/TR/vc-data-model/</eref></t>
-</li>
-<li><t>[RFC6749] <eref target="https://tools.ietf.org/html/rfc6749">https://tools.ietf.org/html/rfc6749</eref></t>
-</li>
-<li><t>[RFC6750] <eref target="https://tools.ietf.org/html/rfc6750">https://tools.ietf.org/html/rfc6750</eref></t>
-</li>
-<li><t>[RFC7638] <eref target="https://tools.ietf.org/html/rfc7638">https://tools.ietf.org/html/rfc7638</eref></t>
-</li>
-<li><t>[OpenID.Registration] <eref target="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</eref></t>
-</li>
-<li><t>[OpenID.Discovery] <eref target="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</eref></t>
-</li>
-<li><t>[OIDM] <eref target="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html</eref></t>
-</li>
-</ul>
-</section>
-
 <section anchor="non-normative-references"><name>Non-Normative References</name>
 
 <ul>
@@ -766,6 +744,45 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 
 <back>
 <references><name>Normative References</name>
+<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+      <organization>Salesforce</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
+<reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Edmund Jay" initials="E." surname="Jay">
+      <organization>Illumila</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
 <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
   <front>
     <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
@@ -799,6 +816,39 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
     <date year="2021" month="Aug" day="3"></date>
   </front>
 </reference>
+<reference anchor="RFC7638" target="https://tools.ietf.org/html/rfc7638">
+  <front>
+    <title>JSON Web Key (JWK) Thumbprint</title>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <date year="2015" month="Sept" day="1"></date>
+  </front>
+</reference>
+<reference anchor="VC-DATA" target="https://www.w3.org/TR/vc-data-model/">
+  <front>
+    <title>Decentralized Identifiers (DIDs) v1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Grant Noble">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Daniel C. Burnett">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Brent Zundel">
+      <organization>Evernym</organization>
+    </author>
+    <date year="2019" month="Nov" day="19"></date>
+  </front>
+</reference>
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
@@ -818,29 +868,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
       <organization>Mattr</organization>
     </author>
     <date year="2021" month="May" day="20"></date>
-  </front>
-</reference>
-</references>
-<references><name>Informative References</name>
-<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
-  <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
-    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <author fullname="John Bradley" initials="J." surname="Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author fullname="Mike Jones" initials="M." surname="Jones">
-      <organization>Microsoft</organization>
-    </author>
-    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
-      <organization>Google</organization>
-    </author>
-    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-      <organization>Salesforce</organization>
-    </author>
-    <date year="2014" month="Nov" day="8"></date>
   </front>
 </reference>
 </references>
