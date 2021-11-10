@@ -167,7 +167,7 @@ Figure: Self-Issued OP Protocol Flow
 
 # Discovery and Registration
 
-In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [OpenID.Registration], or out-of-band mechanisms.
+In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
 
 However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted, and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. Self-Issued OPs utilize registration parameter and/or resolve `client_id` to obtain Relying Party metadata.
 
@@ -231,7 +231,7 @@ How the RP obtains Self-Issued OP's issuer identifier is out of scope of this sp
 
 When [@!OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Selc-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issed OP's Issuer Identifier.
 
-Note that contrary to [@!OpenID.Discovery], `jwks_uri` parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it, and use `sub` claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider. 
+Note that contrary to [@!OpenID.Discovery], `jwks_uri` parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it, and use `sub` claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider.
 Note: handling of `jwks_uri` needs to be discussed.
 
 * `authorization_endpoint`
@@ -386,7 +386,7 @@ This extension defines the following error codes that MUST be returned when the 
 * `value_not_supported`
     * The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in {#rp-metadata}. When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.
 
-The error response must be made in the same manner as defined in Section 3.1.2.6 of [@OpenID].
+The error response must be made in the same manner as defined in Section 3.1.2.6 of [@!OpenID].
 
 
 # Identifier Portability and Verifiable Presentation Support
@@ -396,7 +396,7 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:
 
 * `scope`
-    * REQUIRED. As specified in Section 3.1.2 of [@OpenID].
+    * REQUIRED. As specified in Section 3.1.2 of [@!OpenID].
 * `response_type`
     * REQUIRED. Constant string value `id_token`.
 * `client_id`
@@ -404,17 +404,17 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `redirect_uri`
     * REQUIRED. MUST equal the `client_id` value. MUST be included for compatibility reasons.
 * `id_token_hint`
-    * OPTIONAL. As specified in Section 3.1.2 of [@OpenID]. If the ID Token is encrypted for the Self-Issued OP, the `sub` (subject) of the signed ID Token MUST be sent as the `kid` (Key ID) of the JWE.
+    * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID]. If the ID Token is encrypted for the Self-Issued OP, the `sub` (subject) of the signed ID Token MUST be sent as the `kid` (Key ID) of the JWE.
 * `claims`
-    * OPTIONAL. As specified in Section 5.5 of [@OpenID].
+    * OPTIONAL. As specified in Section 5.5 of [@!OpenID].
 * `registration`
     * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.
 * `registration_uri`
     * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.
 * `request`
-    * OPTIONAL. Request Object value, as specified in Section 6.1 of [@OpenID]. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
+    * OPTIONAL. Request Object value, as specified in Section 6.1 of [@!OpenID]. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
 * `request_uri`
-    * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@OpenID].
+    * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@!OpenID].
 
 To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
@@ -624,6 +624,28 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
 
 {backmatter}
 
+<reference anchor="VC-DATA" target="https://www.w3.org/TR/vc-data-model/">
+        <front>
+        <title>Decentralized Identifiers (DIDs) v1.0</title>
+        <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+        </author>
+        <author fullname="Grant Noble">
+            <organization>ConsenSys</organization>
+        </author>
+        <author fullname="Dave Longley">
+            <organization>Digital Bazaar</organization>
+        </author>
+        <author fullname="Daniel C. Burnett">
+            <organization>ConsenSys</organization>
+        </author>
+        <author fullname="Brent Zundel">
+            <organization>Evernym</organization>
+        </author>
+        <date day="19" month="Nov" year="2019"/>
+        </front>
+</reference>
+
 <reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
@@ -647,19 +669,19 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
 </reference>
 
 <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
-        <front>
-          <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
-		  <author fullname="Nat Sakimura">
-            <organization>NRI</organization>
-          </author>
-          <author fullname="John Bradley">
-            <organization>Ping Identity</organization>
-          </author>
-          <author fullname="Mike Jones">
-            <organization>Microsoft</organization>
-          </author>
-          <date day="8" month="Nov" year="2014"/>
-        </front>
+  <front>
+    <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
+	  <author fullname="Nat Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <date day="8" month="Nov" year="2014"/>
+  </front>
  </reference>
 
 <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
@@ -682,25 +704,25 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
 </reference>
 
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
-      <front>
-        <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
-        <author initials="O." surname="Terbu" fullname="Oliver Terbu">
-         <organization>ConsenSys Mesh</organization>
-        </author>
-        <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-          <organization>yes.com</organization>
-        </author>
-        <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
-          <organization>Microsoft</organization>
-        </author>
-        <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
-          <organization>Convergence.tech</organization>
-        </author>
-        <author initials="T." surname="Looker" fullname="Tobias Looker">
-          <organization>Mattr</organization>
-        </author>
-       <date day="20" month="May" year="2021"/>
-      </front>
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author initials="O." surname="Terbu" fullname="Oliver Terbu">
+      <organization>ConsenSys Mesh</organization>
+    </author>
+    <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
+      <organization>Microsoft</organization>
+    </author>
+    <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
+      <organization>Convergence.tech</organization>
+    </author>
+    <author initials="T." surname="Looker" fullname="Tobias Looker">
+      <organization>Mattr</organization>
+    </author>
+    <date day="20" month="May" year="2021"/>
+  </front>
 </reference>
 
 <reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
@@ -719,28 +741,6 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
             <organization>Evernym</organization>
         </author>
         <date day="3" month="Aug" year="2021"/>
-        </front>
-</reference>
-
-<reference anchor="VC-DATA" target="https://www.w3.org/TR/vc-data-model/">
-        <front>
-        <title>Decentralized Identifiers (DIDs) v1.0</title>
-        <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-        </author>
-        <author fullname="Grant Noble">
-            <organization>ConsenSys</organization>
-        </author>
-        <author fullname="Dave Longley">
-            <organization>Digital Bazaar</organization>
-        </author>
-        <author fullname="Daniel C. Burnett">
-            <organization>ConsenSys</organization>
-        </author>
-        <author fullname="Brent Zundel">
-            <organization>Evernym</organization>
-        </author>
-        <date day="19" month="Nov" year="2019"/>
         </front>
 </reference>
 
