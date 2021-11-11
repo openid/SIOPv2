@@ -692,8 +692,6 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 
 ## Non-Normative References
 
-* [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
-* [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
 * [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
 
 # Relationships to other documents
