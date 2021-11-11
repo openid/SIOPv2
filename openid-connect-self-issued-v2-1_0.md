@@ -251,8 +251,8 @@ Note: handling of `jwks_uri` needs to be discussed.
 * `subject_syntax_types_supported
     * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and `did`.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, without a `did:` prefix and `:` suffix. For example, support for the DID method `did:example:` would be represented by `example` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
-
+    * OPTIONAL. A JSON array of strings representing supported DID methods, without a `did:` prefix and `:` suffix. The ABNF definition of a DID syntax is `did = "did:" method-name ":" method-specific-id`. For example, support for the DID method with a method-name "example" would be represented by `example` as a string value in the Discovery metadata. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
+    
 Note: need to confirm valid `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
 Note: Make sure description of `subject_syntax_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
 
@@ -614,8 +614,6 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 
 ## Non-Normative References
 
-* [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
-* [siop-requirements] https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md
 * [OIX] https://openidentityexchange.org/networks/87/item.html?id=365
 
 # Relationships to other documents
