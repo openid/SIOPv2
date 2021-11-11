@@ -171,7 +171,7 @@ Figure: Self-Issued OP Protocol Flow
 
 In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
 
-However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted.  and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. 
+However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted,  and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. 
 
 For Self-Issued OPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [OpenID.Fed], if `client_id` is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [DID-Core] and the rest of the metadata is obtained from the registration parameter.
 
@@ -282,7 +282,7 @@ Below is a non-normative example of a Self-Issued OP metadata obtained dynamical
 ```json
 {
   "authorization_endpoint": "siop:", //need a sample of a universal link
-  "issuer": "https://sample-siop.com",
+  "issuer": "https://example.com",
   "response_types_supported": [
     "id_token"
   ],
@@ -317,19 +317,9 @@ The implementors are highly encouraged to explore other options before using cus
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
 
-<<<<<<< HEAD
-```need to decide to leave or not the part below
-=======
-### Separate identifier per Self-Issued OP (need to decide to keep or not)
->>>>>>> b3e2c9db6ec57e6d632d81690b74d07073dec244
+### Supporing multiple Self-Issued OPs (need to decide to keep or not)
 
-### Supporing multiple Self-Issued OPs (better title needed)
-
-<<<<<<< HEAD
 When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs.
-=======
-### Common identifier for one or more Self-Issued OPs (need to decide to keep or not)
->>>>>>> b3e2c9db6ec57e6d632d81690b74d07073dec244
 
 Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictacte a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-user to select a Self-Issued OP is handled by the underlying browser or operating system.
 
@@ -339,11 +329,6 @@ The browser or operating system typically has a process by which native applicat
 If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
 Note: clarify why authoritative list is relevant
 Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
-<<<<<<< HEAD
-
-```
-=======
->>>>>>> b3e2c9db6ec57e6d632d81690b74d07073dec244
 
 ## Relying Party Registration {#rp-resolution}
 
@@ -390,7 +375,7 @@ Note that to use Automatic Registration, clients would be required to have an in
 Below is a non-normative example of a `client_id` resolvable using OpenID Federation 1.0 Automatic Registration:
 
 ```json
-"client_id": "https://sample-siop.com"
+"client_id": "https://example.com"
 ```
 
 #### Decentralized Identifier Resolution
@@ -402,7 +387,7 @@ RP metadata other than the public key MUST be obtained from the `registration` p
 Below is a non-normative example of a `client_id` resolvable using Decentralized Identifier Resolution:
 
 ```json
-"client_id": "did:sample:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
+"client_id": "did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
 ```
 
 ### Relying Party Registration Metadata Values {#rp-metadata}
@@ -530,36 +515,9 @@ Note: What would be a use-case when `i_am_siop` is set to false...
 
 Whether the Self-Issued OP is a mobile client or a web client, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
-<<<<<<< HEAD
 1. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a Decentralized Identifier.
 1. When `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
 1. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
-=======
-1. The `iss` (issuer) Claim Value is `https://self-issued.me/v2`.
-2. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a Decentralized Identifier.
-3. When `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
-4. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
-
-## Verifiable Presentation Support
-
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
-
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
-
-
-# Self-Issued ID Token Validation {#siop-id_token-validation}
-See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
-
-To validate the ID Token received, the RP MUST do the following:
-
-1. The Relying Party (RP) MUST validate that the value of the `iss` (issuer) Claim equals to the `authorization_endpoint` in the Self-Issued OP metadata. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When dynamic Self-Issued OP Discovery metadata has been performed, `iss` MUST exactly match the `issuer` identifier pre-obtained by the RP.
-1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `redirect_uri` that the RP sent in the Authentication Request as an audience.
-1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is `jkt`, validation is done according to JWS [JWS] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is `did`, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contian multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
-2. The RP MUST validate the `sub` value. When Subject Syntax Type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is `did`, the RP MUST validate that the `sub` claim value equals the `id` property in the DID Document. 
-3. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
- The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
-2. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
->>>>>>> b3e2c9db6ec57e6d632d81690b74d07073dec244
 
 The following is a non-normative example of a base64url decoded Self-Issued ID Token body (with line wraps within values for display purposes only):
 
@@ -601,20 +559,20 @@ To validate the ID Token received, the RP MUST do the following:
 1. The RP MUST identify which Subject Syntax Type is used. If the `sub` claim is a decentralized identifier, the Subject Syntax Type is `did`. If the `sub` claims is NOT a decentralized identifier, and a `sub_jwk` claim is present, the Subject Syntax Type is `jwk`.
 Note: needs further discussion.
 1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is `jkt`, validation is done according to JWS [JWS] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is `did`, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contian multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
-2. The RP MUST validate the `sub` value. When Subject Syntax Type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is `did`, the RP MUST validate that the `sub` claim value equals the `id` property in the DID Document. 
-3. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
+1. The RP MUST validate the `sub` value. When Subject Syntax Type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is `did`, the RP MUST validate that the `sub` claim value equals the `id` property in the DID Document. 
+1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
-2. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 # Cross-Device SIOP
 
 This section describes how SIOP is used in cross-device scenarios. In contrast to on-device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
 1. The RP prepares a SIOP request and renders it as a QR code.
-2. The user scans the QR code with her smartphone's camera app.
-3. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the `openid` custom scheme).
-4. The SIOP processes the authentication request.
-5. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
+1. The user scans the QR code with her smartphone's camera app.
+1. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the `openid` custom scheme).
+1. The SIOP processes the authentication request.
+1. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
 Note: The request in Step 5 is not a form post request where the SIOP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The SIOP sends this request directly to the RP's endpoint.
 
@@ -732,18 +690,6 @@ Consider supporting selective disclosure and un-linkable presentations using zer
 
 # References
 
-<<<<<<< HEAD
-## Normative References
-
-* [VC-DATA] https://www.w3.org/TR/vc-data-model/
-* [RFC6749] https://tools.ietf.org/html/rfc6749
-* [RFC6750] https://tools.ietf.org/html/rfc6750
-* [RFC7638] https://tools.ietf.org/html/rfc7638
-* [OpenID.Discovery] https://openid.net/specs/openid-connect-discovery-1_0.html
-* [OIDM] https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
-
-=======
->>>>>>> b3e2c9db6ec57e6d632d81690b74d07073dec244
 ## Non-Normative References
 
 * [draft-jones-self_issued_identifier] https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md
