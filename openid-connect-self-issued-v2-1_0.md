@@ -95,7 +95,7 @@ This specification defines:
 
   OpenID Connect typically leverages a registration between a Client (acting as a RP) and the OP, which pre-establishes supported functionality before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and OpenID Connect Dynamic Client Registration.
 
-  In a model where each End-user is represented by a different, locally-controlled Self-Issued OP instance, Relying Parties typically cannot pre-establish registration with a Self-Issued OP. In another model, when all instances of Sel-Issued OPs share the same RP registration data, it is possible for the RPs to pre-establish registration with that set of Self-Issued OPs. 
+  In a model where each End-user is represented by a different, locally-controlled Self-Issued OP instance, Relying Parties typically cannot pre-establish registration with a Self-Issued OP. In another model, when all instances of Self-Issued OPs share the same RP registration data, it is possible for the RPs to pre-establish registration with that set of Self-Issued OPs. 
   
   This specification extends the authentication request with additional dynamic registration techniques.
 
@@ -177,7 +177,7 @@ For Self-Issued OPs, mechanisms to obtain Relying Party metadata depend on wheth
 
 For the RPs, mechanisms to obtain Self-Issued OP metadata can be static or dynamic. A set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification. If the RP knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that the RP may formulate a request that does not include `authorization_endpoint` if the End-user will be receiving the request with a Self-Issued OP application whose metadata the RP knows.
 
-Note: how to mention requests not targeted at any authorization_endpoint. given the logic above, they would have to have performed dynamic SIOP discovery.
+Note: How to mention requests not targeted at any authorization_endpoint. given the logic above, they would have to have performed dynamic SIOP discovery.
 
 ## Self-Issued OpenID Provider Invocation
 
@@ -263,10 +263,10 @@ Note: handling of `jwks_uri` needs to be discussed.
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT [JWT]. Valid values include `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
-* `subject_identifier_types_supported`
+* `subject_syntax_types_supported`
     * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and `did`.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_identifier_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
+    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
 
 Note: need to confirm valid `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
 Note: Make sure description of `subject_syntax_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
@@ -300,7 +300,7 @@ Below is a non-normative example of a Self-Issued OP metadata obtained dynamical
     "ES256K",
     "EdDSA"  
   ],
-  "subject_identifier_types_supported": [
+  "subject_syntax_types_supported": [
     "did"
   ],
   "did_methods_supported": [
@@ -332,13 +332,13 @@ Operating systems also typically have a functionality by which native applicatio
 
 ## Relying Party Registration {#rp-resolution}
 
-When Self-Issed OP request is not signed, all registration parameters **MUST** be passed using registration parameter defined in (#rp-registration-parameter), or using out-of-band mechanism. In this case, `client_id` **MUST** equal `redirect_uri`.
+When the Self-Issed OP request is not signed, all registration parameters **MUST** be passed using registration parameter defined in (#rp-registration-parameter), or using out-of-band mechanism. In this case, `client_id` **MUST** equal `redirect_uri`.
 
-When Self-Issued OP request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata **SHOULD** be included either in the `registration` parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, `client_id` would not equal `redirect_uri`.
+When the Self-Issued OP request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata **SHOULD** be included either in the `registration` parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, `client_id` would not equal `redirect_uri`.
 
 `registration` parameters **MUST NOT** include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP **MUST** ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
-Note that in Self-Issued OP flow, NO registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
+Note that in Self-Issued OP flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
 ### Relying Party Registration Parameter {#rp-registration-parameter}
 
@@ -397,7 +397,7 @@ This extension defines the following RP Registration Metadata values, used by th
 * `subject_syntax_types_supported`
     * REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include `jkt` and `did`. For detailed description, see #sub-syntax-type.
 * `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_identifier_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
+    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
 
 Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
 
@@ -562,7 +562,7 @@ Note: needs further discussion.
 1. The RP MUST validate the `sub` value. When Subject Syntax Type is `jkt`, the RP MUST validate that the `sub` claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is `did`, the RP MUST validate that the `sub` claim value equals the `id` property in the DID Document. 
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
-1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 # Cross-Device SIOP
 
