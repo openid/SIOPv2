@@ -275,7 +275,7 @@ Other Discovery parameters defined in section 3 of [@!OpenID.Discovery] MAY be u
 
 The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
 
-Note that an additional `i_am_siop` Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP, when dynamic Self-Issued OpenID Provider discovery has been used.
+An additional `i_am_siop` Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP, when dynamic Self-Issued OpenID Provider discovery has been used.
 
 Below is a non-normative example of a Self-Issued OP metadata obtained dynamically:
 
@@ -316,19 +316,6 @@ As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links 
 The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid:` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
-
-### Supporing multiple Self-Issued OPs (need to decide to keep or not)
-
-When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs.
-
-Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictacte a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-user to select a Self-Issued OP is handled by the underlying browser or operating system.
-
-### Currently known browser behavior (need to decide to keep or not)
-
-The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and **MAY** be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
-If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
-Note: clarify why authoritative list is relevant
-Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
 ## Relying Party Registration {#rp-resolution}
 
@@ -655,20 +642,6 @@ The following is a non-normative example of an ID token containing a verifiable 
 
 Note: Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
-# Examples
-
-## Static SIOP metadata and an unsigned request
-// placeholder
-
-## Statis SIOP metadata and request signed using DIDs
-//placeholder
-
-## Statis SIOP metadata and request signed using OpenID Federation Automatic registration
-// placeholder
-
-## dynamic SIOP metadata and an unsigned request
-// placeholder
-
 # Security Considerations
 
 ## Invocation using Custom Schema {#invocation-using-custom-schema}
@@ -684,9 +657,41 @@ When more than one Self-issued OP with the same custom schema has been installed
 # Privacy Considerations
 
 ## Selective disclosure and un-linkable presentations
+
 Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.
 
 Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
+
+# Implementation Considerations
+
+## Supporing multiple Self-Issued OPs 
+
+When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs.
+
+Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictacte a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-user to select a Self-Issued OP is handled by the underlying browser or operating system.
+
+## Currently known browser behavior
+
+The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and **MAY** be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
+
+If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
+Note: clarify why authoritative list is relevant
+
+Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
+
+# Examples
+
+## Static SIOP metadata and an unsigned request
+// placeholder
+
+## Statis SIOP metadata and request signed using DIDs
+//placeholder
+
+## Statis SIOP metadata and request signed using OpenID Federation Automatic registration
+// placeholder
+
+## dynamic SIOP metadata and an unsigned request
+// placeholder
 
 # References
 
