@@ -646,6 +646,14 @@ Note: Further processing steps are required if the authentication response conta
 
 # Security Considerations
 
+## Usage of Self-Issued OP for Authentication
+
+A known attack in cross-device SIOP is a session replay attack, where a victim is tricked to send a response to a request that an RP has generated for an attacker. Attacker would trick a victim to respond to a request that an attacker has generated for him/herself at a good RP.
+
+Implementors should be cautious when using cross-device Self-Issued OP model for Authentication, and should implement mitigations according to the desired security level. 
+
+This attack does not apply for the same-device Self-Issued OP flows, and they can be used for Authentication, given all other security measure are put in place.
+
 ## Invocation using Custom Schema {#invocation-using-custom-schema}
 
 Usage of custom schemas as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior.
