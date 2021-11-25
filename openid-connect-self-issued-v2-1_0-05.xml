@@ -74,7 +74,8 @@
 </li>
 </ul>
 <t>OpenID Connect typically leverages a registration between a Client (acting as a RP) and the OP, which pre-establishes supported functionality before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and OpenID Connect Dynamic Client Registration.</t>
-<t>Relying Parties typically cannot pre-establish registration with a Self-Issued OP, as each End-user might be represented by a different, locally-controlled Self-Issued OP instance. This specification extends the authentication request with a mechanism with additional dynamic registration techniques for feature negotiation.</t>
+<t>In a model where each End-user is represented by a different, locally-controlled Self-Issued OP instance, Relying Parties typically cannot pre-establish registration with a Self-Issued OP. In another model, when all instances of Self-Issued OPs share the same RP registration data, it is possible for the RPs to pre-establish registration with that set of Self-Issued OPs.</t>
+<t>This specification extends the authentication request with additional dynamic registration techniques.</t>
 
 <ul>
 <li><t>Additional claims and processing requirements of Self-Issued ID Tokens</t>
@@ -162,13 +163,25 @@
 
 <section anchor="discovery-and-registration"><name>Discovery and Registration</name>
 <t>In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using <xref target="OpenID.Discovery"></xref> and <xref target="OpenID.Registration"></xref>, or out-of-band mechanisms.</t>
-<t>However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted, and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request. Self-Issued OPs utilize registration parameter and/or resolve <tt>client_id</tt> to obtain Relying Party metadata.</t>
+<t>However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted,  and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request.</t>
+<t>For Self-Issued OPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of <tt>client_id</tt> and the resolution method used. If <tt>client_id</tt> is HTTPS URL, <tt>client_id</tt> is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [OpenID.Fed], if <tt>client_id</tt> is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [DID-Core] and the rest of the metadata is obtained from the registration parameter.</t>
+<t>For the RPs, mechanisms to obtain Self-Issued OP metadata can be static or dynamic. A set of static metadata to be used with <tt>openid:</tt> as an <tt>authorization_endpoint</tt> is defined in this specification. If the RP knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including <tt>authorization_endpoint</tt> used to invoke a Self-Issued OP. Note that the RP may formulate a request that does not include <tt>authorization_endpoint</tt> if the End-user will be receiving the request with a Self-Issued OP application whose metadata the RP knows.</t>
+<t>Note: How to mention requests not targeted at any authorization_endpoint. given the logic above, they would have to have performed dynamic SIOP discovery.</t>
 
 <section anchor="self-issued-openid-provider-invocation"><name>Self-Issued OpenID Provider Invocation</name>
 <t>When the End-user first interacts with the RP, there are currently no established, robust means to signal which OpenID Providers to invoke, because applications cannot reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.</t>
 <t>When the RP sends the request to the Self-Issued OP, there are two scenarios how to reach and invoke an application that can process that request.</t>
 <t>In the first scenario, request is encoded in a QR code, and the End-user scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specfiic <tt>authorization_endpoint</tt> of a Self-Issued OP. Note that this will not work in a same-device Self-Issued OP flow, when the RP and the Self-Issued OP are on the same device.</t>
 <t>In the second scenario, request includes <tt>authorization_endpoint</tt> of a Self-Issued OP, and will open a target application. In this scenario, there are two ways of how RP can obtain <tt>authorization_endpoint</tt> of the Self-Issued OP to contruct a targeted request as defined in <xref target="siop-discovery"></xref>, either using the static set of Self-Issued OP metadata, or by pre-obtaining <tt>authorization_endpoint</tt>. Note that this flow would work both for the same-device Self-Issued OP flow and the cross-device Self-Issued OP flow.</t>
+<t>The following is a non-normative example of a request is not intended for a specific <tt>authorization_endpoint</tt> and must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device (line wraps within values are for display purposes only):</t>
+
+<artwork>    response_type=id_token
+    &amp;client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &amp;request_uri=https%3A%2F%2Fclient.example.org%2Frequest
+    &amp;scope=openid%20profile
+    &amp;state=af0ifjsldkj
+    &amp;nonce=n-0S6_WzA2Mj
+</artwork>
 </section>
 
 <section anchor="siop-discovery"><name>Self-Issued OpenID Provider Discovery</name>
@@ -177,8 +190,6 @@
 
 <section anchor="static-siop-metadata"><name>Static Self-Issued OpenID Provider Discovery Metadata</name>
 <t>When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used.</t>
-<t>RP MUST use custom URI scheme <tt>openid://</tt> as the <tt>authorization_endpoint</tt> to construct the request. Self-Issued OPs invoked via <tt>openid://</tt> MUST set issuer identifier, or <tt>iss</tt> Claim in the ID Token to <tt>https://self-issued.me/v2</tt>.</t>
-<t>Note that the request using custom URI scheme <tt>openid://</tt> will open only Self-Issued OPs as native apps. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in <xref target="choice-of-authoriation-endpoint"></xref>.</t>
 
 <sourcecode type="json">{
   &quot;authorization_endpoint&quot;: &quot;openid:&quot;,
@@ -187,11 +198,7 @@
     &quot;id_token&quot;
   ],
   &quot;scopes_supported&quot;: [
-    &quot;openid&quot;,
-    &quot;profile&quot;,
-    &quot;email&quot;,
-    &quot;address&quot;,
-    &quot;phone&quot;
+    &quot;openid&quot;
   ],
   &quot;subject_types_supported&quot;: [
     &quot;pairwise&quot;
@@ -206,6 +213,8 @@
   ]
 }
 </sourcecode>
+<t>RP MUST use custom URI scheme <tt>openid:</tt> as the <tt>authorization_endpoint</tt> to construct the request. Self-Issued OPs invoked via <tt>openid:</tt> MUST set issuer identifier, or <tt>iss</tt> Claim in the ID Token to <tt>https://self-issued.me/v2</tt>.</t>
+<t>Note that the request using custom URI scheme <tt>openid:</tt> will open only Self-Issued OPs as native apps, and does not support Self-Issued OPs as web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in <xref target="choice-of-authoriation-endpoint"></xref>.</t>
 </section>
 
 <section anchor="dynamic-siop-metadata"><name>Dynamic Self-Issued OpenID Provider Discovery Metadata</name>
@@ -258,7 +267,7 @@ Note: handling of <tt>jwks_uri</tt> needs to be discussed.</t>
 <li><t>REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of <xref target="OpenID"></xref>. Valid values include <tt>none</tt>, <tt>RS256</tt>, <tt>ES256</tt>, <tt>ES256K</tt>, and <tt>EdDSA</tt>.</t>
 </li>
 </ul></li>
-<li><t><tt>subject_identifier_types_supported</tt></t>
+<li><t><tt>subject_syntax_types_supported</tt></t>
 
 <ul>
 <li><t>REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include <tt>jkt</tt> and <tt>did</tt>.</t>
@@ -267,7 +276,7 @@ Note: handling of <tt>jwks_uri</tt> needs to be discussed.</t>
 <li><t><tt>did_methods_supported</tt></t>
 
 <ul>
-<li><t>OPTIONAL. A JSON array of strings representing supported DID methods, with a <tt>did:</tt> prefix and <tt>:</tt> suffix. For example, support for the DID method  <tt>example</tt> would be represented by <tt>did:example:</tt> as a string value. Specifying <tt>did</tt> as a supported option in <tt>subject_identifier_types_supported</tt> while omitting <tt>did_methods_supported</tt> indicates the Self-Issued OP will attempt to support all DID methods.</t>
+<li><t>OPTIONAL. A JSON array of strings representing supported DID methods, with a <tt>did:</tt> prefix and <tt>:</tt> suffix. For example, support for the DID method  <tt>example</tt> would be represented by <tt>did:example:</tt> as a string value. Specifying <tt>did</tt> as a supported option in <tt>subject_syntax_types_supported</tt> while omitting <tt>did_methods_supported</tt> indicates the Self-Issued OP will attempt to support all DID methods.</t>
 </li>
 </ul></li>
 </ul>
@@ -275,6 +284,37 @@ Note: handling of <tt>jwks_uri</tt> needs to be discussed.</t>
 Note: Make sure description of <tt>subject_syntax_types_supported</tt> and <tt>did_methods_supported</tt> is consistent with that in the RP Registration section.</t>
 <t>Other Discovery parameters defined in section 3 of <xref target="OpenID.Discovery"></xref> MAY be used.</t>
 <t>The RP MUST use the <tt>authorization_endpoint</tt> defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or <tt>iss</tt> Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata.</t>
+<t>An additional <tt>i_am_siop</tt> Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP, when dynamic Self-Issued OpenID Provider discovery has been used.</t>
+<t>Below is a non-normative example of a Self-Issued OP metadata obtained dynamically:</t>
+
+<sourcecode type="json">{
+  &quot;authorization_endpoint&quot;: &quot;siop:&quot;, //need a sample of a universal link
+  &quot;issuer&quot;: &quot;https://example.com&quot;,
+  &quot;response_types_supported&quot;: [
+    &quot;id_token&quot;
+  ],
+  &quot;scopes_supported&quot;: [
+    &quot;openid&quot;
+  ],
+  &quot;subject_types_supported&quot;: [
+    &quot;pairwise&quot;
+  ],
+  &quot;id_token_signing_alg_values_supported&quot;: [
+    &quot;ES256K&quot;,
+    &quot;EdDSA&quot;
+  ],
+  &quot;request_object_signing_alg_values_supported&quot;: [
+    &quot;ES256K&quot;,
+    &quot;EdDSA&quot;  
+  ],
+  &quot;subject_syntax_types_supported&quot;: [
+    &quot;did&quot;
+  ],
+  &quot;did_methods_supported&quot;: [
+    &quot;example&quot;
+  ]
+}
+</sourcecode>
 
 <section anchor="choice-of-authoriation-endpoint"><name>Choice of <tt>authorization_endpoint</tt></name>
 <t>As the <tt>authorization_endpoint</tt> of a Self-Issued OP, the use of Universal Links ot App Links is <bcp14>RECOMMENDED</bcp14> over the use of custom URI schemes.</t>
@@ -282,27 +322,13 @@ Note: Make sure description of <tt>subject_syntax_types_supported</tt> and <tt>d
 <t>Note that this section is subject to changes in mobile OS and browser mechanisms.</t>
 </section>
 </section>
-
-<section anchor="separate-identifier-per-self-issued-op-need-to-decide-to-keep-or-not"><name>Separate identifier per Self-Issued OP (need to decide to keep or not)</name>
-<t>When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs. In this scenario, the Self-Issued OP implementations would have unique identifiers, which could be used to resolve unique metadata, such as custom URI schemes, or universal links and app links.</t>
 </section>
 
-<section anchor="common-identifier-for-one-or-more-self-issued-ops-need-to-decide-to-keep-or-not"><name>Common identifier for one or more Self-Issued OPs (need to decide to keep or not)</name>
-<t>The RP can also enable End-User choice while using the same URI if Self-Issued OP implementations belong to a trust framework, and the trust framework may dictacte a common identifier for a set of implementations. This identifier should be communicated to the RP as an <tt>authorization_endpoint</tt> URI which every Self-Issued OP supports and has registered with the underlying browser or operating system. Invocation of this endpoint then delegates the act of selecting any appropriate Self-Issued OP to the underlying browser or operating system.</t>
-</section>
-
-<section anchor="currently-known-browser-behavior-need-to-decide-to-keep-or-not"><name>Currently known browser behavior (need to decide to keep or not)</name>
-<t>The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including &quot;App Links&quot; and &quot;Universal Links&quot;, and <bcp14>MAY</bcp14> be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
-If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
-Note: clarify why authoritative list is relevant
-Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.</t>
-</section>
-</section>
-
-<section anchor="relying-party-registration"><name>Relying Party Registration</name>
-<t>When Self-Issued OP request is signed, the public key to verify the signature <bcp14>MUST</bcp14> be obtained by resolving Relying Party's <tt>client_id</tt> as defined in {#rp-resolution}. The rest of the RP Registration metadata <bcp14>SHOULD</bcp14> be included in the <tt>registration</tt> parameter inside the Self-Issued OP request, or could be included in the Entity Statement if OpenID Federation 1.0 Automatic Registration method is used.</t>
+<section anchor="rp-resolution"><name>Relying Party Registration</name>
+<t>When the Self-Issed OP request is not signed, all registration parameters <bcp14>MUST</bcp14> be passed using registration parameter defined in <xref target="rp-registration-parameter"></xref>, or using out-of-band mechanism. In this case, <tt>client_id</tt> <bcp14>MUST</bcp14> equal <tt>redirect_uri</tt>.</t>
+<t>When the Self-Issued OP request is signed, the public key to verify the signature <bcp14>MUST</bcp14> be obtained by resolving Relying Party's <tt>client_id</tt>. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata <bcp14>SHOULD</bcp14> be included either in the <tt>registration</tt> parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, <tt>client_id</tt> would not equal <tt>redirect_uri</tt>.</t>
 <t><tt>registration</tt> parameters <bcp14>MUST NOT</bcp14> include <tt>redirect_uris</tt> to prevent attackers from inserting malicious Redirection URI. If <tt>registration</tt> parameter includes <tt>redirect_uris</tt>, Self-Issued OP <bcp14>MUST</bcp14> ignore it and only use <tt>redirect_uri</tt> directly supplied in the Self-Issued OP request.</t>
-<t>Note that in Self-Issued OP flow no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.</t>
+<t>Note that in Self-Issued OP flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.</t>
 
 <section anchor="rp-registration-parameter"><name>Relying Party Registration Parameter</name>
 <t>OpenID Connect defines the following negotiation parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:</t>
@@ -327,7 +353,7 @@ Operating systems also typically have a functionality by which native applicatio
 <t><tt>registration</tt> and <tt>registration_uri</tt> parameters SHOULD NOT be used when the OP is not a Self-Issued OP.</t>
 </section>
 
-<section anchor="relying-party-metadata-resolution-methods-rp-resolution"><name>Relying Party Metadata Resolution Methods {rp-resolution}</name>
+<section anchor="rp-resolution-parameter"><name>Relying Party Metadata Resolution Methods</name>
 <t>This specification defines two methods of resolving <tt>client_id</tt> of the RP to obtain RP's public key and metadata. These methods are specific to different syntaxes that the <tt>client_id</tt> may utilize.</t>
 <t>Other resolution methods may be defined in the future versions of this specification or by the Trust Frameworks.</t>
 
@@ -335,11 +361,19 @@ Operating systems also typically have a functionality by which native applicatio
 <t>When Relying Party's <tt>client_id</tt> is expressed as an <tt>https</tt> URI, Automatic Registration defined in [OpenID.Federation] MUST be used.</t>
 <t>The Relying Party's Entity Identifier defined in section 1.2 of OpenID.Federation] MUST be <tt>client_id</tt>. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the <tt>jwks</tt> property in the Relying Party's Entity Statement defined in section 3.1 of [OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.</t>
 <t>Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.</t>
+<t>Below is a non-normative example of a <tt>client_id</tt> resolvable using OpenID Federation 1.0 Automatic Registration:</t>
+
+<sourcecode type="json">&quot;client_id&quot;: &quot;https://example.com&quot;
+</sourcecode>
 </section>
 
 <section anchor="decentralized-identifier-resolution"><name>Decentralized Identifier Resolution</name>
 <t>When the Relying Party's <tt>client_id</tt> is expressed as a <tt>did</tt> URI as defined in <xref target="DID-CORE"></xref>, a public key used to sign the request MUST be obtained from the <tt>verificationMethod</tt> property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the <tt>kid</tt> in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.</t>
 <t>RP metadata other than the public key MUST be obtained from the <tt>registration</tt> parameter as defined in {#rp-registration-parameter}.</t>
+<t>Below is a non-normative example of a <tt>client_id</tt> resolvable using Decentralized Identifier Resolution:</t>
+
+<sourcecode type="json">&quot;client_id&quot;: &quot;did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA&quot;
+</sourcecode>
 </section>
 </section>
 
@@ -356,7 +390,7 @@ Operating systems also typically have a functionality by which native applicatio
 <li><t><tt>did_methods_supported</tt></t>
 
 <ul>
-<li><t>OPTIONAL. A JSON array of strings representing supported DID methods, with a <tt>did:</tt> prefix and <tt>:</tt> suffix. For example, support for the DID method  <tt>example</tt> would be represented by <tt>did:example:</tt> as a string value. Specifying <tt>did</tt> as a supported option in <tt>subject_identifier_types_supported</tt> while omitting <tt>did_methods_supported</tt> indicates the Relying Party will attempt to support all DID methods.</t>
+<li><t>OPTIONAL. A JSON array of strings representing supported DID methods, with a <tt>did:</tt> prefix and <tt>:</tt> suffix. For example, support for the DID method  <tt>example</tt> would be represented by <tt>did:example:</tt> as a string value. Specifying <tt>did</tt> as a supported option in <tt>subject_syntax_types_supported</tt> while omitting <tt>did_methods_supported</tt> indicates the Relying Party will attempt to support all DID methods.</t>
 </li>
 </ul></li>
 </ul>
@@ -441,9 +475,6 @@ Operating systems also typically have a functionality by which native applicatio
 </ul>
 <t>The error response must be made in the same manner as defined in Section 3.1.2.6 of <xref target="OpenID"></xref>.</t>
 </section>
-</section>
-
-<section anchor="identifier-portability-and-verifiable-presentation-support"><name>Identifier Portability and Verifiable Presentation Support</name>
 </section>
 
 <section anchor="siop_authentication_request"><name>Self-Issued OpenID Provider Request</name>
@@ -545,46 +576,26 @@ Operating systems also typically have a functionality by which native applicatio
 <li><t><tt>sub_jwk</tt></t>
 
 <ul>
-<li><t>REQUIRED. A JSON object for a secure binding between the subject of the verifiable credential and the subject identifier (and related keys) of the holder who creates the presentation. When Subject Syntax Type is <tt>jkt</tt>, the key is a bare key in JWK [JWK] format (not an X.509 certificate value). When Subject Syntax Type is <tt>did</tt>, <tt>sub_jwk</tt> MUST contain a <tt>kid</tt> member that is a DID URL referring to the verification method in the Self-Issued OP's DID Document that can be used to verify the JWS of the ID Token directly or indirectly. Use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
+<li><t>OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is <tt>jkt</tt>. The key is a bare key in JWK [JWK] format (not an X.509 certificate value). MUST NOT be present only when Subject Syntax Type other than <tt>jkt</tt> is used.</t>
+</li>
+</ul></li>
+<li><t><tt>i_am_siop</tt></t>
+
+<ul>
+<li><t>OPTIONAL. Boolean. It MUST be set to <tt>true</tt> and be included when Self-Issued OP Discovery metadata has been obtained dynamically.
+Note: What would be a use-case when <tt>i_am_siop</tt> is set to false...</t>
 </li>
 </ul></li>
 </ul>
+<t>Note that the use of the <tt>sub_jwk</tt> Claim is NOT RECOMMENDED when the OP is not Self-Issued.</t>
 <t>Whether the Self-Issued OP is a mobile client or a web client, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.</t>
 
 <ol>
-<li><t>The <tt>iss</tt> (issuer) Claim Value is <tt>https://self-issued.me/v2</tt>.</t>
-</li>
 <li><t>The <tt>sub</tt> (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim or a Decentralized Identifier.</t>
 </li>
 <li><t>When <tt>sub</tt> Claim value is the base64url encoded representation of the thumbprint, a <tt>sub_jwk</tt> Claim is present, with its value being the public key used to check the signature of the ID Token.</t>
 </li>
 <li><t>No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.</t>
-</li>
-</ol>
-
-<section anchor="verifiable-presentation-support"><name>Verifiable Presentation Support</name>
-<t>Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations <xref target="OIDC4VP"></xref> and W3C Verifiable Credentials Specification <xref target="VC-DATA"></xref>.</t>
-<t>Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). <xref target="VC-DATA"></xref></t>
-</section>
-</section>
-
-<section anchor="siop-id_token-validation"><name>Self-Issued ID Token Validation</name>
-<t>See <xref target="OIDC4VP"></xref> on how to support multiple credential formats such as JWT and Linked Data Proofs.</t>
-<t>To validate the ID Token received, the RP MUST do the following:</t>
-
-<ol>
-<li><t>The Relying Party (RP) MUST validate that the value of the <tt>iss</tt> (issuer) Claim equals to the <tt>authorization_endpoint</tt> in the Self-Issued OP metadata. When static Self-Issued OP Discovery metadata has been used, <tt>iss</tt> MUST be <tt>https://self-issued.me/v2</tt>. When dynamic Self-Issued OP Discovery metadata has been performed, <tt>iss</tt> MUST exactly match the <tt>issuer</tt> identifier pre-obtained by the RP.</t>
-</li>
-<li><t>The RP MUST validate that the <tt>aud</tt> (audience) Claim contains the value of the <tt>redirect_uri</tt> that the RP sent in the Authentication Request as an audience.</t>
-</li>
-<li><t>The RP MUST validate the signature of the ID Token. When Subject Syntax Type is <tt>jkt</tt>, validation is done according to JWS [JWS] using the algorithm specified in the <tt>alg</tt> header parameter of the JOSE Header, using the key in the <tt>sub_jwk</tt> Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in <tt>id_token_signing_alg_values_supported</tt>). When Subject Syntax Type is <tt>did</tt>, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the <tt>sub</tt> claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since <tt>verificationMethod</tt> property in the DID Document may contian multiple public key sets, public key identified by a key identifier <tt>kid</tt> in a Header of a signed ID Token MUST be used to validate that ID Token.</t>
-</li>
-<li><t>The RP MUST validate the <tt>sub</tt> value. When Subject Syntax Type is <tt>jkt</tt>, the RP MUST validate that the <tt>sub</tt> claim value equals the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim, as specified in <xref target="siop-authentication-response"></xref>. When Subject Syntax Type is <tt>did</tt>, the RP MUST validate that the <tt>sub</tt> claim value equals the <tt>id</tt> property in the DID Document.</t>
-</li>
-<li><t>The current time MUST be before the time represented by the <tt>exp</tt> Claim (possibly allowing for some small leeway to account for clock skew).
-The <tt>iat</tt> Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.</t>
-</li>
-<li><t>The RP MUST validate that a <tt>nonce</tt> Claim is present and is the same value as the one that was sent in the Authentication Request. The Client SHOULD check the <tt>nonce</tt> value for replay attacks. The precise method for detecting replay attacks is RP specific.</t>
 </li>
 </ol>
 <t>The following is a non-normative example of a base64url decoded Self-Issued ID Token body (with line wraps within values for display purposes only):</t>
@@ -608,9 +619,38 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
   }
 }
 </sourcecode>
+
+<section anchor="verifiable-presentation-support"><name>Verifiable Presentation Support</name>
+<t>Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations <xref target="OIDC4VP"></xref> and W3C Verifiable Credentials Specification [VC-DATA].</t>
+<t>Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [VC-DATA]</t>
+</section>
 </section>
 
-<section anchor="cross-device-siop"><name>Cross Device SIOP</name>
+<section anchor="siop-id-token-validation"><name>Self-Issued ID Token Validation</name>
+<t>See <xref target="OIDC4VP"></xref> on how to support multiple credential formats such as JWT and Linked Data Proofs.</t>
+<t>To validate the ID Token received, the RP MUST do the following:</t>
+
+<ol>
+<li><t>The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. When static Self-Issued OP Discovery metadata has been used, <tt>iss</tt> MUST be <tt>https://self-issued.me/v2</tt>. When Self-Issued OP Discovery metadata has been obtained dynamically, an additional <tt>i_am_siop</tt> Claim MUST be present in the ID Token and <tt>iss</tt> MUST exactly match the <tt>issuer</tt> identifier specified in the Self-Issued OP Discovery Metadata MUST be included in the ID Token as a way for the RP to determine if the, when dynamic Self-Issued OpenID Provider discovery has been used.</t>
+</li>
+<li><t>The RP MUST validate that the <tt>aud</tt> (audience) Claim contains the value of the <tt>client_id</tt> that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.</t>
+</li>
+<li><t>The RP MUST identify which Subject Syntax Type is used. If the <tt>sub</tt> claim is a decentralized identifier, the Subject Syntax Type is <tt>did</tt>. If the <tt>sub</tt> claims is NOT a decentralized identifier, and a <tt>sub_jwk</tt> claim is present, the Subject Syntax Type is <tt>jwk</tt>.
+Note: needs further discussion.</t>
+</li>
+<li><t>The RP MUST validate the signature of the ID Token. When Subject Syntax Type is <tt>jkt</tt>, validation is done according to JWS [JWS] using the algorithm specified in the <tt>alg</tt> header parameter of the JOSE Header, using the key in the <tt>sub_jwk</tt> Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in <tt>id_token_signing_alg_values_supported</tt>). When Subject Syntax Type is <tt>did</tt>, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the <tt>sub</tt> claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since <tt>verificationMethod</tt> property in the DID Document may contian multiple public key sets, public key identified by a key identifier <tt>kid</tt> in a Header of a signed ID Token MUST be used to validate that ID Token.</t>
+</li>
+<li><t>The RP MUST validate the <tt>sub</tt> value. When Subject Syntax Type is <tt>jkt</tt>, the RP MUST validate that the <tt>sub</tt> claim value equals the base64url encoded representation of the thumbprint of the key in the <tt>sub_jwk</tt> Claim, as specified in <xref target="siop-authentication-response"></xref>. When Subject Syntax Type is <tt>did</tt>, the RP MUST validate that the <tt>sub</tt> claim value equals the <tt>id</tt> property in the DID Document.</t>
+</li>
+<li><t>The current time MUST be before the time represented by the <tt>exp</tt> Claim (possibly allowing for some small leeway to account for clock skew).
+The <tt>iat</tt> Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.</t>
+</li>
+<li><t>The RP MUST validate that a <tt>nonce</tt> Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the <tt>nonce</tt> value for replay attacks. The precise method for detecting replay attacks is RP specific.</t>
+</li>
+</ol>
+</section>
+
+<section anchor="cross-device-siop"><name>Cross-Device SIOP</name>
 <t>This section describes how SIOP is used in cross-device scenarios. In contrast to on-device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:</t>
 
 <ol>
@@ -651,6 +691,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
     &amp;registration=%7B%22subject_syntax_types_supported%22:%5B%22jkt%22%5D,
     %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 </artwork>
+<t>Note that the authentication request might only include request parameters and not be targeted to a particular <tt>authorization_endpoint</tt>, in which case, ther user must use particular Self-Issued OP application to scan the QR code with such request.</t>
 <t>Note: Such an authentication request might result in a large QR code, especially when including a <tt>claims</tt> parameter and extensive registration data. A RP MAY consider to use a <tt>request_uri</tt> in such a case.</t>
 </section>
 
@@ -667,7 +708,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 </section>
 
 <section anchor="id-token-validation"><name>ID Token Validation</name>
-<t>The RP MUST perform all the check as defined in <xref target="siop-id_token-validation"></xref>.</t>
+<t>The RP MUST perform all the check as defined in <xref target="siop-id-token-validation"></xref>.</t>
 <t>Additionally, the RP MUST check whether the <tt>nonce</tt> claim value provided in the ID Token is known to the RP and was not used before in an authentication response.</t>
 </section>
 </section>
@@ -701,6 +742,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 }
 </sourcecode>
 <t>Note: Further processing steps are required if the authentication response contains verifiable presentations - see <xref target="OIDC4VP"></xref>.</t>
+</section>
 
 <section anchor="security-considerations"><name>Security Considerations</name>
 
@@ -719,6 +761,39 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 <t>Consider supporting selective disclosure and un-linkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.</t>
 </section>
 </section>
+
+<section anchor="implementation-considerations"><name>Implementation Considerations</name>
+
+<section anchor="supporing-multiple-self-issued-ops"><name>Supporing multiple Self-Issued OPs</name>
+<t>When the RP wants to provide End-user choice to select from multiple possible Self-Issued OPs, it MAY present a static list of the supported options. This is similar to the process of supporting multiple different social networks represented as traditional OPs.</t>
+<t>Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictacte a common <tt>authorization_endpoint</tt> for a set of implementations. If <tt>authorization_endpoint</tt> is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-user to select a Self-Issued OP is handled by the underlying browser or operating system.</t>
+</section>
+
+<section anchor="currently-known-browser-behavior"><name>Currently known browser behavior</name>
+<t>The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including &quot;App Links&quot; and &quot;Universal Links&quot;, and <bcp14>MAY</bcp14> be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.</t>
+<t>If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
+Note: clarify why authoritative list is relevant</t>
+<t>Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.</t>
+</section>
+</section>
+
+<section anchor="examples"><name>Examples</name>
+
+<section anchor="static-siop-metadata-and-an-unsigned-request"><name>Static SIOP metadata and an unsigned request</name>
+<t>// placeholder</t>
+</section>
+
+<section anchor="statis-siop-metadata-and-request-signed-using-dids"><name>Statis SIOP metadata and request signed using DIDs</name>
+<t>//placeholder</t>
+</section>
+
+<section anchor="statis-siop-metadata-and-request-signed-using-openid-federation-automatic-registration"><name>Statis SIOP metadata and request signed using OpenID Federation Automatic registration</name>
+<t>// placeholder</t>
+</section>
+
+<section anchor="dynamic-siop-metadata-and-an-unsigned-request"><name>dynamic SIOP metadata and an unsigned request</name>
+<t>// placeholder</t>
+</section>
 </section>
 
 <section anchor="references-1"><name>References</name>
@@ -726,10 +801,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 <section anchor="non-normative-references"><name>Non-Normative References</name>
 
 <ul>
-<li><t>[draft-jones-self<em>issued</em>identifier] <eref target="https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md">https://bitbucket.org/openid/connect/src/master/SIOP/draft-jones-self_issued_identifier.md</eref></t>
-</li>
-<li><t>[siop-requirements] <eref target="https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md">https://bitbucket.org/openid/connect/src/master/SIOP/siop-requirements.md</eref></t>
-</li>
 <li><t>[OIX] <eref target="https://openidentityexchange.org/networks/87/item.html?id=365">https://openidentityexchange.org/networks/87/item.html?id=365</eref></t>
 </li>
 </ul>
@@ -744,45 +815,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 
 <back>
 <references><name>Normative References</name>
-<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
-  <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
-    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <author fullname="John Bradley" initials="J." surname="Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author fullname="Mike Jones" initials="M." surname="Jones">
-      <organization>Microsoft</organization>
-    </author>
-    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
-      <organization>Google</organization>
-    </author>
-    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-      <organization>Salesforce</organization>
-    </author>
-    <date year="2014" month="Nov" day="8"></date>
-  </front>
-</reference>
-<reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
-  <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
-    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <author fullname="John Bradley" initials="J." surname="Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author fullname="Mike Jones" initials="M." surname="Jones">
-      <organization>Microsoft</organization>
-    </author>
-    <author fullname="Edmund Jay" initials="E." surname="Jay">
-      <organization>Illumila</organization>
-    </author>
-    <date year="2014" month="Nov" day="8"></date>
-  </front>
-</reference>
 <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
   <front>
     <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
@@ -828,27 +860,6 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
     <date year="2015" month="Sept" day="1"></date>
   </front>
 </reference>
-<reference anchor="VC-DATA" target="https://www.w3.org/TR/vc-data-model/">
-  <front>
-    <title>Decentralized Identifiers (DIDs) v1.0</title>
-    <author fullname="Manu Sporny">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Grant Noble">
-      <organization>ConsenSys</organization>
-    </author>
-    <author fullname="Dave Longley">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Daniel C. Burnett">
-      <organization>ConsenSys</organization>
-    </author>
-    <author fullname="Brent Zundel">
-      <organization>Evernym</organization>
-    </author>
-    <date year="2019" month="Nov" day="19"></date>
-  </front>
-</reference>
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
@@ -868,6 +879,45 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
       <organization>Mattr</organization>
     </author>
     <date year="2021" month="May" day="20"></date>
+  </front>
+</reference>
+<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+      <organization>Salesforce</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
+<reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Edmund Jay" initials="E." surname="Jay">
+      <organization>Illumila</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
   </front>
 </reference>
 </references>
@@ -892,7 +942,7 @@ The <tt>iat</tt> Claim can be used to reject tokens that were issued too far awa
 
 -04
 
-* added cross device flow
+* added cross-device flow
 * clarified handling for did-based sub and sub_jwk
 * Revising of introductory text and scope of SIOPv2
 * corrected typos and reworked registration example data
