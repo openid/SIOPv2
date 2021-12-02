@@ -498,7 +498,7 @@ This extension defines the following claims to be included in the ID token for u
     * OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is `jkt`. The key is a bare key in JWK [JWK] format (not an X.509 certificate value). MUST NOT be present only when Subject Syntax Type other than `jkt` is used.
 * `i_am_siop`
     * OPTIONAL. Boolean. It MUST be set to `true` and be included when Self-Issued OP Discovery metadata has been obtained dynamically. 
-Note: What would be a use-case when `i_am_siop` is set to false...
+Note: The use of `i_am_siop` claim is under discussion and may be replaced with something like "iss": "siop+https://siop.example.com".
 
 Note that the use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 
