@@ -81,7 +81,7 @@ Note: This specification replaces [Self-Issued OpenID Connect Provider DID Profi
 
 # Scope
 
-As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect defined in section 3.2 of [@!OpenID] to communicate with such locally-running OPs, and extends OpenID Connect Discovery to represent the differences from traditional OPs.
+As a Self-Issued OP may be running locally as a native application or progressive web application, the RP may not have a network-addressable endpoint to communicate directly with the OP. This specification leverages the implicit flow of OpenID Connect defined in Section 3.2 of [@!OpenID] to communicate with such locally-running OPs, and extends OpenID Connect Discovery to represent the differences from traditional OPs.
 
 This document is scoped for a deployment model where the Self-Issued OP is deployed on an End-user's device.
 
@@ -93,7 +93,7 @@ This specification defines:
 
 * Automatic Registration of supported functionality between a RP and Self-Issued OP
 
-  OpenID Connect typically leverages a registration between a Client (acting as a RP) and the OP, which pre-establishes supported functionality before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and the OAuth 2.0 Dynamic Client Registration Protocol.
+  OpenID Connect typically leverages a registration between a Client (acting as a RP) and the OP, which pre-establishes supported functionality before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and the OpenID Connect Dynamic Client Registration Protocol.
 
   In a model where each End-user is represented by a different, locally-controlled Self-Issued OP instance, Relying Parties typically cannot pre-establish registration with a Self-Issued OP. In another model, when all instances of Self-Issued OPs share the same RP registration data, it is possible for the RPs to pre-establish registration with that set of Self-Issued OPs. 
   
@@ -234,6 +234,8 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 }
 ```
 
+Editor's Note: discuss whether "subject_syntax_types_supported" should be defined in a static SIOP Discovery Metadata.
+
 RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid:` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
 Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps, and does not support Self-Issued OPs as web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
@@ -242,7 +244,7 @@ Note that the request using custom URI scheme `openid:` will open only Self-Issu
 
 As an alternative mechanism to the (#static-siop-metadata), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
-How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip section 2 of [@!OpenID.Discovery].
+How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
 
 When [@!OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Selc-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issed OP's Issuer Identifier.
 
@@ -264,14 +266,10 @@ Note: handling of `jwks_uri` needs to be discussed.
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing supported subject identifier types. Valid values include `jkt` and `did`.
-* `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Self-Issued OP will attempt to support all DID methods.
-
+* REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@jwk-thumbprint-uri]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix follewd by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
 Note: need to confirm valid `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
-Note: Make sure description of `subject_syntax_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
 
-Other Discovery parameters defined in section 3 of [@!OpenID.Discovery] MAY be used. 
+Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be used. 
 
 The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
 
@@ -301,10 +299,8 @@ Below is a non-normative example of a Self-Issued OP metadata obtained dynamical
     "EdDSA"  
   ],
   "subject_syntax_types_supported": [
-    "did"
-  ],
-  "did_methods_supported": [
-    "example"
+    "urn:ietf:params:oauth:jwk-thumbprint",
+    "did:key"
   ]
 }
 ```
@@ -316,6 +312,18 @@ As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links 
 The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid:` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
+
+#### Subject Syntax Types {#sub-syntax-type}
+
+Subject Syntax Type refers to a type of an identifier used in a `sub` claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.
+
+This specification defines the following two Subject Syntax Types. Additional Subject Syntax Types may be defined in the future versions of this specification, or profiles of this specification.
+
+* JWK Thumbprint subject syntax type. When this type is used, the `sub` claim value MUST be the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
+
+* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issued OP response. The subject syntax type MUST be cryptographicaly verified against the resolved DID Document as defined in {#siop-id_token-validation}.
+
+The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_types_supported` defined in {#rp-metadata}.
 
 ## Relying Party Registration {#rp-resolution}
 
@@ -379,50 +387,29 @@ Below is a non-normative example of a `client_id` resolvable using Decentralized
 
 ### Relying Party Registration Metadata Values {#rp-metadata}
 
-This extension defines the following RP Registration Metadata values, used by the RP to provide information about itself to the Self-Issued OP:
+This extension defines the following RP Registration Metadata value, used by the RP to provide information about itself to the Self-Issued OP:
 
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing supported Subject Syntax Types. Valid values include `jkt` and `did`. For detailed description, see #sub-syntax-type.
-* `did_methods_supported`
-    * OPTIONAL. A JSON array of strings representing supported DID methods, with a `did:` prefix and `:` suffix. For example, support for the DID method  `example` would be represented by `did:example:` as a string value. Specifying `did` as a supported option in `subject_syntax_types_supported` while omitting `did_methods_supported` indicates the Relying Party will attempt to support all DID methods.
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@jwk-thumbprint-uri]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix follewd by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
 
-Other registration metadata MAY be used as defined by [@!OpenID.Registration] as well as [@!RFC7591]. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
+Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
 
 The following is a non-normative example of the supported RP Registration Metadata Values:
 
 ```json
 {
   "subject_syntax_types_supported": [
-    "did",
-    "jkt"
-  ],
-  "did_methods_supported": [
-    "did:key:",
-    "did:example:"
+    "urn:ietf:params:oauth:jwk-thumbprint",
+    "did:example",
+    "did:key"
   ]
 }
 ```
-
-#### Subject Syntax Types {#sub-syntax-type}
-
-  Subject Syntax Type refers to a type of an identifier used in a `sub` claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.  
-
- Two types are defined by this specification to be used in RP Registration Metadata `subject_syntax_types_supported`:
-
-* `jkt`
-    * JWK Thumbprint subject syntax type. When this type is used, the `sub` claim value MUST be the base64url encoded representation of the thumbprint of the key in the `sub_jwk` claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
-
-* `did`
-     * Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID defined in [@!DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issued OP response. The subject syntax type MUST be cryptographicaly verified against the resolved DID Document as defined in Self-Issued OP Validation.
-
-NOTE: Consider adding a subject syntax type for OpenID Connect Federation entity statements.
 
 ## Relying Party Registration Metadata Error Response {#rp-reg-error}
 
 This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
 
-* `did_methods_not_supported`
-    * The Self-Issued OP does not support any DID methods included in `did_methods_supported` parameter.
 * `subject_syntax_types_not_supported`
     * The Self-Issued OP does not support any Subject Syntax Types included in `subject_syntax_types_supported` parameter.
 * `credential_formats_not_supported`
@@ -502,7 +489,7 @@ Note: The use of `i_am_siop` claim is under discussion and may be replaced with 
 
 Note that the use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 
-Whether the Self-Issued OP is a mobile client or a web client, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
+Whether the Self-Issued OP is a mobile application or a web application, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
 1. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a Decentralized Identifier.
 1. When `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
@@ -867,6 +854,19 @@ The scope of this draft was an extention to OpenID Connect Chapter 7 Self-Issued
         </front>
 </reference>
 
+<reference anchor="jwk-thumbprint-uri" target="https://www.ietf.org/archive/id/draft-jones-oauth-jwk-thumbprint-uri-00.html">
+  <front>
+    <title>JWK Thumbprint URI</title>
+    <author fullname="Michael B. Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Kristina Yasuda">
+      <organization>Microsoft</organization>
+    </author>
+   <date day="24" month="Nov" year="2021"/>
+  </front>
+</reference>
+
 # IANA Considerations
 
 TBD
@@ -884,6 +884,8 @@ The technology described in this specification was made available from contribut
     [[ To be removed from the final specification ]]
 
     -05
+
+    * merged `did_methods_supported` metadata into `subject_syntax_type_supported`
     * added RP Metadata resolution methods
     * editorial - language in Relying Party Registration Metadata Error Response
     
