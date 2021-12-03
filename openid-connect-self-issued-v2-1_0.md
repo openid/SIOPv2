@@ -234,6 +234,8 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 }
 ```
 
+Editor's Note: discuss whether "subject_syntax_types_supported" should be defined in a static SIOP Discovery Metadata.
+
 RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid:` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
 Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps, and does not support Self-Issued OPs as web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
@@ -267,8 +269,6 @@ Note: handling of `jwks_uri` needs to be discussed.
 * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@jwk-thumbprint-uri]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix follewd by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
 Note: need to confirm valid `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
 
-Note: Make sure description of `subject_syntax_types_supported` and `did_methods_supported` is consistent with that in the RP Registration section.
-
 Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be used. 
 
 The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
@@ -299,10 +299,8 @@ Below is a non-normative example of a Self-Issued OP metadata obtained dynamical
     "EdDSA"  
   ],
   "subject_syntax_types_supported": [
-    "did"
-  ],
-  "did_methods_supported": [
-    "example"
+    "urn:ietf:params:oauth:jwk-thumbprint",
+    "did:key"
   ]
 }
 ```
@@ -317,7 +315,9 @@ Note that this section is subject to changes in mobile OS and browser mechanisms
 
 #### Subject Syntax Types {#sub-syntax-type}
 
-Subject Syntax Type refers to a type of an identifier used in a `sub` claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.  
+Subject Syntax Type refers to a type of an identifier used in a `sub` claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.
+
+This specification defines the following two Subject Syntax Types. Additional Subject Syntax Types may be defined in the future versions of this specification, or profiles of this specification.
 
 * JWK Thumbprint subject syntax type. When this type is used, the `sub` claim value MUST be the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP response.
 
@@ -410,8 +410,6 @@ The following is a non-normative example of the supported RP Registration Metada
 
 This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
 
-* `did_methods_not_supported`
-    * The Self-Issued OP does not support any DID methods included in `did_methods_supported` parameter.
 * `subject_syntax_types_not_supported`
     * The Self-Issued OP does not support any Subject Syntax Types included in `subject_syntax_types_supported` parameter.
 * `credential_formats_not_supported`
