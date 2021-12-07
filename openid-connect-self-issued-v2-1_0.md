@@ -483,7 +483,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 
 To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
-`nonce` Claim MUST be present. 
+RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detectioncomplying with the security considerations given in [@!OpenID], section 15.5.2.
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
