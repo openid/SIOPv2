@@ -208,7 +208,7 @@ RP can obtain `authorization_endpoint` of the Self-Issued OP to contruct a reque
 
 Value of the `iss` Claim in the ID Token serves as an indicator which Self-Issued OP Discovery Mechanism is used.
 
-## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-metadata}
+## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-discovery}
 
 When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used. 
 
@@ -244,7 +244,7 @@ Note that the request using custom URI scheme `openid:` will open only Self-Issu
 
 ## Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
 
-As an alternative mechanism to the (#static-siop-metadata), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
+As an alternative mechanism to the (#static-siop-discovery), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
 How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
 
