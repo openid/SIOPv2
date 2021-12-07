@@ -64,7 +64,7 @@ Note: This specification replaces [Self-Issued OpenID Connect Provider DID Profi
 
 ## Resilience against Sudden or Planned Hosted OP Unavailability
 
-A hosted OP's infrastructure may become unavailable or even destroyed due to natural disasters such as hurricanes, tsunamis and fires, or may be removed from service as a planned business decision. End-users using Self-Issued OPs local to their environment, have lower chances to be simultaneously affected in such events.
+A hosted third-party provided OP's infrastructure may become unavailable or even destroyed due to natural disasters such as hurricanes, tsunamis and fires, or may be removed from service as a planned business decision. End-users using Self-Issued OPs local to their environment, have lower chances to be simultaneously affected in such events.
 
 ## Authentication at the Edge
 
@@ -72,21 +72,21 @@ As internet-connected smartphones have risen in availability, traditionally in-p
 
 ## Authentication and Presentations of User Claims without the involvement of the Issuer
 
+The RP can directly receive the issuer-signed claims about the End-user from the Self-Issued OP, without talking to the Issuer. This prevents the Issuer from knowing where the End-user is presenting these issuer-signed claims. In this use-case, obtaining and potentially storing the issuer-signed credentials is the Self-Issued OP's responsibility using specifications such as [@!OIDC4VP].
 
 ## Sharing Credentials from Several Issuers in One Transaction
 
 When End-users apply to open a banking account online, in most countries they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and hard to be verified in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information as credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate credentials from multiple sources, then release them within a single transaction to a relying party. The relying party can then verify the authenticity of the information to make the necessary business decisions.
 
-## Aggregation of Multiple Personas under One Self-Issued Op
+## Aggregation of Multiple Personas under One Self-Issued OP
 
-End-users often use several hosted OpenID Providers for different Relying Parties. While there are many reasons to do this, often this is done to have separately maintained identities, such as keeping a work-related persona separate from a personal persona. An End-user may do this to specifically represent different sets of claims, or because they what to prevent relying parties from correlating their activities by using the same OP. The usage of multiple OPs can create friction later, as the end-user may return later having forgot which OP they used for the relying party.
+End-users often use several hosted OpenID Providers for different Relying Parties. Some of the reasons to do this is to separate a work-related persona from a personal persona or to prevent the RPs from correlating their activities by using the same OP. 
 
-A single Self-Issued OP can be chosen by the End-user based on its capability to meet specific needs and privacy concerns. The separately-defined ability to present third-party credentials allows the RP to accept Self-Issued ID Tokens while still evaluating attributes using reputational trust of the credential issuers.
-Note: review this second paragraph
+The usage of multiple OPs can create friction later, as the end-user may return later having forgot which OP they used for the relying party. A single Self-Issued OP can be chosen by the End-user based on its capability to meet specific needs and privacy concerns.
 
-## Authentication using the User-provided Identifier
+## Identifier Portability
 
-
+With a hosted third-party provider, a user identifier used at the RP is assigned by the third-party, while with a Self-Issued OP, a user identifier can be created by an application locally controlled by the End-user. This would allow the End-user to maintain the relationship with the RP while minimizing the third-party influence, as long as the End-user can keep control of the Self-Issued identifier.
 
 # Scope
 
@@ -564,7 +564,7 @@ POST /post_cb HTTP/1.1
 
 ## ID Token
 
-The response contains an ID Token and, if applicable, further response parameters as defined in extensions. As an example, the response MAY also include a VP token as defined in [OIDC4VP].
+The response contains an ID Token and, if applicable, further response parameters as defined in extensions. As an example, the response MAY also include a VP token as defined in [@!OIDC4VP].
 
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:
 
