@@ -426,31 +426,7 @@ The following is a non-normative example of the supported RP Registration Metada
 }
 ```
 
-## Error Response {#rp-reg-error}
-
-The error response must be made in the same manner as defined in Section 3.1.2.6 of [@!OpenID].
-
-This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
-
-* **`subject_syntax_types_not_supported`**: a specific error code used when the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
-* **`invalid_registration_uri`**: a specific error code used when the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
-* **`invalid_registration_object`**: a specific error code used when the `registration` parameter contains an invalid RP Registration Metadata Object.
-
-Other error codes defined in Section 3.1.2.6 of [@!OpenID] MAY be used.
-
-Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
-
-Below is a non-normative example of an error response in the same-device Self-Issued OP flow:
-
-```
-HTTP/1.1 302 Found
-  Location: https://client.example.org/cb?
-    error=invalid_request
-    &error_description=Unsupported%20response_type%20value
-    &state=af0ifjsldkj
-```
-
-# Self-Issued OpenID Provider Request {#siop_authentication_request}
+# Self-Issued OpenID Provider Authentication Request {#siop_authentication_request}
 
 SIOP authentication request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
@@ -504,7 +480,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 ```
 
-## Cross-Device Self-Issued OP Request
+## Cross-Device Self-Issued OpenID Provider Request
 
 The cross-device authentication request differs from the same-device variant as defined in (#siop_authentication_request) as follows:
 
@@ -531,11 +507,11 @@ Note that the authentication request might only include request parameters and n
 
 Note: Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case.
 
-# Self-Issued OpenID Provider Response {#siop-authentication-response}
+# Self-Issued OpenID Provider Authentication Response {#siop-authentication-response}
 
 A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Response made in the same manner as in the Implicit Flow, as defined in Section 3.1.2.5 of [@!OpenID], with the exception of the differences specified in this section.
 
-A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#rp-reg-error).
+A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#siop-error-respose).
 
 In a same-device flow, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
@@ -549,7 +525,7 @@ HTTP/1.1 302 Found
     &id_token=...
 ```
 
-## ## Cross-Device Self-Issued OP Response
+## Cross-Device Self-Issued OpenID Provider Response
 
 The SIOP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
@@ -560,6 +536,30 @@ POST /post_cb HTTP/1.1
   Host: client.example.com
   Content-Type: application/x-www-form-urlencoded
   &id_token=...
+```
+
+## Self-Issued OpenID Provider Error Response {#siop-error-respose}
+
+The error response must be made in the same manner as defined in Section 3.1.2.6 of [@!OpenID].
+
+This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
+
+* **`subject_syntax_types_not_supported`**: a specific error code used when the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
+* **`invalid_registration_uri`**: a specific error code used when the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
+* **`invalid_registration_object`**: a specific error code used when the `registration` parameter contains an invalid RP Registration Metadata Object.
+
+Other error codes defined in Section 3.1.2.6 of [@!OpenID] MAY be used.
+
+Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
+
+Below is a non-normative example of an error response in the same-device Self-Issued OP flow:
+
+```
+HTTP/1.1 302 Found
+  Location: https://client.example.org/cb?
+    error=invalid_request
+    &error_description=Unsupported%20response_type%20value
+    &state=af0ifjsldkj
 ```
 
 ## ID Token
