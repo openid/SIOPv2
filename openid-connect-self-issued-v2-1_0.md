@@ -185,7 +185,7 @@ Just like in conventional OpenID Connect flows, Relying Party and Self-Issued OP
 
 However, in Self-Issued OP flows, such mechanisms may also be unavailable since Self-Issued OPs do not have API endpoints for that purpose. For those use-cases, this specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties are expected to obtain each other's metadata during individual requests.
 
-If the RP is able to perform pre-discovery of the Self-Issued OPs, and knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that the RP may formulate a request that does not include `authorization_endpoint` if the End-user will be receiving the request with a Self-Issued OP application whose metadata the RP has obtained during pre-discovery.
+If the RP is able to perform pre-discovery of the Self-Issued OPs, and knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that onl includes the request parameters without including `authorization_endpoint`.
 
 If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
 
