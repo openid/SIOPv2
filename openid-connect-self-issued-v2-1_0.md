@@ -94,20 +94,13 @@ As a Self-Issued OP may be running locally as a native application, a browser ap
 
 ## In-Scope
 
-This specification defines the following aspects.
+This specification extends the the OpenID Connect implicit flow with the following aspects.
 
-### Invocation and Discovery of a Self-Issued OP
+* **Invocation of a Self-Issued OP**: mechanisms how the RP invokes/opens a Self-Issued OP.
 
-  This specification defines extensions to the OpenID Connect implicit flow how the RP invokes/opens a Self-Issued OP. It extends OpenID Connect Discovery to represent the differences from traditional OPs and enable the RPs to discover Self-issued OP's metadata such as authorization endpoint to invoke/open it.
+* **Static and Dynamic Self-Issued OP Discovery**: mechanisms how the RP discovers Self-issued OP's metadata such as authorization endpoint to invoke/open it. 
 
-### RP Registration of supported functionalities
-
-  OpenID Connect typically leverages a registration of a Client (acting as a RP) with the OP, which pre-establishes functionalities supported by an RP before a request has been made. This may be done statically, or may leverage a combination of OpenID Connect Discovery and the OpenID Connect Dynamic Client Registration Protocol.
-
-  In a model where each End-user is represented by a different, locally-controlled Self-Issued OP instance, Relying Parties typically cannot pre-establish registration with a Self-Issued OP. In another model, when all instances of Self-Issued OPs share the same RP registration data, it is possible for the RPs to pre-establish registration with that set of Self-Issued OPs. 
-  
-  This specification extends the authentication request with additional dynamic registration techniques.
-Note: need to re-review the section
+* **RP Registration**: mechanisms how the RPs registers metadata such as supported functionalities with the Self-Issued OP. Extends [@!OpenID.Registration] with dynamic registration 
 
 ### Additional claims and processing requirements of Self-Issued ID Tokens
 
@@ -433,22 +426,29 @@ The following is a non-normative example of the supported RP Registration Metada
 }
 ```
 
-## Relying Party Registration Metadata Error Response {#rp-reg-error}
+## Error Response {#rp-reg-error}
+
+The error response must be made in the same manner as defined in Section 3.1.2.6 of [@!OpenID].
 
 This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
 
-* `subject_syntax_types_not_supported`
-    * The Self-Issued OP does not support any Subject Syntax Types included in `subject_syntax_types_supported` parameter.
-* `credential_formats_not_supported`
-    * The Self-Issued OP does not support any credential formats included in `credential_formats_supported` parameter.
-* `invalid_registration_uri`
-    * The `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
-* `invalid_registration_object`
-    * The `registration` parameter contains an invalid RP Registration Metadata Object.
-* `value_not_supported`
-    * The Self-Issued OP does not support one or more of the RP Registration Metadata values defined in {#rp-metadata}. When not supported metadata values include DID methods, Subject Syntax Types, or credential formats, more specific error message as defined above must be used.
+* **`subject_syntax_types_not_supported`**: a specific error code used when the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
+* **`invalid_registration_uri`**: a specific error code used when the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
+* **`invalid_registration_object`**: a specific error code used when the `registration` parameter contains an invalid RP Registration Metadata Object.
 
-The error response must be made in the same manner as defined in Section 3.1.2.6 of [@!OpenID].
+Other error codes defined in Section 3.1.2.6 of [@!OpenID] MAY be used.
+
+Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
+
+Below is a non-normative example of an error response in the same-device Self-Issued OP flow:
+
+```
+HTTP/1.1 302 Found
+  Location: https://client.example.org/cb?
+    error=invalid_request
+    &error_description=Unsupported%20response_type%20value
+    &state=af0ifjsldkj
+```
 
 # Self-Issued OpenID Provider Request {#siop_authentication_request}
 
