@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-05"
+value = "openid-connect-self-issued-v2-1_0-06"
 status = "standard"
 
 [[author]]
@@ -58,7 +58,7 @@ Because a Self-Issued OP within the End-User’s local control does not have the
 
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID].
 
-Note: This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
+This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
 
 # Use-cases
 
@@ -177,31 +177,33 @@ This section outlines how SIOP is used in cross-device scenarios, and its differ
 1. The SIOP processes the authentication request.
 1. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
-Note: The request in Step 5 is not a form post request where the SIOP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The SIOP sends this request directly to the RP's endpoint.
+The request in Step 5 is not a form post request where the SIOP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The SIOP sends this request directly to the RP's endpoint.
 
 # Discovery and Registration
 
-In conventional OpenID Connect flows, Relying Party and OpenID Provider can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
+Just like in conventional OpenID Connect flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
 
-However, in Self-Issued OP flows, such mechanisms are typically not available since Self-Issued OPs do not have API endpoints for that purpose. Therefore, alternative mechanisms are adopted,  and Self-Issued OPs and Relying Parties are expected to obtain each other's metadata at every single request.
+However, in Self-Issued OP flows, such mechanisms may also be unavailable since Self-Issued OPs do not have API endpoints for that purpose. For those use-cases, this specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties are expected to obtain each other's metadata during individual requests.
 
-For Self-Issued OPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [OpenID.Fed], if `client_id` is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [DID-Core] and the rest of the metadata is obtained from the registration parameter.
+If the RP is able to perform pre-discovery of the Self-Issued OPs, and knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that onl includes the request parameters without including `authorization_endpoint`.
 
-For the RPs, mechanisms to obtain Self-Issued OP metadata can be static or dynamic. A set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification. If the RP knows the Self-Issued OP's Issuer Identifier, [OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that the RP may formulate a request that does not include `authorization_endpoint` if the End-User will be receiving the request with a Self-Issued OP application whose metadata the RP knows.
+If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
 
-Note: How to mention requests not targeted at any authorization_endpoint. given the logic above, they would have to have performed dynamic SIOP discovery.
+If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process. 
 
-## Self-Issued OpenID Provider Invocation
+If the Self-Issued OP is unable to perform pre-registration of the RPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [OpenID.Fed], if `client_id` is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [DID-Core] and the rest of the metadata is obtained from the registration parameter.
 
-When the End-User first interacts with the RP, there are currently no established, robust means to signal which OpenID Providers to invoke, because applications cannot reliably determine a URI of the Self-Issued OP an End-User may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
+# Self-Issued OpenID Provider Invocation
+
+When the End-user first interacts with the RP, there are currently no established, robust means for the RP to reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
 
 When the RP sends the request to the Self-Issued OP, there are two scenarios how to reach and invoke an application that can process that request. 
 
-In the first scenario, request is encoded in a QR code, and the End-User scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specfiic `authorization_endpoint` of a Self-Issued OP. Note that this will not work in a same-device Self-Issued OP flow, when the RP and the Self-Issued OP are on the same device.
+In the first scenario, request is encoded in a QR code or a deep link, and the End-user scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specfiic `authorization_endpoint` of a Self-Issued OP. Note that a QR code option will not work in a same-device Self-Issued OP flow, when the RP and the Self-Issued OP are on the same device.
 
 In the second scenario, request includes `authorization_endpoint` of a Self-Issued OP, and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to contruct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this flow would work both for the same-device Self-Issued OP flow and the cross-device Self-Issued OP flow.
 
-The following is a non-normative example of a request is not intended for a specific `authorization_endpoint` and must be scanned by the Self-Issued OP application manually opened by the End-User instead of an arbitrary camera application on a user-device (line wraps within values are for display purposes only):
+The following is a non-normative example of a request not intended for a specific `authorization_endpoint` which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device (line wraps within values are for display purposes only):
 
 ```
     response_type=id_token
@@ -212,13 +214,13 @@ The following is a non-normative example of a request is not intended for a spec
     &nonce=n-0S6_WzA2Mj
 ```
 
-## Self-Issued OpenID Provider Discovery {#siop-discovery}
+# Self-Issued OpenID Provider Discovery {#siop-discovery}
 
-RP can obtain `authorization_endpoint` of the Self-Issued OP to contruct a request targeted to a particular application either by using the static set of Self-Issued OP metadata as defined in (#siop-discovery), or by pre-obtaining `authorization_endpoint` as defined in (#dynamic-siop-metadata).
+RP can obtain `authorization_endpoint` of the Self-Issued OP to contruct a request targeted to a particular application either by using the static set of Self-Issued OP metadata as defined in (#static-siop-discovery), or by pre-obtaining `authorization_endpoint` as defined in (#dynamic-siop-metadata).
 
 Value of the `iss` Claim in the ID Token serves as an indicator which Self-Issued OP Discovery Mechanism is used.
 
-### Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-metadata}
+## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-discovery}
 
 When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used. 
 
@@ -252,16 +254,15 @@ RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to const
 
 Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps, and does not support Self-Issued OPs as web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
-### Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
+## Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
 
-As an alternative mechanism to the (#static-siop-metadata), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
+As an alternative mechanism to the (#static-siop-discovery), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
 How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
 
 When [@!OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Selc-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issed OP's Issuer Identifier.
 
 Note that contrary to [@!OpenID.Discovery], `jwks_uri` parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it, and use `sub` Claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider.
-Note: handling of `jwks_uri` needs to be discussed.
 
 * `authorization_endpoint`
     * REQUIRED. URL of the Self-Issued OP used by the RP to perform Authentication of the End-User. Can be custom URI scheme, or Universal Links/App links. See (#choice-of-authoriation-endpoint).
@@ -278,8 +279,9 @@ Note: handling of `jwks_uri` needs to be discussed.
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
-* REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@jwk-thumbprint-uri]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix follewd by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
-Note: need to confirm valid `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@jwk-thumbprint-uri]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix follewd by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
+
+Note: need to confirm Mandatory to Implement `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
 
 Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be used. 
 
@@ -317,15 +319,15 @@ Below is a non-normative example of a Self-Issued OP metadata obtained dynamical
 }
 ```
 
-#### Choice of `authorization_endpoint` {#choice-of-authoriation-endpoint}
+### Choice of `authorization_endpoint` {#choice-of-authoriation-endpoint}
 
-As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links ot App Links is **RECOMMENDED** over the use of custom URI schemes. 
+As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links ot App Links is RECOMMENDED over the use of custom URI schemes. 
 
 The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid:` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
 
-#### Subject Syntax Types {#sub-syntax-type}
+### Subject Syntax Types {#sub-syntax-type}
 
 Subject Syntax Type refers to a type of an identifier used in a `sub` Claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder, and is used to obtain cryptographic material to verify the signature on the ID Token.
 
@@ -337,13 +339,23 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_types_supported` defined in {#rp-metadata}.
 
-## Relying Party Registration {#rp-resolution}
+# Relying Party Registration {#rp-resolution}
 
-When the Self-Issed OP request is not signed, all registration parameters **MUST** be passed using registration parameter defined in (#rp-registration-parameter), or using out-of-band mechanism. In this case, `client_id` **MUST** equal `redirect_uri`.
+Registration mechanism depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
 
-When the Self-Issued OP Request is signed, the public key to verify the signature **MUST** be obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata **SHOULD** be included either in the `registration` parameter inside the Self-Issued OP Request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, `client_id` would not equal `redirect_uri`.
+## Pre-Registered Relying Party
 
-`registration` parameters **MUST NOT** include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP **MUST** ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP Request.
+When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registeration, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process. 
+
+## Not Pre-Registered Relying Party
+
+When the RP has not pre-registered and has to dynamically register with the Self-Issued OP, the registration mechanism depends on whether the Self-Issued OP Request is signed or not.
+
+When the Self-Issed OP request is not signed, all registration parameters MUST be passed using registration parameter defined in (#rp-registration-parameter), or using out-of-band mechanism. In this case, `client_id` MUST equal `redirect_uri`.
+
+When the Self-Issued OP request is signed, the public key to verify the signature is obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata SHOULD be included either in the `registration` parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, `client_id` MUST NOT equal `redirect_uri`.
+
+`registration` parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
 Note that in Self-Issued OP flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
@@ -352,10 +364,10 @@ Note that in Self-Issued OP flow, no registration response is returned. A succes
 OpenID Connect defines the following negotiation parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:
 
 * `registration` 
-  * **OPTIONAL**. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values. The registration parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
+  * OPTIONAL. This parameter enables RP Registration Metadata to be passed in a single, self-contained parameter. The value is a JSON object containing RP Registration Metadata values. The registration parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
 
 * `registration_uri` 
-  * **OPTIONAL**. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request_uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values. The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the `registration_uri` value MUST be https. The request_uri value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP. This parameter is used identically to the request parameter, other than that the Relying Party registration metadata value is retrieved from the resource at the specified URL.
+  * OPTIONAL. This parameter enables RP Registration Metadata to be passed by reference, rather than by value. The request_uri value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values. The contents of the resource referenced by the URL MUST be a RP Registration Metadata Object. The scheme used in the `registration_uri` value MUST be https. The request_uri value MUST be reachable by the Self-Issued OP, and SHOULD be reachable by the RP. This parameter is used identically to the request parameter, other than that the Relying Party registration metadata value is retrieved from the resource at the specified URL.
 
 If one of these parameters is used, the other MUST NOT be used in the same request.
 
@@ -497,7 +509,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
 
 Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, ther user must use particular Self-Issued OP application to scan the QR code with such request.
 
-Note: Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case.
+Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider to use a `request_uri` in such a case.
 
 # Self-Issued OpenID Provider Authentication Response {#siop-authentication-response}
 
@@ -568,6 +580,7 @@ This extension defines the following claims to be included in the ID token for u
     * OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is `jkt`. The key is a bare key in JWK [JWK] format (not an X.509 certificate value). MUST NOT be present only when Subject Syntax Type other than `jkt` is used.
 * `i_am_siop`
     * OPTIONAL. Boolean. It MUST be set to `true` and be included when Self-Issued OP Discovery metadata has been obtained dynamically. 
+
 Note: The use of `i_am_siop` Claim is under discussion and may be replaced with something like "iss": "siop+https://siop.example.com".
 
 Note that the use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
@@ -636,7 +649,7 @@ The following is a non-normative example of an ID token containing a verifiable 
 }
 ```
 
-Note: Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
+Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
 ## Verifiable Presentation Support
 
@@ -652,8 +665,7 @@ To validate the ID Token received, the RP MUST do the following:
 
 1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, an additional `i_am_siop` Claim MUST be present in the ID Token and `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata MUST be included in the ID Token as a way for the RP to determine if the, when dynamic Self-Issued OpenID Provider discovery has been used.
 1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
-1. The RP MUST identify which Subject Syntax Type is used. If the `sub` Claim is a decentralized identifier, the Subject Syntax Type is `did`. If the `sub` Claims is NOT a decentralized identifier, and a `sub_jwk` Claim is present, the Subject Syntax Type is `jwk`.
-Note: needs further discussion.
+1. The RP MUST identify which Subject Syntax Type is used based on the URI of the `sub` Claim. Valid values defined in this specification are `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type and `did:` for Decentralized Identifier Subject Syntax Type.
 1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is `jkt`, validation is done according to JWS [JWS] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is `did`, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contian multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
 1. The RP MUST validate the `sub` value. When Subject Syntax Type is `jkt`, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is `did`, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
@@ -698,7 +710,7 @@ Note that if Self-Issued OP implementations belong to a trust framework, the tru
 
 ## Currently known browser behavior
 
-The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and **MAY** be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
+The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and MAY be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
 
 If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
 Note: clarify why authoritative list is relevant
