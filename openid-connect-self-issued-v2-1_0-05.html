@@ -2067,19 +2067,25 @@ Note: need to confirm valid <code>alg</code> values that we want to explicitly s
 <a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-self-issued-openid-provider-e" class="section-name selfRef">Self-Issued OpenID Provider Error Response</a>
         </h3>
 <p id="section-9.2-1">The error response must be made in the same manner as defined in Section 3.1.2.6 of <span>[<a href="#OpenID" class="xref">OpenID</a>]</span>.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
-<p id="section-9.2-2">This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:<a href="#section-9.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.2-2">In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of <span>[<a href="#OpenID" class="xref">OpenID</a>]</span>, this specification also defines the following error codes:<a href="#section-9.2-2" class="pilcrow">¶</a></p>
 <ul>
 <li id="section-9.2-3.1">
-            <p id="section-9.2-3.1.1"><strong><code>subject_syntax_types_not_supported</code></strong>: a specific error code used when the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the <code>subject_syntax_types_supported</code> parameter.<a href="#section-9.2-3.1.1" class="pilcrow">¶</a></p>
+            <p id="section-9.2-3.1.1"><strong><code>user_cancelled</code></strong>: user cancelled the authentication request from the RP.<a href="#section-9.2-3.1.1" class="pilcrow">¶</a></p>
 </li>
 <li id="section-9.2-3.2">
-            <p id="section-9.2-3.2.1"><strong><code>invalid_registration_uri</code></strong>: a specific error code used when the <code>registration_uri</code> in the Self-Issued OpenID Provider request returns an error or contains invalid data.<a href="#section-9.2-3.2.1" class="pilcrow">¶</a></p>
+            <p id="section-9.2-3.2.1"><strong><code>registration_value_not_supported</code></strong>: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.<a href="#section-9.2-3.2.1" class="pilcrow">¶</a></p>
 </li>
 <li id="section-9.2-3.3">
-            <p id="section-9.2-3.3.1"><strong><code>invalid_registration_object</code></strong>: a specific error code used when the <code>registration</code> parameter contains an invalid RP Registration Metadata Object.<a href="#section-9.2-3.3.1" class="pilcrow">¶</a></p>
+            <p id="section-9.2-3.3.1"><strong><code>subject_syntax_types_not_supported</code></strong>: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the <code>subject_syntax_types_supported</code> parameter.<a href="#section-9.2-3.3.1" class="pilcrow">¶</a></p>
+</li>
+<li id="section-9.2-3.4">
+            <p id="section-9.2-3.4.1"><strong><code>invalid_registration_uri</code></strong>: the <code>registration_uri</code> in the Self-Issued OpenID Provider request returns an error or contains invalid data.<a href="#section-9.2-3.4.1" class="pilcrow">¶</a></p>
+</li>
+<li id="section-9.2-3.5">
+            <p id="section-9.2-3.5.1"><strong><code>invalid_registration_object</code></strong>: the <code>registration</code> parameter contains an invalid RP Registration Metadata Object.<a href="#section-9.2-3.5.1" class="pilcrow">¶</a></p>
 </li>
 </ul>
-<p id="section-9.2-4">Other error codes defined in Section 3.1.2.6 of <span>[<a href="#OpenID" class="xref">OpenID</a>]</span> MAY be used.<a href="#section-9.2-4" class="pilcrow">¶</a></p>
+<p id="section-9.2-4">Other error codes MAY be used.<a href="#section-9.2-4" class="pilcrow">¶</a></p>
 <p id="section-9.2-5">Note that HTTP error codes do not work in the cross-device Self-Issued OP flows.<a href="#section-9.2-5" class="pilcrow">¶</a></p>
 <p id="section-9.2-6">Below is a non-normative example of an error response in the same-device Self-Issued OP flow:<a href="#section-9.2-6" class="pilcrow">¶</a></p>
 <div class="artwork art-text alignLeft" id="section-9.2-7">
@@ -2369,9 +2375,12 @@ Note: clarify why authoritative list is relevant<a href="#section-13.2-2" class=
 <a href="#section-16" class="section-number selfRef">16. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
-<dt id="OpenID.Registration">[OpenID.Registration]</dt>
+<dt id="OIDC4VP">[OIDC4VP]</dt>
 <dd>
-<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, and M. Jones</span>, <span class="refTitle">"OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>&gt;</span>. </dd>
+<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
+<dt id="OpenID.Discovery">[OpenID.Discovery]</dt>
+<dd>
+<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, and E. Jay</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>&gt;</span>. </dd>
 <dt id="RFC7638">[RFC7638]</dt>
 <dd>
 <span class="refAuthor">Jones, M.</span><span class="refAuthor"> and N. Sakimura</span>, <span class="refTitle">"JSON Web Key (JWK) Thumbprint"</span>, <time datetime="2015-09-01">1 September 2015</time>, <span>&lt;<a href="https://tools.ietf.org/html/rfc7638">https://tools.ietf.org/html/rfc7638</a>&gt;</span>. </dd>
@@ -2384,12 +2393,9 @@ Note: clarify why authoritative list is relevant<a href="#section-13.2-2" class=
 <dt id="VC-DATA">[VC-DATA]</dt>
 <dd>
 <span class="refAuthor">Sporny, M.</span><span class="refAuthor">, Noble, G.</span><span class="refAuthor">, Longley, D.</span><span class="refAuthor">, Burnett, D. C.</span><span class="refAuthor">, and B. Zundel</span>, <span class="refTitle">"Decentralized Identifiers (DIDs) v1.0"</span>, <time datetime="2019-11-19">19 November 2019</time>, <span>&lt;<a href="https://www.w3.org/TR/vc-data-model/">https://www.w3.org/TR/vc-data-model/</a>&gt;</span>. </dd>
-<dt id="OpenID.Discovery">[OpenID.Discovery]</dt>
+<dt id="OpenID.Registration">[OpenID.Registration]</dt>
 <dd>
-<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, and E. Jay</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>&gt;</span>. </dd>
-<dt id="OIDC4VP">[OIDC4VP]</dt>
-<dd>
-<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
+<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, and M. Jones</span>, <span class="refTitle">"OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>&gt;</span>. </dd>
 </dl>
 </section>
 <section id="section-17">

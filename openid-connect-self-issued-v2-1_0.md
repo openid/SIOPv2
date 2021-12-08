@@ -534,13 +534,15 @@ POST /post_cb HTTP/1.1
 
 The error response must be made in the same manner as defined in Section 3.1.2.6 of [@!OpenID].
 
-This extension defines the following error codes that MUST be returned when the Self-Issued OP does not support some Relying Party Registration metadata values received from the Relying Party in the registration parameter:
+In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID], this specification also defines the following error codes: 
 
-* **`subject_syntax_types_not_supported`**: a specific error code used when the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
-* **`invalid_registration_uri`**: a specific error code used when the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
-* **`invalid_registration_object`**: a specific error code used when the `registration` parameter contains an invalid RP Registration Metadata Object.
+* **`user_cancelled`**: user cancelled the authentication request from the RP.
+* **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
+* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
+* **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
+* **`invalid_registration_object`**: the `registration` parameter contains an invalid RP Registration Metadata Object.
 
-Other error codes defined in Section 3.1.2.6 of [@!OpenID] MAY be used.
+Other error codes MAY be used.
 
 Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
 
