@@ -1533,7 +1533,7 @@ Note: discuss trust OP-RP relationship in SIOP.<a href="#section-1-3" class="pil
 <p id="section-6-1">There are two models of Self-Issued OP flows:<a href="#section-6-1" class="pilcrow">¶</a></p>
 <ul>
 <li id="section-6-2.1">
-          <p id="section-6-2.1.1">Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User's user interactions are occurring. The RP might be a Web site on a different machine and use the sam-device Self-Issued OP flow for authentication.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-6-2.1.1">Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User's user interactions are occurring. The RP might be a Web site on a different machine and use the same-device Self-Issued OP flow for authentication.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
 </li>
 <li id="section-6-2.2">
           <p id="section-6-2.2.1">Cross-device Self-Issued OP model: Self-Issued OP is on the different device on which the End-User's user interactions are occurring.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
@@ -2375,27 +2375,27 @@ Note: clarify why authoritative list is relevant<a href="#section-13.2-2" class=
 <a href="#section-16" class="section-number selfRef">16. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
-<dt id="OIDC4VP">[OIDC4VP]</dt>
-<dd>
-<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
 <dt id="OpenID.Discovery">[OpenID.Discovery]</dt>
 <dd>
 <span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, and E. Jay</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>&gt;</span>. </dd>
-<dt id="RFC7638">[RFC7638]</dt>
-<dd>
-<span class="refAuthor">Jones, M.</span><span class="refAuthor"> and N. Sakimura</span>, <span class="refTitle">"JSON Web Key (JWK) Thumbprint"</span>, <time datetime="2015-09-01">1 September 2015</time>, <span>&lt;<a href="https://tools.ietf.org/html/rfc7638">https://tools.ietf.org/html/rfc7638</a>&gt;</span>. </dd>
 <dt id="RFC7591">[RFC7591]</dt>
 <dd>
 <span class="refAuthor">Richer, J., Ed.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Machulak, M.</span><span class="refAuthor">, and P. Hunt</span>, <span class="refTitle">"OAuth 2.0 Dynamic Client Registration Protocol"</span>, <span class="seriesInfo">RFC 7591</span>, <span class="seriesInfo">DOI 10.17487/RFC7591</span>, <time datetime="2015-07">July 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7591">https://www.rfc-editor.org/info/rfc7591</a>&gt;</span>. </dd>
-<dt id="OpenID">[OpenID]</dt>
-<dd>
-<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, de Medeiros, B.</span><span class="refAuthor">, and C. Mortimore</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="http://openid.net/specs/openid-connect-core-1_0.html">http://openid.net/specs/openid-connect-core-1_0.html</a>&gt;</span>. </dd>
 <dt id="VC-DATA">[VC-DATA]</dt>
 <dd>
 <span class="refAuthor">Sporny, M.</span><span class="refAuthor">, Noble, G.</span><span class="refAuthor">, Longley, D.</span><span class="refAuthor">, Burnett, D. C.</span><span class="refAuthor">, and B. Zundel</span>, <span class="refTitle">"Decentralized Identifiers (DIDs) v1.0"</span>, <time datetime="2019-11-19">19 November 2019</time>, <span>&lt;<a href="https://www.w3.org/TR/vc-data-model/">https://www.w3.org/TR/vc-data-model/</a>&gt;</span>. </dd>
+<dt id="OpenID">[OpenID]</dt>
+<dd>
+<span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, Jones, M.</span><span class="refAuthor">, de Medeiros, B.</span><span class="refAuthor">, and C. Mortimore</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="http://openid.net/specs/openid-connect-core-1_0.html">http://openid.net/specs/openid-connect-core-1_0.html</a>&gt;</span>. </dd>
 <dt id="OpenID.Registration">[OpenID.Registration]</dt>
 <dd>
 <span class="refAuthor">Sakimura, N.</span><span class="refAuthor">, Bradley, J.</span><span class="refAuthor">, and M. Jones</span>, <span class="refTitle">"OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1"</span>, <time datetime="2014-11-08">8 November 2014</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-registration-1_0.html">https://openid.net/specs/openid-connect-registration-1_0.html</a>&gt;</span>. </dd>
+<dt id="RFC7638">[RFC7638]</dt>
+<dd>
+<span class="refAuthor">Jones, M.</span><span class="refAuthor"> and N. Sakimura</span>, <span class="refTitle">"JSON Web Key (JWK) Thumbprint"</span>, <time datetime="2015-09-01">1 September 2015</time>, <span>&lt;<a href="https://tools.ietf.org/html/rfc7638">https://tools.ietf.org/html/rfc7638</a>&gt;</span>. </dd>
+<dt id="OIDC4VP">[OIDC4VP]</dt>
+<dd>
+<span class="refAuthor">Terbu, O.</span><span class="refAuthor">, Lodderstedt, T.</span><span class="refAuthor">, Yasuda, K.</span><span class="refAuthor">, Lemmon, A.</span><span class="refAuthor">, and T. Looker</span>, <span class="refTitle">"OpenID Connect Core 1.0 incorporating errata set 1"</span>, <time datetime="2021-05-20">20 May 2021</time>, <span>&lt;<a href="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html</a>&gt;</span>. </dd>
 </dl>
 </section>
 <section id="section-17">

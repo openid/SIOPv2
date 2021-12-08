@@ -162,7 +162,7 @@ Note: discuss trust OP-RP relationship in SIOP.</t>
 <t>There are two models of Self-Issued OP flows:</t>
 
 <ul>
-<li><t>Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and use the sam-device Self-Issued OP flow for authentication.</t>
+<li><t>Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and use the same-device Self-Issued OP flow for authentication.</t>
 </li>
 <li><t>Cross-device Self-Issued OP model: Self-Issued OP is on the different device on which the End-User’s user interactions are occurring.</t>
 </li>
@@ -783,27 +783,6 @@ Note: clarify why authoritative list is relevant</t>
 
 <back>
 <references><name>Normative References</name>
-<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
-  <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
-    <author fullname="Oliver Terbu" initials="O." surname="Terbu">
-      <organization>ConsenSys Mesh</organization>
-    </author>
-    <author fullname="Torsten Lodderstedt" initials="T." surname="Lodderstedt">
-      <organization>yes.com</organization>
-    </author>
-    <author fullname="Kristina Yasuda" initials="K." surname="Yasuda">
-      <organization>Microsoft</organization>
-    </author>
-    <author fullname="Adam Lemmon" initials="A." surname="Lemmon">
-      <organization>Convergence.tech</organization>
-    </author>
-    <author fullname="Tobias Looker" initials="T." surname="Looker">
-      <organization>Mattr</organization>
-    </author>
-    <date year="2021" month="May" day="20"></date>
-  </front>
-</reference>
 <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
@@ -822,40 +801,7 @@ Note: clarify why authoritative list is relevant</t>
     <date year="2014" month="Nov" day="8"></date>
   </front>
 </reference>
-<reference anchor="RFC7638" target="https://tools.ietf.org/html/rfc7638">
-  <front>
-    <title>JSON Web Key (JWK) Thumbprint</title>
-    <author fullname="Mike Jones" initials="M." surname="Jones">
-      <organization>Microsoft</organization>
-    </author>
-    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <date year="2015" month="Sept" day="1"></date>
-  </front>
-</reference>
 <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7591.xml"/>
-<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
-  <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
-    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <author fullname="John Bradley" initials="J." surname="Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author fullname="Mike Jones" initials="M." surname="Jones">
-      <organization>Microsoft</organization>
-    </author>
-    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
-      <organization>Google</organization>
-    </author>
-    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-      <organization>Salesforce</organization>
-    </author>
-    <date year="2014" month="Nov" day="8"></date>
-  </front>
-</reference>
 <reference anchor="VC-DATA" target="https://www.w3.org/TR/vc-data-model/">
   <front>
     <title>Decentralized Identifiers (DIDs) v1.0</title>
@@ -877,6 +823,27 @@ Note: clarify why authoritative list is relevant</t>
     <date year="2019" month="Nov" day="19"></date>
   </front>
 </reference>
+<reference anchor="OpenID" target="http://openid.net/specs/openid-connect-core-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+      <organization>Salesforce</organization>
+    </author>
+    <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
 <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
   <front>
     <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
@@ -890,6 +857,39 @@ Note: clarify why authoritative list is relevant</t>
       <organization>Microsoft</organization>
     </author>
     <date year="2014" month="Nov" day="8"></date>
+  </front>
+</reference>
+<reference anchor="RFC7638" target="https://tools.ietf.org/html/rfc7638">
+  <front>
+    <title>JSON Web Key (JWK) Thumbprint</title>
+    <author fullname="Mike Jones" initials="M." surname="Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <date year="2015" month="Sept" day="1"></date>
+  </front>
+</reference>
+<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author fullname="Oliver Terbu" initials="O." surname="Terbu">
+      <organization>ConsenSys Mesh</organization>
+    </author>
+    <author fullname="Torsten Lodderstedt" initials="T." surname="Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author fullname="Kristina Yasuda" initials="K." surname="Yasuda">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Adam Lemmon" initials="A." surname="Lemmon">
+      <organization>Convergence.tech</organization>
+    </author>
+    <author fullname="Tobias Looker" initials="T." surname="Looker">
+      <organization>Mattr</organization>
+    </author>
+    <date year="2021" month="May" day="20"></date>
   </front>
 </reference>
 </references>
