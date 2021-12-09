@@ -514,6 +514,8 @@ To prevent duplication, registration parameters MUST be passed either in `regist
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
+Ussage of the `state` parameter is optional.
+
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
