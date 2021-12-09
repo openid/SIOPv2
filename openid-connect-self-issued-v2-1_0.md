@@ -81,7 +81,7 @@ With a hosted third-party provider, a user identifier used at the RP is assigned
 
 # Scope
 
-As a Self-Issued OP may be running locally as a native application, a browser application, or a progressive Web application, it may not be able to provide a network-addressable endpoint for direct communication to the RP. This specification leverages the implicit flow of OpenID Connect defined in Section 3.2 of [@!OpenID.Core] to communicate with such locally-running OPs.
+As a Self-Issued OP may be running locally as a native application, a browser application, or a Progressive Web Application, it may not be able to provide a network-addressable endpoint for direct communication to the RP. This specification leverages the implicit flow of OpenID Connect defined in Section 3.2 of [@!OpenID.Core] to communicate with such locally-running OPs.
 
 ## In Scope
 
@@ -239,7 +239,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 }
 ```
 
-Editor's Note: Discuss whether `subject_syntax_types_supported1 should be defined in static SIOP Discovery Metadata.
+Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static SIOP Discovery Metadata.
 
 RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid:` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
@@ -817,7 +817,7 @@ The scope of this draft was an extension to OpenID Connect Chapter 7 Self-Issued
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
     </author>
-    <author fullname="Andreas &Aring;kre Solberg" initials="A.&Aring;."
+    <author fullname="Andreas &#x00C5;kre Solberg" initials="A.&#x00C5;."
             surname="Solberg">
       <organization abbrev="Uninett">Uninett AS</organization>
     </author>
