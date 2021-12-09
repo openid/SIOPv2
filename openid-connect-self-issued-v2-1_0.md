@@ -201,7 +201,6 @@ The following is a non-normative example of a request not intended for a specifi
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -347,7 +346,6 @@ The following is a non-normative example of a same-device request when the RP is
     &client_id=s6BhdRkqt3
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -390,7 +388,6 @@ The following is a non-normative example of an **unsigned** same-device request 
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
     &registration%3D%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
@@ -426,7 +423,6 @@ HTTP/1.1 302 Found
     &client_id=https%3A%2F%2Fclient.example.org%2F
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -454,7 +450,6 @@ The following is a non-normative example of a **signed** cross-device request wh
     &registration%3D%7B%22subject_syntax_types_supported%22%3A
     %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -514,8 +509,6 @@ To prevent duplication, registration parameters MUST be passed either in `regist
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
-Ussage of the `state` parameter is optional.
-
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
@@ -533,7 +526,6 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &registration%3D%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -557,7 +549,6 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &registration%3D%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -581,7 +572,6 @@ The following is an informative example of a Self-Issued OP Response in a same-d
 HTTP/1.1 302 Found
   Location: https://client.example.org/cb#
     id_token=...
-    &state=af0ifjsldkj
 ```
 
 ## Cross-Device Self-Issued OpenID Provider Response
@@ -596,7 +586,6 @@ POST /post_cb HTTP/1.1
   Content-Type: application/x-www-form-urlencoded
   
   id_token=...
-  &state=af0ifjsldkj
 ```
 
 ## Self-Issued OpenID Provider Error Response {#siop-error-respose}
@@ -622,7 +611,6 @@ HTTP/1.1 302 Found
   Location: https://client.example.org/cb?
     error=invalid_request
     &error_description=Unsupported%20response_type%20value
-    &state=af0ifjsldkj
 ```
 
 ## ID Token
