@@ -43,7 +43,7 @@ This specification extends OpenID Connect with the concept of a _Self-Issued Ope
 An OP releases identity information such as End-User authentication in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP. 
 
 In the case of a hosted third-party provided OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User.
-Note: Discuss trust OP-RP relationship in SIOP.
+Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
 Because a Self-Issued OP within the End-User’s local control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
 
@@ -153,22 +153,22 @@ Self-Issued OP Request is an OpenID Connect Authentication Request that results 
 ~~~
 Figure: Self-Issued OP Protocol Flow
 
-# Cross-Device SIOP {#cross-device-siop}
+# Cross-Device Self-Issued OP {#cross-device-siop}
 
 There are two models of Self-Issued OP flows:
 
 * Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and use the same-device Self-Issued OP flow for authentication.
 * Cross-device Self-Issued OP model: Self-Issued OP is on the different device on which the End-User’s user interactions are occurring.
 
-This section outlines how SIOP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor SIOP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
+This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
-1. The RP prepares a SIOP request and renders it as a QR code.
+1. The RP prepares a Self-Issued OP request and renders it as a QR code.
 1. The user scans the QR code with her smartphone's camera app.
-1. The standard mechanisms for invoking the SIOP are used on the smartphone (based on the `openid:` custom scheme).
-1. The SIOP processes the authentication request.
-1. Upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
+1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid:` custom scheme).
+1. The Self-Issued OP processes the authentication request.
+1. Upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
-The request in Step 5 is not a form post request where the SIOP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The SIOP sends this request directly to the RP's endpoint.
+The request in Step 5 is not a form post request where the Self-Issued OP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The Self-Issued OP sends this request directly to the RP's endpoint.
 
 # Discovery and Registration
 
@@ -203,6 +203,9 @@ The following is a non-normative example of a request not intended for a specifi
     &scope=openid%20profile
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
+    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
+    %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
@@ -239,7 +242,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 }
 ```
 
-Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static SIOP Discovery Metadata.
+Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
 
 RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid:` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
@@ -278,7 +281,7 @@ Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be u
 
 The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
 
-An additional `i_am_siop` Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP, when dynamic Self-Issued OpenID Provider discovery has been used.
+When dynamic Self-Issued OpenID Provider discovery has been used, an additional `i_am_siop` Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP.
 
 Below is a non-normative example of a Self-Issued OP metadata obtained dynamically:
 
@@ -338,6 +341,19 @@ Registration mechanism depends on whether the Self-Issued OP and the RP have a p
 
 When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registration, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
+The following is a non-normative example of a same-device Self-Issued OP Request when the RP is pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
+
+```
+  HTTP/1.1 302 Found
+  Location:  https://client.example.org/universal-link?
+    response_type=id_token
+    &client_id=s6BhdRkqt3
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=openid%20profile
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
+```
+
 ## Non-Pre-Registered Relying Party
 
 When the RP has not pre-registered and has to dynamically register with the Self-Issued OP, the registration mechanism depends on whether the Self-Issued OP Request is signed or not.
@@ -367,6 +383,22 @@ RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the
 Metadata parameters should preferably be sent by reference as a URI using `registration_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `registration` parameter.
 
 `registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
+
+The following is a non-normative example of an **unsigned** HTTP 302 redirect request by the RP which triggers the User Agent to make an Authentication Request to the Self-Issued OP in a same-device flow (with line wraps within values for display purposes only):
+
+```
+  HTTP/1.1 302 Found
+  Location: openid://?
+    response_type=id_token
+    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=openid%20profile
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
+    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
+    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
+```
 
 ### Relying Party Metadata Resolution Methods {#rp-resolution-parameter}
 
@@ -423,7 +455,7 @@ The following is a non-normative example of the supported RP Registration Metada
 
 # Self-Issued OpenID Provider Authentication Request {#siop_authentication_request}
 
-SIOP authentication request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
+Self-Issued OP authentication request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
 The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], using request parameters defined by OAuth 2.0 and OpenID Connect, with the exception of the differences specified in this section.
 
@@ -471,16 +503,17 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &scope=openid%20profile
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_syntax_types_supported%22:%5B%22jkt%22%5D,
-    %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
+    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
+    %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
 
 ## Cross-Device Self-Issued OpenID Provider Request
 
 The cross-device authentication request differs from the same-device variant as defined in (#siop_authentication_request) as follows:
 
-* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the SIOP to deliver the result of the authentication process to a certain endpoint. The additional parameter `response_mode` is used to carry this value.
-* This endpoint the SIOP shall deliver the authentication result to is conveyed in the standard parameter `redirect_uri`.
+* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint. The additional parameter `response_mode` is used to carry this value.
+* This endpoint the Self-Issued OP shall deliver the authentication result to is conveyed in the standard parameter `redirect_uri`.
 * The RP MUST ensure the `nonce` value used for a particular transaction is available at this endpoint for security checks.
 
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow {#cross-device-siop}:
@@ -494,7 +527,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &scope=openid%20profile
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_syntax_types_supported%22:%5B%22jkt%22%5D,
+    &registration=%7B%22subject_syntax_types_supported%22%5B%22jkt%22%5D
     %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 ```
 
@@ -510,7 +543,7 @@ A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports 
 
 In a same-device flow, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
-In a cross-device flow, upon completion of the authentication request, the SIOP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
+In a cross-device flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
 Below is an informative example of a Self-Issued OP Response in a same-device flow:
 
@@ -522,7 +555,7 @@ HTTP/1.1 302 Found
 
 ## Cross-Device Self-Issued OpenID Provider Response
 
-The SIOP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
+The Self-Issued OP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
 Below is an informative example of a Self-Issued OP Response in a cross-device flow: {#cross-device-siop}:
 
@@ -667,7 +700,7 @@ To validate the ID Token received, the RP MUST do the following:
 
 ## Usage of Self-Issued OP for Authentication
 
-A known attack in cross-device SIOP is a session replay attack, where a victim is tricked to send a response to a request that an RP has generated for an attacker. Attacker would trick a victim to respond to a request that an attacker has generated for him/herself at a good RP.
+A known attack in cross-device Self-Issued OP is a session replay attack, where a victim is tricked to send a response to a request that an RP has generated for an attacker. Attacker would trick a victim to respond to a request that an attacker has generated for him/herself at a good RP.
 
 Implementors should be cautious when using cross-device Self-Issued OP model for Authentication and should implement mitigations according to the desired security level.
 
@@ -687,7 +720,7 @@ When more than one Self-issued OP with the same custom schema has been installed
 
 ## Selective Disclosure and Unlinkable Presentations
 
-Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, IdP / SIOP correlation can occur.
+Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, Identity Provider / Self-Issued OP correlation can occur.
 
 Consider supporting selective disclosure and unlinkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
 
@@ -708,23 +741,9 @@ Note: Clarify why authoritative list is relevant.
 
 Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
-# Examples
-
-## Static SIOP metadata and an unsigned request
-// placeholder
-
-## Static SIOP metadata and request signed using DIDs
-//placeholder
-
-## Static SIOP metadata and request signed using OpenID Federation Automatic registration
-// placeholder
-
-## Dynamic SIOP metadata and an unsigned request
-// placeholder
-
 # Relationships to Other Documents
 
-The scope of this draft was an extension to OpenID Connect Chapter 7 Self-Issued OpenID Provider. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
+The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provider in [@!OpenID.Core]. However, some sections of it could become applicable more generally to the entire OpenID Connect specification.
 
 {backmatter}
 
@@ -943,8 +962,8 @@ The technology described in this specification was made available from contribut
     * sub_jwk made optional for Subject Syntax Type DID and mandatory for subtype jwk thumbprint
     * Added text that nonce is mandatory
     * Replaced vp claim with reference to OIDC4VP draft
-    * Adopted SIOP chooser as SIOP Discovery
-    * Deprecated openid:// for SIOP Discovery as not recommended
+    * Adopted Self-Issued OP chooser as Self-Issued OP Discovery
+    * Deprecated openid:// for Self-Issued OP Discovery as not recommended
     * Clarified Discovery and Registration metadata
     * Formatted Normative Reference Section to mmarkdown
 
