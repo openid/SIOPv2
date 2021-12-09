@@ -157,7 +157,7 @@ Figure: Self-Issued OP Protocol Flow
 
 There are two models of Self-Issued OP flows:
 
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and use the same-device Self-Issued OP flow for authentication.
+* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
 * Cross-device Self-Issued OP model: Self-Issued OP is on the different device on which the End-User’s user interactions are occurring.
 
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
@@ -200,7 +200,7 @@ The following is a non-normative example of a request not intended for a specifi
     response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
-    &scope=openid%20profile
+    &scope=openid
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -390,7 +390,7 @@ The following is a non-normative example of an **unsigned** same-device request 
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
     &nonce=n-0S6_WzA2Mj
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
@@ -448,7 +448,7 @@ The following is a non-normative example of a **signed** cross-device request wh
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -519,12 +519,12 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 ```
   HTTP/1.1 302 Found
   Location: openid://?
-    scope=openid%20profile
+    scope=openid
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -534,20 +534,22 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 The cross-device authentication request differs from the same-device variant as defined in (#siop_authentication_request) as follows:
 
-* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint. The additional parameter `response_mode` is used to carry this value.
-* This endpoint the Self-Issued OP shall deliver the authentication result to is conveyed in the standard parameter `redirect_uri`.
-* The RP MUST ensure the `nonce` value used for a particular transaction is available at this endpoint for security checks.
+* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
+* This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
-The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow {#cross-device-siop}:
+Self-Issued OP is on the different device on which the End-User’s user interactions are occurring
+
+The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow (#cross-device-siop):
 
 ```
   openid://?
     scope=openid%20profile
     &response_type=id_token
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
+    &response_mode=post
     &claims=...
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -579,7 +581,7 @@ HTTP/1.1 302 Found
 
 The Self-Issued OP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
-The following is an informative example of a Self-Issued OP Response in a cross-device flow: {#cross-device-siop}:
+The following is an informative example of a Self-Issued OP Response in a cross-device flow: (#cross-device-siop):
 
 ```
 POST /post_cb HTTP/1.1
