@@ -115,7 +115,7 @@ The following are considered out of scope of this document.
   
 # Terms and Definitions
 
-Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@DID-CORE]. In the case where a term has a definition that differs, the definition below is authoritative.
+Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
 
 - Cryptographically verifiable identifier
     - an identifier which is either based upon or resolves to cryptographic key material which can be used to verify a signature on the ID Token or the Self-Issued OP Request.
@@ -326,7 +326,7 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 * JWK Thumbprint subject syntax type. When this type is used, the `sub` Claim value MUST be the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` Claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP Response.
 
-* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@DID-CORE], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. The subject syntax type MUST be cryptographically verified against the resolved DID Document as defined in {#siop-id_token-validation}.
+* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. The subject syntax type MUST be cryptographically verified against the resolved DID Document as defined in {#siop-id_token-validation}.
 
 The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_types_supported` defined in {#rp-metadata}.
 
@@ -390,7 +390,7 @@ Below is a non-normative example of a `client_id` resolvable using OpenID Federa
 
 #### Decentralized Identifier Resolution
 
-When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@DID-CORE], a public key used to sign the request MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
+When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@!DID-Core], a public key used to sign the request MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
 
 RP metadata other than the public key MUST be obtained from the `registration` parameter as defined in {#rp-registration-parameter}.
 
@@ -853,7 +853,7 @@ The scope of this draft was an extension to OpenID Connect Chapter 7 Self-Issued
   </front>
 </reference>
 
-<reference anchor="DID-CORE" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
+<reference anchor="DID-Core" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
         <front>
         <title>Decentralized Identifiers (DIDs) v1.0</title>
         <author fullname="Manu Sporny">
