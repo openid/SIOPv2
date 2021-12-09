@@ -194,7 +194,7 @@ In the first scenario, the request is encoded in a QR code or a deep link, and t
 
 In the second scenario, the request includes the `authorization_endpoint` of a Self-Issued OP and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this flow would work both for the same-device Self-Issued OP flow and the cross-device Self-Issued OP flow.
 
-The following is a non-normative example of a request not intended for a specific `authorization_endpoint` which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device (line wraps within values are for display purposes only):
+The following is a non-normative example of a request not intended for a specific `authorization_endpoint`, which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device. It is a request when the RP is pre-registered with the Self-Issued OP (line wraps within values are for display purposes only):
 
 ```
     response_type=id_token
@@ -203,9 +203,6 @@ The following is a non-normative example of a request not intended for a specifi
     &scope=openid%20profile
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
-    %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
-    %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
@@ -283,12 +280,12 @@ The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery
 
 When dynamic Self-Issued OpenID Provider discovery has been used, an additional `i_am_siop` Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP.
 
-Below is a non-normative example of a Self-Issued OP metadata obtained dynamically:
+The following is a non-normative example of a Self-Issued OP metadata obtained dynamically:
 
 ```json
 {
-  "authorization_endpoint": "siop:", //need a sample of a universal link
-  "issuer": "https://example.com",
+  "authorization_endpoint": "siop:", //can be a universal link/app link
+  "issuer": "https://client.example.org",
   "response_types_supported": [
     "id_token"
   ],
@@ -341,7 +338,7 @@ Registration mechanism depends on whether the Self-Issued OP and the RP have a p
 
 When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registration, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
-The following is a non-normative example of a same-device Self-Issued OP Request when the RP is pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
+The following is a non-normative example of a same-device request when the RP is pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
@@ -384,11 +381,11 @@ Metadata parameters should preferably be sent by reference as a URI using `regis
 
 `registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
 
-The following is a non-normative example of an **unsigned** HTTP 302 redirect request by the RP which triggers the User Agent to make an Authentication Request to the Self-Issued OP in a same-device flow (with line wraps within values for display purposes only):
+The following is a non-normative example of an **unsigned** same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
-  Location: openid://?
+  Location: https://client.example.org/universal-link?
     response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
@@ -397,7 +394,7 @@ The following is a non-normative example of an **unsigned** HTTP 302 redirect re
     &nonce=n-0S6_WzA2Mj
     &registration%3D%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
-    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
+    %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
 
 ### Relying Party Metadata Resolution Methods {#rp-resolution-parameter}
@@ -414,10 +411,23 @@ The Relying Party's Entity Identifier defined in Section 1.2 of [@!OpenID.Federa
 
 Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
 
-Below is a non-normative example of a `client_id` resolvable using OpenID Federation 1.0 Automatic Registration:
+The following is a non-normative example of a `client_id` resolvable using OpenID Federation 1.0 Automatic Registration:
 
 ```json
-"client_id": "https://example.com"
+"client_id": "https://client.example.org"
+```
+
+The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. (with line wraps within values for display purposes only):
+
+```
+HTTP/1.1 302 Found
+  Location: https://client.example.org/universal-link?
+    response_type=id_token
+    &client_id=https%3A%2F%2Fclient.example.org%2F
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=openid%20profile
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
 ```
 
 #### Decentralized Identifier Resolution
@@ -426,10 +436,26 @@ When the Relying Party's `client_id` is expressed as a `did` URI as defined in [
 
 RP metadata other than the public key MUST be obtained from the `registration` parameter as defined in {#rp-registration-parameter}.
 
-Below is a non-normative example of a `client_id` resolvable using Decentralized Identifier Resolution:
+The following is a non-normative example of a `client_id` resolvable using Decentralized Identifier Resolution:
 
 ```json
 "client_id": "did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
+```
+
+The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
+
+```
+  openid://?
+    scope=openid%20profile
+    &response_type=id_token
+    &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &claims=...
+    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
+    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
 ```
 
 ### Relying Party Registration Metadata Values {#rp-metadata}
@@ -497,15 +523,16 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 ```
   HTTP/1.1 302 Found
   Location: openid://?
-    response_type=id_token
+    scope=openid%20profile
+    &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &scope=openid%20profile
-    &state=af0ifjsldkj
-    &nonce=n-0S6_WzA2Mj
+    &claims=...
     &registration%3D%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
-    %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
+    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
+    &state=af0ifjsldkj
+    &nonce=n-0S6_WzA2Mj
 ```
 
 ## Cross-Device Self-Issued OpenID Provider Request
@@ -519,16 +546,17 @@ The cross-device authentication request differs from the same-device variant as 
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow {#cross-device-siop}:
 
 ```
-    openid://?
-    response_type=id_token
-    &response_mode=post
+  openid://?
+    scope=openid%20profile
+    &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &scope=openid%20profile
+    &claims=...
+    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
+    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_syntax_types_supported%22%5B%22jkt%22%5D
-    %22id_token_signing_alg_values_supported%22:%5B%22RS256%22%5D%7D
 ```
 
 Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the user must use a particular Self-Issued OP application to scan the QR code with such request.
@@ -545,25 +573,28 @@ In a same-device flow, the response parameters will be returned in the URL fragm
 
 In a cross-device flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
-Below is an informative example of a Self-Issued OP Response in a same-device flow:
+The following is an informative example of a Self-Issued OP Response in a same-device flow:
 
 ```
 HTTP/1.1 302 Found
   Location: https://client.example.org/cb#
-    &id_token=...
+    id_token=...
+    &state=af0ifjsldkj
 ```
 
 ## Cross-Device Self-Issued OpenID Provider Response
 
 The Self-Issued OP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
-Below is an informative example of a Self-Issued OP Response in a cross-device flow: {#cross-device-siop}:
+The following is an informative example of a Self-Issued OP Response in a cross-device flow: {#cross-device-siop}:
 
 ```
 POST /post_cb HTTP/1.1
-  Host: client.example.com
+  Host: client.example.org
   Content-Type: application/x-www-form-urlencoded
-  &id_token=...
+  
+  id_token=...
+  &state=af0ifjsldkj
 ```
 
 ## Self-Issued OpenID Provider Error Response {#siop-error-respose}
@@ -582,7 +613,7 @@ Other error codes MAY be used.
 
 Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
 
-Below is a non-normative example of an error response in the same-device Self-Issued OP flow:
+The following is a non-normative example of an error response in the same-device Self-Issued OP flow:
 
 ```
 HTTP/1.1 302 Found
@@ -615,7 +646,7 @@ Whether the Self-Issued OP is a mobile application or a Web application, the res
 1. When the `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
 1. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
 
-The following is a non-normative example of a base64url decoded Self-Issued ID Token body (with line wraps within values for display purposes only):
+The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the static Self-Issued OP Discovery and JWK Thumbprint Subject Syntax type are used (with line wraps within values for display purposes only):
 
 ```json
 {
@@ -644,36 +675,35 @@ The RP MUST perform all the check as defined in (#siop-id-token-validation).
 
 Additionally, the RP MUST check whether the `nonce` Claim value provided in the ID Token is known to the RP and was not used before in an authentication response.
 
-The following is a non-normative example of an ID token containing a verifiable presentation (with line wraps within values for display purposes only):
+The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the dynamic Self-Issued OP Discovery and Decentalized Identifier Subject Syntax type are used (with line wraps within values for display purposes only):
 
 ```json
 {
-  "iss": "https://self-issued.me/v2",
-  "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+  "iss": "https://siop.example.com",
+  "sub": "did:example:NzbLsXh8uDCcd6MNwXF4W7noWXFZAfHkxZsRGC9Xs",
   "aud": "https://client.example.org/cb",
   "nonce": "n-0S6_WzA2Mj",
   "exp": 1311281970,
   "iat": 1311280970,
-  "sub_jwk": {
-    "kty": "RSA",
-    "n": "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAt
-    VT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W
-    -5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQ
-    MicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdk
-    t-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-cs
-    FCur-kEgU8awapJzKnqDKgw",
-    "e": "AQAB"
-  },
-  "verifiable_presentations": [
-    {
-      "format": "vp_jwt",
-      "presentation": "ewogICAgImlzcyI6Imh0dHBzOi8vYm9vay5pdHNvdXJ3ZWIub...IH0="
-    }
-  ]
+  "presentation_submission": {
+    "id": "Selective disclosure example presentation",
+    "definition_id": "Selective disclosure example",
+    "descriptor_map": [
+      {
+        "id": "ID Card with constraints",
+        "format": "ldp_vp",
+        "path": "$",
+        "path_nested": {
+          "format": "ldp_vc",
+          "path": "$.verifiableCredential[0]"
+        }
+      }
+    ]
+  }
 }
 ```
 
-Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
+Further processing steps are required if the authentication response contains `presentation_submission` as in the example above - see [@!OIDC4VP].
 
 ## Verifiable Presentation Support
 
