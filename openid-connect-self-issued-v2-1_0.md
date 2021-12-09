@@ -228,12 +228,13 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
     "pairwise"
   ],
   "id_token_signing_alg_values_supported": [
-    "ES256",
-    "ES256K"
+    "ES256"
   ],
   "request_object_signing_alg_values_supported": [
-    "ES256",
-    "ES256K"
+    "ES256"
+  ],
+  "subject_syntax_types_supported": [
+    "urn:ietf:params:oauth:jwk-thumbprint"
   ]
 }
 ```
