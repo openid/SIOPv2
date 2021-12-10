@@ -157,8 +157,8 @@ Figure: Self-Issued OP Protocol Flow
 
 There are two models of Self-Issued OP flows:
 
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and use the same-device Self-Issued OP flow for authentication.
-* Cross-device Self-Issued OP model: Self-Issued OP is on the different device on which the End-User’s user interactions are occurring.
+* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
+* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
@@ -200,8 +200,7 @@ The following is a non-normative example of a request not intended for a specifi
     response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
-    &scope=openid%20profile
-    &state=af0ifjsldkj
+    &scope=openid
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -229,12 +228,13 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
     "pairwise"
   ],
   "id_token_signing_alg_values_supported": [
-    "ES256",
-    "ES256K"
+    "ES256"
   ],
   "request_object_signing_alg_values_supported": [
-    "ES256",
-    "ES256K"
+    "ES256"
+  ],
+  "subject_syntax_types_supported": [
+    "urn:ietf:params:oauth:jwk-thumbprint"
   ]
 }
 ```
@@ -347,7 +347,6 @@ The following is a non-normative example of a same-device request when the RP is
     &client_id=s6BhdRkqt3
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -390,9 +389,8 @@ The following is a non-normative example of an **unsigned** same-device request 
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
@@ -426,7 +424,6 @@ HTTP/1.1 302 Found
     &client_id=https%3A%2F%2Fclient.example.org%2F
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -451,10 +448,9 @@ The following is a non-normative example of a **signed** cross-device request wh
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -523,15 +519,14 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 ```
   HTTP/1.1 302 Found
   Location: openid://?
-    scope=openid%20profile
+    scope=openid
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -539,23 +534,24 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 The cross-device authentication request differs from the same-device variant as defined in (#siop_authentication_request) as follows:
 
-* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint. The additional parameter `response_mode` is used to carry this value.
-* This endpoint the Self-Issued OP shall deliver the authentication result to is conveyed in the standard parameter `redirect_uri`.
-* The RP MUST ensure the `nonce` value used for a particular transaction is available at this endpoint for security checks.
+* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
+* This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
-The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow {#cross-device-siop}:
+Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
+
+The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow (#cross-device-siop):
 
 ```
   openid://?
     scope=openid%20profile
     &response_type=id_token
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
+    &response_mode=post
     &claims=...
-    &registration%3D%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &state=af0ifjsldkj
     &nonce=n-0S6_WzA2Mj
 ```
 
@@ -579,14 +575,13 @@ The following is an informative example of a Self-Issued OP Response in a same-d
 HTTP/1.1 302 Found
   Location: https://client.example.org/cb#
     id_token=...
-    &state=af0ifjsldkj
 ```
 
 ## Cross-Device Self-Issued OpenID Provider Response
 
 The Self-Issued OP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
-The following is an informative example of a Self-Issued OP Response in a cross-device flow: {#cross-device-siop}:
+The following is an informative example of a Self-Issued OP Response in a cross-device flow: (#cross-device-siop):
 
 ```
 POST /post_cb HTTP/1.1
@@ -594,7 +589,6 @@ POST /post_cb HTTP/1.1
   Content-Type: application/x-www-form-urlencoded
   
   id_token=...
-  &state=af0ifjsldkj
 ```
 
 ## Self-Issued OpenID Provider Error Response {#siop-error-respose}
@@ -620,7 +614,6 @@ HTTP/1.1 302 Found
   Location: https://client.example.org/cb?
     error=invalid_request
     &error_description=Unsupported%20response_type%20value
-    &state=af0ifjsldkj
 ```
 
 ## ID Token
@@ -669,6 +662,27 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 }
 ```
 
+## Verifiable Presentation Support
+
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
+
+Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
+
+
+# Self-Issued ID Token Validation {#siop-id-token-validation}
+See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
+
+To validate the ID Token received, the RP MUST do the following:
+
+1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, an additional `i_am_siop` Claim MUST be present in the ID Token and `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata MUST be included in the ID Token as a way for the RP to determine if the, when dynamic Self-Issued OpenID Provider discovery has been used.
+1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
+1. The RP MUST identify which Subject Syntax Type is used based on the URI of the `sub` Claim. Valid values defined in this specification are `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type and `did:` for Decentralized Identifier Subject Syntax Type.
+1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
+1. The RP MUST validate the `sub` value. When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
+1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
+ The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
+1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+
 ## Cross-Device Self-Issued OP ID Token Validation
 
 The RP MUST perform all the check as defined in (#siop-id-token-validation).
@@ -704,27 +718,6 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 ```
 
 Further processing steps are required if the authentication response contains `presentation_submission` as in the example above - see [@!OIDC4VP].
-
-## Verifiable Presentation Support
-
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
-
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
-
-
-# Self-Issued ID Token Validation {#siop-id-token-validation}
-See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
-
-To validate the ID Token received, the RP MUST do the following:
-
-1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, an additional `i_am_siop` Claim MUST be present in the ID Token and `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata MUST be included in the ID Token as a way for the RP to determine if the, when dynamic Self-Issued OpenID Provider discovery has been used.
-1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
-1. The RP MUST identify which Subject Syntax Type is used based on the URI of the `sub` Claim. Valid values defined in this specification are `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type and `did:` for Decentralized Identifier Subject Syntax Type.
-1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
-1. The RP MUST validate the `sub` value. When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
-1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
- The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
-1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 # Security Considerations
 
