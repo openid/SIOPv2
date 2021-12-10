@@ -158,7 +158,7 @@ Figure: Self-Issued OP Protocol Flow
 There are two models of Self-Issued OP flows:
 
 * Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
-* Cross-device Self-Issued OP model: Self-Issued OP is on the different device on which the End-User’s user interactions are occurring.
+* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
@@ -537,7 +537,7 @@ The cross-device authentication request differs from the same-device variant as 
 * This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
-Self-Issued OP is on the different device on which the End-User’s user interactions are occurring
+Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow (#cross-device-siop):
 
