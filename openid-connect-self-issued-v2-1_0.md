@@ -332,13 +332,13 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 * Decentralized Identifier Subject Syntax Type. When this Subject Syntax Type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. This Subject Syntax Type MUST be cryptographically verified against the resolved DID Document as defined in (#siop-id_token-validation).
 
-The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_types_supported` defined in (#rp-metadata).
+The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_type` defined in (#rp-metadata).
 
 # Relying Party Registration {#rp-resolution}
 
 Registration mechanism depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
 
-## Pre-Registered Relying Party
+## Pre-Registered Relying Party {#pre-registered-rp}
 
 When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registration, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
@@ -362,7 +362,7 @@ When the Self-Issued OP request is not signed, all registration parameters MUST 
 
 When the Self-Issued OP request is signed, the public key to verify the signature is obtained by resolving Relying Party's `client_id` using Relying Party Metadata Resolution Methods defined in (#rp-resolution-methods). Depending on the Relying Party Metadata Resolution Method used, the rest of the RP Registration metadata SHOULD be included either in the `registration` parameter inside the Self-Issued OP request, or externally, for example in the Entity Statement defined in [@!OpenID.Federation] Automatic Registration. In this case, `client_id` MUST NOT equal `redirect_uri`.
 
-`registration` parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
+`registration` parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request. `redirect_uris` can be used in the RP metadata communicated using means other than `registration` parameters, such as the Entity Statement defined in (#automatic-registration), or when the RP is pre-registered as defined in (#pre-registered-rp).
 
 Note that in Self-Issued OP flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
@@ -382,7 +382,7 @@ RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the
 
 Metadata parameters should preferably be sent by reference as a URI using `registration_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `registration` parameter.
 
-`registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
+`registration` and `registration_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP. They MUST NOT be used when OpenID Federation 1.0 Automatic Registration defined in (#automatic-registration) is used to obtain RP registration metadata.
 
 The following is a non-normative example of an **unsigned** same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
@@ -394,7 +394,7 @@ The following is a non-normative example of an **unsigned** same-device request 
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_type%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
@@ -405,13 +405,17 @@ This specification defines two resolution methods of how RP's `client_id` can be
 
 Other resolution methods may be defined in future versions of this specification or by Trust Frameworks.
 
-#### OpenID Federation 1.0 Automatic Registration
+#### OpenID Federation 1.0 Automatic Registration {#automatic-registration}
 
 When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [@!OpenID.Federation] MUST be used.
 
 The Relying Party's Entity Identifier defined in Section 1.2 of [@!OpenID.Federation] MUST be `client_id`. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in Section 3.1 of [@!OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
 
-Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
+To use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
+
+When this resolution method is used, 
+- Self-Issued OP Request MUST be signed.
+- Registration parameters defined in (#rp-registration-parameter) MUST NOT be present.
 
 The following is a non-normative example of a `client_id` resolvable using OpenID Federation 1.0 Automatic Registration:
 
@@ -452,7 +456,7 @@ The following is a non-normative example of a **signed** cross-device request wh
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_type%22%3A
     %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -462,7 +466,7 @@ The following is a non-normative example of a **signed** cross-device request wh
 
 This extension defines the following RP Registration Metadata value, used by the RP to provide information about itself to the Self-Issued OP:
 
-* `subject_syntax_types_supported`
+* `subject_syntax_type`
     * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!JWK-Thumbprint-URI]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
 
 Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
@@ -471,7 +475,7 @@ The following is a non-normative example of the supported RP Registration Metada
 
 ```json
 {
-  "subject_syntax_types_supported": [
+  "subject_syntax_type": [
     "urn:ietf:params:oauth:jwk-thumbprint",
     "did:example",
     "did:key"
@@ -501,16 +505,14 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
     * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core]. If the ID Token is encrypted for the Self-Issued OP, the `sub` (subject) of the signed ID Token MUST be sent as the `kid` (Key ID) of the JWE.
 * `claims`
     * OPTIONAL. As specified in Section 5.5 of [@!OpenID.Core].
-* `registration`
-    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter).
-* `registration_uri`
-    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter).
-* `request`
-    * OPTIONAL. Request Object value, as specified in Section 6.1 of [@!OpenID.Core]. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
-* `request_uri`
-    * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@!OpenID.Core].
 
-To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
+Using registration parameters defined in (#rp-registration-parameter), the RP MAY provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration.
+
+Request Parameters can be passed as JWTs using `request` or `request_uri` parametersas defined in Section 6 in [@!OpenID.Core]. The Request Object in the `request` parameter MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
+
+Registration parameters MUST be passed either using `registration` or `registration_uri` parameters directly in the request, or using `request` or `request_uri` parameters to prevent duplication. When `registration` or `registration_uri` parameters are included directly in the request, `request` or `request_uri` parameters MUST not include registration parameters. 
+
+When RP is not pre-registered with the Self-Issued OP and is not using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request.
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
@@ -528,7 +530,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_type%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -553,7 +555,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
     &response_mode=post
     &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &registration=%7B%22subject_syntax_type%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -603,7 +605,7 @@ In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Secti
 
 * **`user_cancelled`**: user cancelled the authentication request from the RP.
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
-* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
+* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_type` parameter.
 * **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
 * **`invalid_registration_object`**: the `registration` parameter contains an invalid RP Registration Metadata Object.
 
