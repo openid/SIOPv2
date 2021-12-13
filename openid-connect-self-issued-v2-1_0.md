@@ -128,6 +128,7 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
 * OP: OpenID Provider
 * RP: Relying Party
 * Self-Issued OP or SIOP: Self-Issued OpenID Provider
+* DID: Decentralized Identifier
 
 # Protocol Flow
 
@@ -184,7 +185,7 @@ If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of st
 
 If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
-If the Self-Issued OP is unable to perform pre-registration of the RPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [@!OpenID.Federation], if `client_id` is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [@!DID-Core] and the rest of the metadata is obtained from the registration parameter.
+If the Self-Issued OP is unable to perform pre-registration of the RPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [@!OpenID.Federation], if `client_id` is a Decentralized Identifier (DID), public key is obtained from a DIDDoc as defined in [@!DID-Core] and the rest of the metadata is obtained from the registration parameter.
 
 # Self-Issued OpenID Provider Invocation {#siop-invocation}
 
@@ -508,11 +509,11 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 
 Using registration parameters defined in (#rp-registration-parameter), the RP MAY provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration.
 
+When RP is not pre-registered with the Self-Issued OP and is not using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present.
+
 Request Parameters can be passed as JWTs using `request` or `request_uri` parametersas defined in Section 6 in [@!OpenID.Core]. The Request Object in the `request` parameter MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
 
 Registration parameters MUST be passed either using `registration` or `registration_uri` parameters directly in the request, or using `request` or `request_uri` parameters to prevent duplication. When `registration` or `registration_uri` parameters are included directly in the request, `request` or `request_uri` parameters MUST not include registration parameters. 
-
-When RP is not pre-registered with the Self-Issued OP and is not using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request.
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
@@ -561,7 +562,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &nonce=n-0S6_WzA2Mj
 ```
 
-Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the user must use a particular Self-Issued OP application to scan the QR code with such request.
+Note that when the user is scanning a QR code with the request using a particular Self-Issued OP application, the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`.
 
 Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider using a `request_uri` in such a case.
 
@@ -603,15 +604,14 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
-* **`user_cancelled`**: user cancelled the authentication request from the RP.
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
-* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_type` parameter.
+* **`subject_syntax_type_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_type` parameter.
 * **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
 * **`invalid_registration_object`**: the `registration` parameter contains an invalid RP Registration Metadata Object.
 
 Other error codes MAY be used.
 
-Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
+Note that HTTP status codes do not work as error codes in the cross-device Self-Issued OP flows. 
 
 The following is a non-normative example of an error response in the same-device Self-Issued OP flow:
 
@@ -633,7 +633,7 @@ This extension defines the following claims to be included in the ID token for u
 * `sub_jwk`
     * OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is JWK Thumbprint. The key is a bare key in JWK [@!RFC7517] format (not an X.509 certificate value). MUST NOT be present when Subject Syntax Type other than JWK Thumbprint is used.
 * `i_am_siop`
-    * OPTIONAL. Boolean. It MUST be set to `true` and be included when Self-Issued OP Discovery metadata has been obtained dynamically. 
+    * REQUIRED. Boolean. It MUST be set to `true` when the ID Token is signed by a Self-Issued OP. 
 
 Note: The use of `i_am_siop` Claim is under discussion and may be replaced with something like "iss": "siop+https://siop.example.com".
 
@@ -676,17 +676,27 @@ Verifiable Presentation is a tamper-evident presentation encoded in such a way t
 
 
 # Self-Issued ID Token Validation {#siop-id-token-validation}
+
 See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
 
 To validate the ID Token received, the RP MUST do the following:
 
-1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, an additional `i_am_siop` Claim MUST be present in the ID Token and `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata MUST be included in the ID Token as a way for the RP to determine if the, when dynamic Self-Issued OpenID Provider discovery has been used.
-1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
-1. The RP MUST identify which Subject Syntax Type is used based on the URI of the `sub` Claim. Valid values defined in this specification are `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type and `did:` for Decentralized Identifier Subject Syntax Type.
-1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
+1. If the ID Token is encrypted, decrypt it using the keys and algorithms that the RP specified during Registration that the Self-Issued OP was to use to encrypt the ID Token. If encryption was negotiated with the Self-Issued OP at registration time and the ID Token is not encrypted, the RP SHOULD reject it.
+
+1. The RP MUST verify the ID Token has an `i_am_siop` claim with value `true`, indicating it is intended to be processed as a Self-Issued ID Token. If the OP metadata has associated signing keys (such as those referenced via jwks_uri, the OP is not Self-Issued OP and processing should proceed using the verification steps defined by [@!OpenID.Core].
+
+1. The RP MUST verify the issuer of the id_token. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata.
+
+1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. 
+
+1. The RP MUST identify which Subject Syntax Type is used based on the URI prefix of the `sub` Claim. Valid URI values defined in this specification begin with `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type, or `did:` for Decentralized Identifier Subject Syntax Type. `did` prefix is followed by an identifier for the specific DID method as defined in [@!DID-Core].
+
 1. The RP MUST validate the `sub` value. When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
-1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
- The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
+
+1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
+
+1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew). The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
+
 1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 ## Cross-Device Self-Issued OP ID Token Validation
