@@ -668,44 +668,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 }
 ```
 
-## Verifiable Presentation Support
-
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
-
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
-
-
-# Self-Issued ID Token Validation {#siop-id-token-validation}
-
-See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
-
-To validate the ID Token received, the RP MUST do the following:
-
-1. If the ID Token is encrypted, decrypt it using the keys and algorithms that the RP specified during Registration that the Self-Issued OP was to use to encrypt the ID Token. If encryption was negotiated with the Self-Issued OP at registration time and the ID Token is not encrypted, the RP SHOULD reject it.
-
-1. The RP MUST verify the ID Token has an `i_am_siop` claim with value `true`, indicating it is intended to be processed as a Self-Issued ID Token. If the OP metadata has associated signing keys (such as those referenced via jwks_uri, the OP is not Self-Issued OP and processing should proceed using the verification steps defined by [@!OpenID.Core].
-
-1. The RP MUST verify the issuer of the id_token. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata.
-
-1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. 
-
-1. The RP MUST identify which Subject Syntax Type is used based on the URI prefix of the `sub` Claim. Valid URI values defined in this specification begin with `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type, or `did:` for Decentralized Identifier Subject Syntax Type. `did` prefix is followed by an identifier for the specific DID method as defined in [@!DID-Core].
-
-1. The RP MUST validate the `sub` value. When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
-
-1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
-
-1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew). The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
-
-1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
-
-## Cross-Device Self-Issued OP ID Token Validation
-
-The RP MUST perform all the check as defined in (#siop-id-token-validation).
-
-Additionally, the RP MUST check whether the `nonce` Claim value provided in the ID Token is known to the RP and was not used before in an authentication response.
-
-The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the dynamic Self-Issued OP Discovery and Decentalized Identifier Subject Syntax Type are used (with line wraps within values for display purposes only):
+The following is a non-normative example of a base64url decoded Self-Issued ID Token body that contains one Verifiable Presentation with two Verifiable Credentials. The dynamic Self-Issued OP Discovery and Decentalized Identifier Subject Syntax Type are used (with line wraps within values for display purposes only):
 
 ```json
 {
@@ -733,7 +696,48 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 }
 ```
 
-Further processing steps are required if the authentication response contains `presentation_submission` as in the example above - see [@!OIDC4VP].
+Further processing steps are required if the authentication response contains `presentation_submission` as in the example above. See [@!OIDC4VP].
+
+## Verifiable Presentation Support
+
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
+
+Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
+
+
+# Self-Issued ID Token Validation {#siop-id-token-validation}
+
+See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
+
+To validate the ID Token received, the RP MUST do the following:
+
+1. If the ID Token is encrypted, decrypt it using the keys and algorithms that the RP specified during Registration that the Self-Issued OP was to use to encrypt the ID Token. If encryption was negotiated with the Self-Issued OP at registration time and the ID Token is not encrypted, the RP SHOULD reject it.
+
+1. The RP MUST verify the ID Token has an `i_am_siop` claim with value `true`, indicating it is intended to be processed as a Self-Issued ID Token. If the OP metadata has associated signing keys (such as those referenced via jwks_uri, the OP is not Self-Issued OP and processing should proceed using the verification steps defined by [@!OpenID.Core].
+
+1. The RP MUST verify the issuer of the id_token. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata.
+
+1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. 
+
+1. The RP MUST identify which Subject Syntax Type is used based on the URI prefix of the `sub` Claim. Valid URI values defined in this specification begin with `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type, or `did:` for Decentralized Identifier Subject Syntax Type. `did` prefix is followed by an identifier for the specific DID method as defined in [@!DID-Core].
+
+1. The RP MUST validate the `sub` value. 
+When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim using the mechanism defined in [@!RFC7638], as specified in (#siop-authentication-response) .
+When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
+
+1. The RP MUST obtain a public key associated to the `sub` Claim. 
+When Subject Syntax Type is JWK Thumbprint, validation MUST be done using the public key material extracted from the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The `sub_jwk` MUST only contain the required values for a given `kty`. 
+When Subject Syntax Type is Decentralized Identifier, validation is performed using the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
+
+1. The Client MUST validate the signature of the ID Token using the subject key obtained in a previous step, according to JWS [JWS] using the algorithm specified in the JWT `alg` header parameter of the JOSE Header. The Client MUST NOT use any keys associated with the issuer.
+
+1. The RP SHOULD validate that the algorithm is one of the allowed algorithms (as in `id_token_signed_response_alg`). The default is ES256.
+
+1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew). The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
+
+1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+
+The ID Token Validation Process is the same for both same-device and cross-device flows.
 
 # Security Considerations {#security-considerations}
 
