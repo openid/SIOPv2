@@ -333,7 +333,7 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 * Decentralized Identifier Subject Syntax Type. When this Subject Syntax Type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. This Subject Syntax Type MUST be cryptographically verified against the resolved DID Document as defined in (#siop-id_token-validation).
 
-The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_type` defined in (#rp-metadata).
+The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_types` defined in (#rp-metadata).
 
 # Relying Party Registration {#rp-resolution}
 
@@ -395,7 +395,7 @@ The following is a non-normative example of an **unsigned** same-device request 
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_syntax_type%22%3A
+    &registration=%7B%22subject_syntax_types%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
@@ -457,7 +457,7 @@ The following is a non-normative example of a **signed** cross-device request wh
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration=%7B%22subject_syntax_type%22%3A
+    &registration=%7B%22subject_syntax_types%22%3A
     %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -467,7 +467,7 @@ The following is a non-normative example of a **signed** cross-device request wh
 
 This extension defines the following RP Registration Metadata value, used by the RP to provide information about itself to the Self-Issued OP:
 
-* `subject_syntax_type`
+* `subject_syntax_types`
     * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!JWK-Thumbprint-URI]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
 
 Other registration parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
@@ -476,7 +476,7 @@ The following is a non-normative example of the supported RP Registration Metada
 
 ```json
 {
-  "subject_syntax_type": [
+  "subject_syntax_types": [
     "urn:ietf:params:oauth:jwk-thumbprint",
     "did:example",
     "did:key"
@@ -531,7 +531,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration=%7B%22subject_syntax_type%22%3A
+    &registration=%7B%22subject_syntax_types%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -556,7 +556,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
     &response_mode=post
     &claims=...
-    &registration=%7B%22subject_syntax_type%22%3A
+    &registration=%7B%22subject_syntax_types%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -605,7 +605,7 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
-* **`subject_syntax_type_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_type` parameter.
+* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_type` parameter.
 * **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
 * **`invalid_registration_object`**: the `registration` parameter contains an invalid RP Registration Metadata Object.
 
@@ -989,7 +989,7 @@ The technology described in this specification was made available from contribut
 
     -05
 
-    * merged `did_methods_supported` metadata into `subject_syntax_type_supported`
+    * merged `did_methods_supported` metadata into `subject_syntax_types_supported`
     * added RP Metadata resolution methods
     * editorial - language in Relying Party Registration Metadata Error Response
     
