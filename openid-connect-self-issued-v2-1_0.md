@@ -181,7 +181,7 @@ However, in Self-Issued OP flows, such mechanisms may be unavailable since Self-
 
 If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
-If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid://` as an `authorization_endpoint` is defined in this specification.
+If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
 
 If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
@@ -219,7 +219,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 ```json
 {
-  "authorization_endpoint": "openid://",
+  "authorization_endpoint": "openid:",
   "issuer": "https://self-issued.me/v2",
   "response_types_supported": [
     "id_token"
@@ -244,9 +244,9 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
 
-RP MUST use custom URI scheme `openid://` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid://` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
+RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid:` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
 
-Note that the request using custom URI scheme `openid://` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
 ## Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
 
@@ -319,7 +319,7 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 
 As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links or App Links is RECOMMENDED over the use of custom URI schemes.
 
-The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid://` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
+The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid:` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-schema) in Privacy Considerations section for more details.
 
 Note that this section is subject to changes in mobile OS and browser mechanisms.
 
