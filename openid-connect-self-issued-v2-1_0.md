@@ -32,20 +32,20 @@ organization="Microsoft"
 
 OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information.
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-Userâ€™s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User's local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-Userâ€™s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to Relying Parties (RPs). This allows users to interact with the RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
+This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User's local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to Relying Parties (RPs). This allows users to interact with the RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
 
 An OP releases identity information such as End-User authentication in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP. 
 
 In the case of a hosted third-party provided OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User.
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
-Because a Self-Issued OP within the End-Userâ€™s local control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
+Because a Self-Issued OP within the End-User's local control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
 
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core].
 
@@ -157,8 +157,8 @@ Figure: Self-Issued OP Protocol Flow
 
 There are two models of Self-Issued OP flows:
 
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-Userâ€™s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
-* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-Userâ€™s user interactions are occurring.
+* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User's user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
+* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User's user interactions are occurring.
 
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
@@ -537,7 +537,7 @@ The cross-device authentication request differs from the same-device variant as 
 * This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
-Self-Issued OP is on a different device than the one on which the End-Userâ€™s user interactions are occurring.
+Self-Issued OP is on a different device than the one on which the End-User's user interactions are occurring.
 
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow (#cross-device-siop):
 
