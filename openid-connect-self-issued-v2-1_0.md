@@ -511,7 +511,7 @@ Using registration parameters defined in (#rp-registration-parameter), the RP MA
 
 When RP is not pre-registered with the Self-Issued OP and is not using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present.
 
-Request Parameters can be passed as JWTs using `request` or `request_uri` parametersas defined in Section 6 in [@!OpenID.Core]. The Request Object in the `request` parameter MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
+Request Parameters can be passed as JWTs using `request` or `request_uri` parameters as defined in Section 6 in [@!OpenID.Core]. The Request Object in the `request` parameter MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
 
 Registration parameters MUST be passed either using `registration` or `registration_uri` parameters directly in the request, or using `request` or `request_uri` parameters to prevent duplication. When `registration` or `registration_uri` parameters are included directly in the request, `request` or `request_uri` parameters MUST not include registration parameters. 
 
@@ -605,7 +605,7 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
-* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_type` parameter.
+* **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types` parameter.
 * **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
 * **`invalid_registration_object`**: the `registration` parameter contains an invalid RP Registration Metadata Object.
 
@@ -989,7 +989,7 @@ The technology described in this specification was made available from contribut
 
     -05
 
-    * merged `did_methods_supported` metadata into `subject_syntax_types_supported`
+    * merged `did_methods_supported` metadata into `subject_syntax_types`
     * added RP Metadata resolution methods
     * editorial - language in Relying Party Registration Metadata Error Response
     
