@@ -353,7 +353,7 @@ When the Self-Issued OP request is signed, the public key to verify the signatur
 
 Note that in Self-Issued OP flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
-### Relying Party Registration Parameter *#rp-registration-parameter}
+### Relying Party Registration Parameter {#rp-registration-parameter}
 
 This specification defines the following registration parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:
 
