@@ -236,7 +236,8 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
   ],
   "subject_syntax_types_supported": [
     "urn:ietf:params:oauth:jwk-thumbprint"
-  ]
+  ],
+  "jwk_thumbprint_hash_function": "S256"
 }
 ```
 
@@ -273,7 +274,9 @@ The following are OpenID Provider Metadata values used by Self-Issued OPs:
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID.Core]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!JWK-Thumbprint-URI]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JSON Web Key (JWK) Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@JWK-Thumbprint-URI]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
+* `jwk_thumbprint_hash_function`
+    * OPTIONAL. A string containing a hash function that Self-Issued OP uses to compute thumbprint of a JWK used to sign the ID Token, when JWK Thumbprint Subject Syntax Type is used for the `sub` Claim. If omitted, the default is `S256` (SHA-256).
 * `i_am_siop`
     * REQUIRED. Boolean value specifying this set of OP metadata and the Issuer identifier belong to a Self-Issued OP.
 
@@ -329,7 +332,7 @@ Subject Syntax Types defines types of cryptographically verifiable identifiers d
 
 This specification defines the following two Subject Syntax Types. Additional Subject Syntax Types may be defined in the future versions of this specification, or profiles of this specification.
 
-* JWK Thumbprint Subject Syntax Type. When this type is used, the `sub` Claim value MUST be a JWK Thumbprint URI defined in [@!JWK-Thumbprint-URI]. JWK Thumbprint in the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` Claim [@!RFC7638]. When this Subject Syntax Type is used, `sub_jwk` MUST be included in the Self-Issued OP Response.
+* JWK Thumbprint Subject Syntax Type. When this type is used, the `sub` Claim value MUST be a JWK Thumbprint URI defined in [@!JWK-Thumbprint-URI]. JWK Thumbprint in the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` Claim [@!RFC7638]. When this Subject Syntax Type is used, `sub_jwk` MUST be included in the Self-Issued OP Response. Hashing function used to compute JWK Thumbprint is `S256` (SHA-256), or the one indicated in Self-Issued OP Discovery metadata `jwk_thumbprint_hash_function`.
 
 * Decentralized Identifier Subject Syntax Type. When this Subject Syntax Type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. This Subject Syntax Type MUST be cryptographically verified against the resolved DID Document as defined in (#siop-id_token-validation).
 
@@ -633,7 +636,7 @@ The response contains an ID Token and, if applicable, further response parameter
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:
 
 * `sub`
-    * REQUIRED. Subject identifier value. When Subject Syntax Type is JWK Thumbprint, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When Subject Syntax Type is Decentralized Identifier, the value is a Decentralized Identifier. The thumbprint value of JWK Thumbprint Subject Syntax Type is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [@!RFC7638] specification.
+    * REQUIRED. Subject identifier value. When Subject Syntax Type is JWK Thumbprint, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When Subject Syntax Type is Decentralized Identifier, the value is a Decentralized Identifier. The thumbprint value of JWK Thumbprint Subject Syntax Type is computed using the `S256` (SHA-256), or the hash function communicated in `jwk_thumbprint_hash_function` Self-Issued OP Discovery metadata. The thumbprint value is computed using the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [@!RFC7638] specification. 
 * `sub_jwk`
     * OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is JWK Thumbprint. The key is a bare key in JWK [@!RFC7517] format (not an X.509 certificate value). MUST NOT be present when Subject Syntax Type other than JWK Thumbprint is used.
 * `i_am_siop`
@@ -726,7 +729,7 @@ To validate the ID Token received, the RP MUST do the following:
 1. The RP MUST identify which Subject Syntax Type is used based on the URI prefix of the `sub` Claim. Valid URI values defined in this specification begin with `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type, or `did:` for Decentralized Identifier Subject Syntax Type. `did` prefix is followed by an identifier for the specific DID method as defined in [@!DID-Core].
 
 1. The RP MUST validate the `sub` value. 
-When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim using the mechanism defined in [@!RFC7638], as specified in (#siop-authentication-response) .
+When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim using the mechanism defined in [@!RFC7638], as specified in (#siop-authentication-response). Hashing function used to compute Thumbprint of a JWK is `S256` (SHA-256), or the one indicated in Self-Issued OP Discovery metadata `jwk_thumbprint_hash_function`.
 When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
 
 1. The RP MUST obtain a public key associated to the `sub` Claim. 
