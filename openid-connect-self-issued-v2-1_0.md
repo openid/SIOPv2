@@ -614,7 +614,7 @@ HTTP/1.1 302 Found
     &error_description=Unsupported%20response_type%20value
 ```
 
-## ID Token
+# Self-Issued ID Token
 
 The response contains an ID Token and, if applicable, further response parameters as defined in extensions. As an example, the response MAY also include a VP token as defined in [@!OIDC4VP].
 
@@ -660,15 +660,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 }
 ```
 
-## Verifiable Presentation Support
-
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
-
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
-
-To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP flow MUST be bound to the `nonce` provided by the RP and the `client_id` of the RP, as described in [@!OIDC4VP].
-
-# Self-Issued ID Token Validation {#siop-id-token-validation}
+## Self-Issued ID Token Validation {#siop-id-token-validation}
 See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
 
 To validate the ID Token received, the RP MUST do the following:
@@ -717,6 +709,14 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 ```
 
 Further processing steps are required if the authentication response contains `presentation_submission` as in the example above - see [@!OIDC4VP].
+
+# Verifiable Presentation Support
+
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
+
+Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
+
+To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP flow MUST be bound to the `nonce` provided by the RP and the `client_id` of the RP, as described in [@!OIDC4VP].
 
 # Security Considerations
 
