@@ -666,7 +666,7 @@ Self-Issued OP and the RP that wish to support request and presentation of Verif
 
 Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
 
-To prevent replay attacks, any Verifiable Presentations presented in a SIOP flow MUST be bound to the `nonce` provided by the RP and the `client_id` of the RP, as described in [@!OIDC4VP].
+To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP flow MUST be bound to the `nonce` provided by the RP and the `client_id` of the RP, as described in [@!OIDC4VP].
 
 # Self-Issued ID Token Validation {#siop-id-token-validation}
 See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
@@ -725,50 +725,45 @@ Using the mechanisms described in this specification and [@!OIDC4VP], data about
 
 ### End-User Claims in ID Tokens
 
-Regarding the ID token as a transport mechanism, the RP can trust that the SIOP has access to the private key required to sign the ID token. The value of the `sub` Claim is bound to this key. It is in the SIOP's interest to not make the signing available to other parties, in particular attackers. The RP can therefore use the `sub` Claim as a primary identifier for the End-User, assuming that the ID token was checked properly.
+Regarding the ID token as a transport mechanism, the RP can trust that the Self-Issued OP has access to the private key required to sign the ID token. The value of the `sub` Claim is bound to this key. It is in the Self-Issued OP's interest to not make the signing available to other parties, in particular attackers. The RP can therefore use the `sub` Claim as a primary identifier for the End-User, assuming that the ID token was checked properly.
 
-Other Claims within the ID token MUST be considered self-asserted: The SIOP can use arbitrary data that can usually not be checked by the RP. RPs therefore MUST NOT use other Claims than `sub` to (re-)identify users, for example, for login.
+Other Claims within the ID token MUST be considered self-asserted: The Self-Issued OP can use arbitrary data that can usually not be checked by the RP. RPs therefore MUST NOT use other Claims than `sub` to (re-)identify users, for example, for login.
 
 ### Additional Data in Verifiable Presentations
 
-The validity of data presented in Veriable Presentations is attested by the issuer of the underlying Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the SIOP transaction (`nonce` and `client_id` binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
+The validity of data presented in Veriable Presentations is attested by the issuer of the underlying Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the Self-Issued OP transaction (`nonce` and `client_id` binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
 
 RPs MUST consider that Verifiable Presentations can be revoked and that user data within the Verifiable Credential may change over time. Such changes can only be noticed by the RP if the Verifiable Presentation is checked at each login. 
 
-## RP and SIOP Metadata Integrity
+## RP and Self-Issued OP Metadata Integrity
 
-The integrity and authenticity of SIOP and RP metadata is paramount for the security of the protocol flow. For example, a modified `authorization_endpoint` could be used by an attacker to launch phishing or mix-up-style attacks (see [@I-D.oauth-security-topics]). A modified `redirect_uri` could be used by an attacker to gather information that can then be used in replay attacks. The provisions defined in this specification ensure the authenticity and integrity of the metadata if all checks (signature validation, etc.) are performed as described.
+The integrity and authenticity of Self-Issued OP and RP metadata is paramount for the security of the protocol flow. For example, a modified `authorization_endpoint` could be used by an attacker to launch phishing or mix-up-style attacks (see [@I-D.oauth-security-topics]). A modified `redirect_uri` could be used by an attacker to gather information that can then be used in replay attacks. The provisions defined in this specification ensure the authenticity and integrity of the metadata if all checks (signature validation, etc.) are performed as described.
 
-## Usage of Cross-Device SIOP for Authentication
+## Usage of Cross-Device Self-Issued OP for Authentication
 
 A known attack in cross-device Self-Issued OP is an authentication request replay attack, where a victim is tricked to send a response to an authentication request that an RP has generated for an attacker. In other words, the attacker would trick a victim to respond to a request that the attacker has generated for him/herself at a good RP, for example, by showing the QR code encoding the authentication request that would normally be presented on the RP's website on the attacker's website. In this case, the victim might not be able to detect that the request was generated by the RP for the attacker. (Note that the same attack applies when methods other than a QR code are used to encode the authentication request. For brevity, only the QR code method will be discussed in the following, but the same considerations apply to other transport methods as well.)
 
 This attack is based on the fact that the authentication request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the cross-device flow, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
 
-Implementers MUST take this fact into consideration when using cross-device SIOP. There are a number of measures that can be taken to reduce the risk of such an attack, but none of these can completely prevent the attack. For example:
+Implementers MUST take this fact into consideration when using cross-device Self-Issued OP. There are a number of measures that can be taken to reduce the risk of such an attack, but none of these can completely prevent the attack. For example:
 
- * The SIOP can show the origin of the request (e.g., the domain where the response will be sent) and/or ask the End-User to confirm this origin. In an attack, this origin would be different from the attacker's origin where the QR code is displayed to the End-User. It cannot be expected that all End-Users will identify an attack in this way, but at least for some users it might help to detect the attack. Note that depending on the device on which the attacker is showing the QR code, there might be no indication of the origin, e.g., on a terminal devices that does not show a browser with a URL bar.
+ * The Self-Issued OP can show the origin of the request (e.g., the domain where the response will be sent) and/or ask the End-User to confirm this origin. In an attack, this origin would be different from the attacker's origin where the QR code is displayed to the End-User. It cannot be expected that all End-Users will identify an attack in this way, but at least for some users it might help to detect the attack. Note that depending on the device on which the attacker is showing the QR code, there might be no indication of the origin, e.g., on a terminal devices that does not show a browser with a URL bar.
  * The authentication request can be made short-lived. An attacker would have to request a new authentication request (e.g., QR code) frequently and update it on its website as well. This requires more effort from the attacker.
- * SIOP can warn the End-User when logging in at a new RP for the first time.
+ * Self-Issued OP can warn the End-User when logging in at a new RP for the first time.
 
 Implementors should be cautious when using cross-device Self-Issued OP model for authentication and should implement mitigations according to the desired security level.
 
-This attack does not apply for the same-device Self-Issued OP flows as the RP checks that the authentication response comes from the same browser where the authentication request was sent to. Same-device SIOP flows therefore can be used for authentication, given all other security measures are put in place.
+This attack does not apply for the same-device Self-Issued OP flows as the RP checks that the authentication response comes from the same browser where the authentication request was sent to. Same-device Self-Issued OP flows therefore can be used for authentication, given all other security measures are put in place.
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
 Usage of private-use URI schemes such as `openid:`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
 
-Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device.
+Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
 Implementors are highly encouraged to explore other options before using private-use URI schemes due to the known security issues of such schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. Any malicious app can register the custom scheme already used by another app, imitate the user interface and impersonate a good app. 
 
 The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and MAY be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
-
-If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
-Note: Clarify why authoritative list is relevant.
-
-Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
 Further details are discussed in [@app-2-app-sec].
 
@@ -983,7 +978,7 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
     <author fullname="Joseph Heenan">
       <organization>Authlete</organization>
     </author>
-   <date day="27" month="Nov" year="2021"/>
+   <date day="27" month="Nov" year="2020"/>
   </front>
 </reference>
 
