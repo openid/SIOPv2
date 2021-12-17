@@ -312,11 +312,7 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 
 ### Choice of `authorization_endpoint` {#choice-of-authoriation-endpoint}
 
-As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links or App Links is RECOMMENDED over the use of custom URI schemes.
-
-The implementors are highly encouraged to explore other options before using custom URI schemes such as `openid:` due to the known security issues of the custom URI schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. See (invocation-using-custom-scheme) in Privacy Considerations section for more details.
-
-Note that this section is subject to changes in mobile OS and browser mechanisms.
+As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links or App Links is RECOMMENDED over the use of custom URI schemes. See (#invocation-using-custom-scheme) for details.
 
 ### Subject Syntax Types {#sub-syntax-type}
 
@@ -581,6 +577,8 @@ HTTP/1.1 302 Found
 
 The Self-Issued OP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
 
+The Self-Issued OP MUST NOT follow redirects on this request.
+
 The following is an informative example of a Self-Issued OP Response in a cross-device flow: (#cross-device-siop):
 
 ```
@@ -727,15 +725,19 @@ Using the mechanisms described in this specification and [@!OIDC4VP], data about
 
 ### End-User Claims in ID Tokens
 
-Regarding the Claims in the ID token, the RP can trust that the SIOP has access to the private key required to sign the ID token. The value of the `sub` Claim is bound to this key. The private key required for signing the ID token MUST NOT be made available to other parties, in particular attackers. The RP can therefore use the `sub` Claim as a primary identifier for the End-User, assuming that the ID token was checked properly.
+Regarding the ID token as a transport mechanism, the RP can trust that the SIOP has access to the private key required to sign the ID token. The value of the `sub` Claim is bound to this key. It is in the SIOP's interest to not make the signing available to other parties, in particular attackers. The RP can therefore use the `sub` Claim as a primary identifier for the End-User, assuming that the ID token was checked properly.
 
 Other Claims within the ID token MUST be considered self-asserted: The SIOP can use arbitrary data that can usually not be checked by the RP. RPs therefore MUST NOT use other Claims than `sub` to (re-)identify users, for example, for login.
 
 ### Additional Data in Verifiable Presentations
 
-The validity of data presented in Veriable Presentations is attested by the issuer of the underlying Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the SIOP transaction (`nonce` and `client_id` binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID token are usually not related.
+The validity of data presented in Veriable Presentations is attested by the issuer of the underlying Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the SIOP transaction (`nonce` and `client_id` binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
 
-RPs MUST consider that Verifiable Presentations can be revoked and that user data within the Verifiable Credential may change over time. Such changes can only be noticed by the RP if the Verifiable Presentation is requested at each login. 
+RPs MUST consider that Verifiable Presentations can be revoked and that user data within the Verifiable Credential may change over time. Such changes can only be noticed by the RP if the Verifiable Presentation is checked at each login. 
+
+## RP and SIOP Metadata Integrity
+
+The integrity and authenticity of SIOP and RP metadata is paramount for the security of the protocol flow. For example, a modified `authorization_endpoint` could be used by an attacker to launch phishing or mix-up-style attacks (see [@I-D.oauth-security-topics]). A modified `redirect_uri` could be used by an attacker to gather information that can then be used in replay attacks. The provisions defined in this specification ensure the authenticity and integrity of the metadata if all checks (signature validation, etc.) are performed as described.
 
 ## Usage of Cross-Device SIOP for Authentication
 
@@ -755,15 +757,20 @@ This attack does not apply for the same-device Self-Issued OP flows as the RP ch
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
-Usage of private-use URI schemes, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
+Usage of private-use URI schemes such as `openid:`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
 
 Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device.
 
-Any malicious app can register the custom scheme already used by another app, imitate the user interface and impersonate a good app.
+Implementors are highly encouraged to explore other options before using private-use URI schemes due to the known security issues of such schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. Any malicious app can register the custom scheme already used by another app, imitate the user interface and impersonate a good app. 
 
-When more than one Self-issued OP with the same custom scheme has been installed on one device, the behavior of Self-Issued OP is undefined.
+The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and MAY be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
 
-Implementers should therefore consider using alternatives to private-use URI schemes, as, for example, described in [@app-2-app-sec].
+If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
+Note: Clarify why authoritative list is relevant.
+
+Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
+
+Further details are discussed in [@app-2-app-sec].
 
 # Privacy Considerations
 
@@ -781,14 +788,6 @@ When the RP wants to provide End-User choice to select from multiple possible Se
 
 Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictate a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-User to select a Self-Issued OP is handled by the underlying browser or operating system.
 
-## Currently Known Browser Behavior
-
-The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and MAY be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
-
-If the underlying browser or operating system restricts application support for HTTPS URL handling to an authoritative list, the list would be administered under the trust framework to reflect certified and/or audited implementations.
-Note: Clarify why authoritative list is relevant.
-
-Operating systems also typically have a functionality by which native applications and websites can register a preference that one or more apps be called when a URI underneath a scheme that the platform or browser allows. For custom URI scheme, there is typically no platform or other controls limiting the ability of applications to register such schemes. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
 # Relationships to Other Documents
 
