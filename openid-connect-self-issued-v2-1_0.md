@@ -335,7 +335,7 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 The RP indicates Subject Syntax Type it supports in RP Registration Metadata `subject_syntax_types` defined in (#rp-metadata).
 
-# Relying Party Registration rp-resolution}
+# Relying Party Registration {#rp-resolution}
 
 Registration mechanism depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
 
