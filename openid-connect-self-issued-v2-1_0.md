@@ -986,6 +986,10 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
 
 TBD
 
+# Acknowledgements {#Acknowledgements}
+
+We would like to thank Torsten Lodderstedt, Daniel Fett, David Waite, Jeremie Miller, Oliver Terbu, Tobias Looker, Alen Horvat, Nat Sakimura, John Bradley, Kim Cameron, Edmund Jay, Brandon Murdoch, Dmitri Zagidulin, Tom Jones, Giuseppe De Marco, and Niels Klomp for their valuable feedback and contributions that helped to evolve this specification.
+
 # Notices 
 
 Copyright (c) 2021 The OpenID Foundation.
