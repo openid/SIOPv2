@@ -982,6 +982,25 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
   </front>
 </reference>
 
+<reference anchor="I-D.oauth-security-topics" target="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics-19">
+  <front>
+    <title>OAuth 2.0 Security Best Current Practice</title>
+    <author fullname="Torsten Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Andrey Labunets">
+      <organization>Independent Researcher</organization>
+    </author>
+    <author fullname="Daniel Fett">
+      <organization>yes.com</organization>
+    </author>
+   <date day="16" month="Dec" year="2021"/>
+  </front>
+</reference>
+
 # IANA Considerations
 
 TBD
