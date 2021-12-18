@@ -982,6 +982,25 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
   </front>
 </reference>
 
+<reference anchor="I-D.oauth-security-topics" target="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics-19">
+  <front>
+    <title>OAuth 2.0 Security Best Current Practice</title>
+    <author fullname="Torsten Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author fullname="Andrey Labunets">
+      <organization>Independent Researcher</organization>
+    </author>
+    <author fullname="Daniel Fett">
+      <organization>yes.com</organization>
+    </author>
+   <date day="16" month="Dec" year="2021"/>
+  </front>
+</reference>
+
 # IANA Considerations
 
 TBD
@@ -1006,19 +1025,24 @@ The technology described in this specification was made available from contribut
 
     * Added statically registered clients
     * Cleanups in preparation for the first proposed Implementer's Draft
+    * Updated Security Considerations
+    * Added an Acknowledgements section
+    * Clarified which Hash Function is to be used to compute/verify JWK Thumbprints
+    * Added more examples
 
     -05
 
-    * merged `did_methods_supported` metadata into `subject_syntax_type_supported`
-    * added RP Metadata resolution methods
-    * editorial - language in Relying Party Registration Metadata Error Response
-    
+    * Merged `did_methods_supported` metadata into `subject_syntax_type_supported`
+    * Added RP Metadata resolution methods
+    * Editorial - language in Relying Party Registration Metadata Error Response
+    * Introduced mandatory `i_am_siop` claim
+
     -04
 
-    * added cross-device flow
-    * clarified handling for did-based sub and sub_jwk
+    * Added cross-device flow
+    * Clarified handling for did-based sub and sub_jwk
     * Revising of introductory text and scope of SIOPv2
-    * corrected typos and reworked registration example data
+    * Corrected typos and reworked registration example data
 
     -03
     
