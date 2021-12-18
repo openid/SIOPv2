@@ -1027,22 +1027,22 @@ The technology described in this specification was made available from contribut
     * Cleanups in preparation for the first proposed Implementer's Draft
     * Updated Security Considerations
     * Added an Acknowledgements section
-    * Clarified which Hash Function to be used to compute/verify JWK thumbprint
-    * added more examples
+    * Clarified which Hash Function is to be used to compute/verify JWK Thumbprints
+    * Added more examples
 
     -05
 
-    * merged `did_methods_supported` metadata into `subject_syntax_type_supported`
-    * added RP Metadata resolution methods
-    * editorial - language in Relying Party Registration Metadata Error Response
-    * introduced mandatory `i_am_siop` claim
+    * Merged `did_methods_supported` metadata into `subject_syntax_type_supported`
+    * Added RP Metadata resolution methods
+    * Editorial - language in Relying Party Registration Metadata Error Response
+    * Introduced mandatory `i_am_siop` claim
 
     -04
 
-    * added cross-device flow
-    * clarified handling for did-based sub and sub_jwk
+    * Added cross-device flow
+    * Clarified handling for did-based sub and sub_jwk
     * Revising of introductory text and scope of SIOPv2
-    * corrected typos and reworked registration example data
+    * Corrected typos and reworked registration example data
 
     -03
     
