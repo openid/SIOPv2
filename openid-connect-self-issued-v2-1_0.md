@@ -783,6 +783,9 @@ When the RP wants to provide End-User choice to select from multiple possible Se
 
 Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictate a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-User to select a Self-Issued OP is handled by the underlying browser or operating system.
 
+## Receviving Cross-Device Responses
+
+In case of the cross-device flow, the SIOP will send the result as a HTTP POST message to the RP, typically via the Internet. This means such RPs must be able to receive a HTTP POST request originating from the Internet. There are different ways the RP can achieve this. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the SIOP responses.  
 
 # Relationships to Other Documents
 
