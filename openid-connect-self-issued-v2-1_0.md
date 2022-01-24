@@ -510,9 +510,9 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `response_type`
     * REQUIRED. Constant string value `id_token`.
 * `client_id`
-    * REQUIRED. Client ID value for the Client, which in this case contains the `redirect_uri` value of the RP.
+    * REQUIRED. RP's identifier at the Self-Issued OP.
 * `redirect_uri`
-    * REQUIRED. MUST equal the `client_id` value. MUST be included for compatibility reasons.
+    * REQUIRED. URI to which the Self-Issued OP Response will be sent.
 * `id_token_hint`
     * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core]. If the ID Token is encrypted for the Self-Issued OP, the `sub` (subject) of the signed ID Token MUST be sent as the `kid` (Key ID) of the JWE.
 * `claims`
