@@ -197,6 +197,8 @@ This section outlines how Self-Issued OP is used in cross-device scenarios, and 
 
 The request in Step 5 is not a form post request where the Self-Issued OP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The Self-Issued OP sends this request directly to the RP's endpoint.
 
+For brevity, mainly the QR code method is discussed as a mechanism to initiate a cross-device protocol flow throughout this specification. However, same modifications from the seme-device protocol flow apply to mechanisms other than QR code.
+
 # Discovery and Registration
 
 Just like in conventional OpenID Connect protocol flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
