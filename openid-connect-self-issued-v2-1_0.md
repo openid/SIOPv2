@@ -51,6 +51,37 @@ The extensions defined in this specification provide the protocol changes needed
 
 This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
 
+## Terms and Definitions
+
+Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
+
+- Self-Issued OpenID Provider (Self-Issued OP)
+  - An OpenID Provider (OP) used by the End-users to prove control over a cryptographically verifiable identifier
+
+- Self-Issued OP Request
+  - Request to a Self-Issued OP from an RP
+
+- Self-Issued OP Response
+  - Response to an RP from a Self-Issued OP
+
+- Self-Issued ID Token
+  - ID Token issued by a Self-Issued OP
+
+- Cryptographically verifiable identifier
+  - an identifier which is either based upon or resolves to cryptographic key material which can be used to verify a signature on the ID Token or the Self-Issued OP Request.
+    
+- Trust framework
+  - a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
+
+- Verifiable Credential
+  - A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. see [@!VC-DATA].
+
+## Abbreviations
+
+* OP: OpenID Provider
+* RP: Relying Party
+* Self-Issued OP or SIOP: Self-Issued OpenID Provider
+
 # Use Cases
 
 ## Resilience against Sudden or Planned Hosted OP Unavailability
@@ -65,7 +96,7 @@ As internet-connected smartphones have risen in availability, traditionally in-p
 
 The RP can directly receive the issuer-signed claims about the End-User from the Self-Issued OP, without talking to the Issuer. This prevents the Issuer from knowing where the End-User is presenting these issuer-signed claims. In this use-case, obtaining and potentially storing the issuer-signed credentials is the Self-Issued OP's responsibility using specifications such as [@!OIDC4VP].
 
-## Sharing Credentials from Several Issuers in One Transaction
+## Sharing Verifiable Credentials from Several Issuers in One Transaction
 
 When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information as credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate credentials from multiple sources, then release them within a single transaction to a relying party. The relying party can then verify the authenticity of the information to make the necessary business decisions.
 
@@ -103,15 +134,15 @@ This specification extends the OpenID Connect implicit flow in the following way
 
 The following are considered out of scope of this document.
 
-### Issuance of Credentials
+### Issuance of Verifiable Credentials
 
   The mechanism for a Self-Issued OP to acquire credentials which can be presented is out of scope of this document. Similar to presentation, a traditional OP may also wish to acquire third-party credentials to present to Relying Parties. One mechanism to issue credentials is being defined within the Claims Aggregation specification.
 
-### Presentation of Aggregated Credentials
+### Presentation of Aggregated Claims
 
   A Self-Issued OP can present two types of claims - self-attested claims and cryptographically verifiable claims issued by trusted third-party sources.
 
-  This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which describes the presentation of Verifiable Credentials with OpenID Connect.
+  This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which describes the presentation of W3C Verifiable Credentials with OpenID Connect.
   
 ## Relationship with Chapter 7 of [@!OpenID.Core] Self-Issued OpenID Provider
 
@@ -124,34 +155,6 @@ This specification extends Chapter 7 of [@!OpenID.Core] Self-Issued OpenID Provi
 - Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
 
 Note that while this specification extends Self-Issued OP v1, some sections of it could be applicable more generally to the entire OpenID Connect Core specification.
-
-# Terms and Definitions
-
-Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
-
-- Self-Issued OpenID Provider (Self-Issued OP)
-  - An OpenID Provider (OP) used by the End-users to prove control over a cryptographically verifiable identifier
-
-- Self-Issued OP Request
-  - Request to a Self-Issued OP from an RP
-
-- Self-Issued OP Response
-  - Response to an RP from a Self-Issued OP
-
-- Self-Issued ID Token
-  - ID Token issued by a Self-Issued OP
-
-- Cryptographically verifiable identifier
-  - an identifier which is either based upon or resolves to cryptographic key material which can be used to verify a signature on the ID Token or the Self-Issued OP Request.
-    
-- Trust framework
-  - a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
-
-## Abbreviations
-
-* OP: OpenID Provider
-* RP: Relying Party
-* Self-Issued OP or SIOP: Self-Issued OpenID Provider
 
 # Protocol Flow
 
@@ -755,9 +758,9 @@ Other Claims within the ID token MUST be considered self-asserted: The Self-Issu
 
 ### Additional Data in Verifiable Presentations
 
-The validity of data presented in Veriable Presentations is attested by the issuer of the underlying Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the Self-Issued OP transaction (`nonce` and `client_id` binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
+The validity of data presented in W3C Veriable Presentations is attested by the issuer of the underlying W3C Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the Self-Issued OP transaction (`nonce` and `client_id` binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
 
-RPs MUST consider that Verifiable Presentations can be revoked and that user data within the Verifiable Credential may change over time. Such changes can only be noticed by the RP if the Verifiable Presentation is checked at each login. 
+RPs MUST consider that Verifiable Presentations can be revoked and that user data within the W3C Verifiable Credential may change over time. Such changes can only be noticed by the RP if the W3C Verifiable Presentation is checked at each login. 
 
 ## RP and Self-Issued OP Metadata Integrity
 
