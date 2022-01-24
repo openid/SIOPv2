@@ -93,7 +93,7 @@ This specification extends the OpenID Connect implicit flow in the following way
 
 * **RP Registration**: mechanisms for how the RPs register metadata such as supported functionalities with the Self-Issued OP, registration parameters and RP Metadata Registration Methods.
 
-* **Self-Issued ID Token**: defines additional claims and processing requirements of Self-Issued ID Tokens
+* **Self-Issued ID Token**: defines additional claims and processing requirements of ID Tokens issued by Self-Issued OPs
 
 * **Self-Asserted Claims**: transporting claims in a Self-Issued ID Token that are not verifiable by the RP
 
@@ -129,11 +129,23 @@ Note that while this specification extends Self-Issued OP v1, some sections of i
 
 Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
 
+- Self-Issued OpenID Provider (Self-Issued OP)
+  - An OpenID Provider (OP) used by the End-users to prove control over a cryptographically verifiable identifier
+
+- Self-Issued OP Request
+  - Request to a Self-Issued OP from an RP
+
+- Self-Issued OP Response
+  - Response to an RP from a Self-Issued OP
+
+- Self-Issued ID Token
+  - ID Token issued by a Self-Issued OP
+
 - Cryptographically verifiable identifier
-    - an identifier which is either based upon or resolves to cryptographic key material which can be used to verify a signature on the ID Token or the Self-Issued OP Request.
+  - an identifier which is either based upon or resolves to cryptographic key material which can be used to verify a signature on the ID Token or the Self-Issued OP Request.
     
 - Trust framework
-    - a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
+  - a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
 
 ## Abbreviations
 
@@ -143,7 +155,7 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
 
 # Protocol Flow
 
-Self-Issued OP Request is an OpenID Connect Authentication Request that results in an End-User providing an ID Token to the Relying Party through the Self-Issued OP. The ID Token MAY include claims about the End-User.
+Self-Issued OP Request results in Self-Issued OP provisioning ID Token to the Relying Party when the End-User authentication succeeds and the End-User provides necessary permission. The ID Token MAY include claims about the End-User.
 
 ~~~ ascii-art
 +------+                                           +----------------+
@@ -686,7 +698,7 @@ To validate the ID Token received, the RP MUST do the following:
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
 1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
-## Cross-Device Self-Issued OP ID Token Validation
+## Cross-Device Self-Issued ID Token Validation
 
 The RP MUST perform all the check as defined in (#siop-id-token-validation).
 
