@@ -113,6 +113,18 @@ The following are considered out of scope of this document.
 
   This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which describes the presentation of Verifiable Credentials with OpenID Connect.
   
+## Relationship with Chapter 7 of [@!OpenID.Core] Self-Issued OpenID Provider
+
+This specification extends Chapter 7 of [@!OpenID.Core] Self-Issued OpenID Provider (Self-Issued OP v1) in the following ways:
+
+- Added support for Decentralized Identifiers defined in [@!DID-Core] as Cryptographically Verifiable Identifiers in addition to the JWK thumbprint defined in Self-Issued OP v2. See (#sub-syntax-type).
+- Added support for Cross-Device Self-Issued OP model. See (#cross-device-siop).
+- Extended Relying Party Registration mechanisms to support pre-registration, and dynamic registration for not-pre-registered RPs. See (#rp-resolution).
+- Added support for Dynamic Self-Issued OpenID Provider Discovery. See (#dynamic-siop-metadata). 
+- Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
+
+Note that while this specification extends Self-Issued OP v1, some sections of it could be applicable more generally to the entire OpenID Connect Core specification.
+
 # Terms and Definitions
 
 Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
