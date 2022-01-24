@@ -167,12 +167,12 @@ Figure: Self-Issued OP Protocol Flow
 
 # Cross-Device Self-Issued OP {#cross-device-siop}
 
-There are two models of Self-Issued OP flows:
+There are two models of Self-Issued OP protocol flows:
 
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
+* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP protocol flow for authentication.
 * Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
-This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
+This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The protocol flow is therefore modified as follows:
 
 1. The RP prepares a Self-Issued OP request and renders it as a QR code.
 1. The user scans the QR code with her smartphone's camera app.
@@ -184,9 +184,9 @@ The request in Step 5 is not a form post request where the Self-Issued OP would 
 
 # Discovery and Registration
 
-Just like in conventional OpenID Connect flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
+Just like in conventional OpenID Connect protocol flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
 
-However, in Self-Issued OP flows, such mechanisms may be unavailable since Self-Issued OPs do not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
+However, in Self-Issued OP protocol flows, such mechanisms may be unavailable since Self-Issued OPs do not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
 
 If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
@@ -202,9 +202,9 @@ When the End-user first interacts with the RP, there are currently no establishe
 
 When the RP sends the request to the Self-Issued OP, there are two scenarios of how to reach and invoke an application that can process that request.
 
-In the first scenario, the request is encoded in a QR code or a deep link, and the End-user scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specific `authorization_endpoint` of a Self-Issued OP. Note that a QR code option will not work in a same-device Self-Issued OP flow, when the RP and the Self-Issued OP are on the same device.
+In the first scenario, the request is encoded in a QR code or a deep link, and the End-user scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specific `authorization_endpoint` of a Self-Issued OP. Note that a QR code option will not work in a same-device Self-Issued OP protocol flow, when the RP and the Self-Issued OP are on the same device.
 
-In the second scenario, the request includes the `authorization_endpoint` of a Self-Issued OP and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this flow would work both for the same-device Self-Issued OP flow and the cross-device Self-Issued OP flow.
+In the second scenario, the request includes the `authorization_endpoint` of a Self-Issued OP and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this protocol flow would work both for the same-device Self-Issued OP protocol flow and the cross-device Self-Issued OP protocol flow.
 
 The following is a non-normative example of a request with no specific `authorization_endpoint`, which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device. It is a request when the RP is pre-registered with the Self-Issued OP (line wraps within values are for display purposes only):
 
@@ -328,7 +328,7 @@ As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links 
 
 ### Subject Syntax Types {#sub-syntax-type}
 
-Subject Syntax Type refers to a type of an identifier used in a `sub` Claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP flow serves as an identifier of the Self-Issued OP's Holder and is used to obtain cryptographic material to verify the signature on the ID Token.
+Subject Syntax Type refers to a type of an identifier used in a `sub` Claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP protocol flow serves as an identifier of the Self-Issued OP's Holder and is used to obtain cryptographic material to verify the signature on the ID Token.
 
 This specification defines the following two Subject Syntax Types. Additional Subject Syntax Types may be defined in the future versions of this specification, or profiles of this specification.
 
@@ -368,7 +368,7 @@ When the Self-Issued OP request is signed, the public key to verify the signatur
 
 `registration` parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `registration` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
-Note that in Self-Issued OP flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
+Note that in Self-Issued OP protocol flow, no registration response is returned. A successful authentication response implicitly indicates that the registration parameters were accepted.
 
 ### Relying Party Registration Parameter {#rp-registration-parameter}
 
@@ -522,7 +522,7 @@ Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
 
-The following is a non-normative example HTTP 302 redirect request by the RP which triggers the User Agent to make an Authentication Request to the Self-Issued OP in a same-device flow (with line wraps within values for display purposes only):
+The following is a non-normative example HTTP 302 redirect request by the RP which triggers the User Agent to make an Authentication Request to the Self-Issued OP in a same-device protocol flow (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
@@ -547,7 +547,7 @@ The cross-device authentication request differs from the same-device variant as 
 
 Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
-The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow (#cross-device-siop):
+The following is a non-normative example of a Self-Issued OP Request URL in a cross-device protocol flow (#cross-device-siop):
 
 ```
   openid://?
@@ -573,11 +573,11 @@ A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Respo
 
 A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#siop-error-respose).
 
-In a same-device flow, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
+In a same-device protocol flow, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
-In a cross-device flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
+In a cross-device protocol flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
-The following is an informative example of a Self-Issued OP Response in a same-device flow:
+The following is an informative example of a Self-Issued OP Response in a same-device protocol flow:
 
 ```
 HTTP/1.1 302 Found
@@ -591,7 +591,7 @@ The Self-Issued OP sends the authentication response to the endpoint passed in t
 
 The Self-Issued OP MUST NOT follow redirects on this request.
 
-The following is an informative example of a Self-Issued OP Response in a cross-device flow: (#cross-device-siop):
+The following is an informative example of a Self-Issued OP Response in a cross-device protocol flow: (#cross-device-siop):
 
 ```
 POST /post_cb HTTP/1.1
@@ -615,9 +615,9 @@ In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Secti
 
 Other error codes MAY be used.
 
-Note that HTTP error codes do not work in the cross-device Self-Issued OP flows. 
+Note that HTTP error codes do not work in the cross-device Self-Issued OP protocol flows. 
 
-The following is a non-normative example of an error response in the same-device Self-Issued OP flow:
+The following is a non-normative example of an error response in the same-device Self-Issued OP protocol flow:
 
 ```
 HTTP/1.1 302 Found
@@ -728,7 +728,7 @@ Self-Issued OP and the RP that wish to support request and presentation of Verif
 
 Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
 
-To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP flow MUST be bound to the `nonce` provided by the RP and the `client_id` of the RP, as described in [@!OIDC4VP].
+To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP protocol flow MUST be bound to the `nonce` provided by the RP and the `client_id` of the RP, as described in [@!OIDC4VP].
 
 # Security Considerations
 
@@ -755,7 +755,7 @@ The integrity and authenticity of Self-Issued OP and RP metadata is paramount fo
 
 A known attack in cross-device Self-Issued OP is an authentication request replay attack, where a victim is tricked to send a response to an authentication request that an RP has generated for an attacker. In other words, the attacker would trick a victim to respond to a request that the attacker has generated for him/herself at a good RP, for example, by showing the QR code encoding the authentication request that would normally be presented on the RP's website on the attacker's website. In this case, the victim might not be able to detect that the request was generated by the RP for the attacker. (Note that the same attack applies when methods other than a QR code are used to encode the authentication request. For brevity, only the QR code method will be discussed in the following, but the same considerations apply to other transport methods as well.)
 
-This attack is based on the fact that the authentication request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the cross-device flow, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
+This attack is based on the fact that the authentication request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the cross-device protocol flow, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
 
 Implementers MUST take this fact into consideration when using cross-device Self-Issued OP. There are a number of measures that can be taken to reduce the risk of such an attack, but none of these can completely prevent the attack. For example:
 
@@ -765,7 +765,7 @@ Implementers MUST take this fact into consideration when using cross-device Self
 
 Implementors should be cautious when using cross-device Self-Issued OP model for authentication and should implement mitigations according to the desired security level.
 
-This attack does not apply for the same-device Self-Issued OP flows as the RP checks that the authentication response comes from the same browser where the authentication request was sent to. Same-device Self-Issued OP flows therefore can be used for authentication, given all other security measures are put in place.
+This attack does not apply for the same-device Self-Issued OP protocol flows as the RP checks that the authentication response comes from the same browser where the authentication request was sent to. Same-device Self-Issued OP protocol flows therefore can be used for authentication, given all other security measures are put in place.
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
@@ -1051,7 +1051,7 @@ The technology described in this specification was made available from contribut
 
     -04
 
-    * Added cross-device flow
+    * Added cross-device protocol flow
     * Clarified handling for did-based sub and sub_jwk
     * Revising of introductory text and scope of SIOPv2
     * Corrected typos and reworked registration example data
