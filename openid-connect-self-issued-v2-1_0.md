@@ -895,7 +895,7 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
 
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
   <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <title>OpenID Connect for Verifiable Presentations</title>
     <author initials="O." surname="Terbu" fullname="Oliver Terbu">
       <organization>ConsenSys Mesh</organization>
     </author>
