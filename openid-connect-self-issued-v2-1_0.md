@@ -74,7 +74,7 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
   - A legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
 
 - Verifiable Credential (VC)
-  - A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. see [@!VC-DATA].
+  - A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. See [@!VC-DATA].
 
 ## Abbreviations
 
@@ -146,7 +146,7 @@ The following are considered out of scope of this document.
   
 ## Relationship with Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider
 
-This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider (Self-Issued OP v1) in the following ways:
+This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider in the following ways:
 
 - Added support for Decentralized Identifiers defined in [@!DID-Core] as Cryptographically Verifiable Identifiers in addition to the JWK thumbprint defined in Self-Issued OP v2. See (#sub-syntax-type).
 - Added support for Cross-Device Self-Issued OP model. See (#cross-device-siop).
@@ -154,7 +154,7 @@ This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provi
 - Added support for Dynamic Self-Issued OpenID Provider Discovery. See (#dynamic-siop-metadata). 
 - Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
 
-Note that while this specification extends Self-Issued OP v1, some sections of it could be applicable more generally to the entire OpenID Connect Core specification.
+Note that while this specification extends the original Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider, some sections of it could be applicable more generally to the entire OpenID Connect Core specification.
 
 # Protocol Flow
 
