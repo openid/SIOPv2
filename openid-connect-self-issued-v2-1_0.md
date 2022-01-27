@@ -68,12 +68,12 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
   - ID Token issued by a Self-Issued OP
 
 - Cryptographically verifiable identifier
-  - an identifier which is either based upon or resolves to cryptographic key material which can be used to verify a signature on the ID Token or the Self-Issued OP Request.
+  - An identifier that is either based upon or resolves to cryptographic key material that can be used to verify a signature on the ID Token or the Self-Issued OP Request.
     
-- Trust framework
-  - a legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
+- Trust Framework
+  - A legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
 
-- Verifiable Credential
+- Verifiable Credential (VC)
   - A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. see [@!VC-DATA].
 
 ## Abbreviations
@@ -96,15 +96,15 @@ As internet-connected smartphones have risen in availability, traditionally in-p
 
 The RP can directly receive the issuer-signed claims about the End-User from the Self-Issued OP, without talking to the Issuer. This prevents the Issuer from knowing where the End-User is presenting these issuer-signed claims. In this use-case, obtaining and potentially storing the issuer-signed credentials is the Self-Issued OP's responsibility using specifications such as [@!OIDC4VP].
 
-## Sharing Verifiable Credentials from Several Issuers in One Transaction
+## Sharing Claims (e.g. VC) from Several Issuers in One Transaction
 
-When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information as credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate credentials from multiple sources, then release them within a single transaction to a relying party. The relying party can then verify the authenticity of the information to make the necessary business decisions.
+When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
 
 ## Aggregation of Multiple Personas under One Self-Issued OP
 
 End-Users often use several hosted OpenID Providers for different Relying Parties. Some of the reasons to do this is to separate a work-related persona from a personal persona or to prevent the RPs from correlating their activities by using the same OP. 
 
-The usage of multiple OPs can create friction later, as the End-User may return later having forgotten which OP they used for the relying party. A single Self-Issued OP can be chosen by the End-User based on its capability to meet specific needs and privacy concerns.
+The usage of multiple OPs can create friction later, as the End-User may return later having forgotten which OP they used for the Relying Party. A single Self-Issued OP can be chosen by the End-User based on its capability to meet specific needs and privacy concerns.
 
 ## Identifier Portability
 
@@ -144,13 +144,13 @@ The following are considered out of scope of this document.
 
   This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which describes the presentation of W3C Verifiable Credentials with OpenID Connect.
   
-## Relationship with Chapter 7 of [@!OpenID.Core] Self-Issued OpenID Provider
+## Relationship with Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider
 
-This specification extends Chapter 7 of [@!OpenID.Core] Self-Issued OpenID Provider (Self-Issued OP v1) in the following ways:
+This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider (Self-Issued OP v1) in the following ways:
 
 - Added support for Decentralized Identifiers defined in [@!DID-Core] as Cryptographically Verifiable Identifiers in addition to the JWK thumbprint defined in Self-Issued OP v2. See (#sub-syntax-type).
 - Added support for Cross-Device Self-Issued OP model. See (#cross-device-siop).
-- Extended Relying Party Registration mechanisms to support pre-registration, and dynamic registration for not-pre-registered RPs. See (#rp-resolution).
+- Extended Relying Party Registration mechanisms to support pre-registration and dynamic registration for not-pre-registered RPs. See (#rp-resolution).
 - Added support for Dynamic Self-Issued OpenID Provider Discovery. See (#dynamic-siop-metadata). 
 - Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
 
@@ -158,7 +158,7 @@ Note that while this specification extends Self-Issued OP v1, some sections of i
 
 # Protocol Flow
 
-Self-Issued OP Request results in Self-Issued OP provisioning ID Token to the Relying Party when the End-User authentication succeeds and the End-User provides necessary permission. The ID Token MAY include claims about the End-User.
+Self-Issued OP Request results in Self-Issued OP returning an ID Token to the Relying Party when the End-User authentication succeeds and the End-User provides necessary permission. The ID Token MAY include claims about the End-User.
 
 ~~~ ascii-art
 +------+                                           +----------------+
@@ -197,7 +197,7 @@ This section outlines how Self-Issued OP is used in cross-device scenarios, and 
 
 The request in Step 5 is not a form post request where the Self-Issued OP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The Self-Issued OP sends this request directly to the RP's endpoint.
 
-For brevity, mainly the QR code method is discussed as a mechanism to initiate a cross-device protocol flow throughout this specification. However, same modifications from the seme-device protocol flow apply to mechanisms other than QR code.
+For brevity, mainly the QR code method is discussed as a mechanism to initiate a cross-device protocol flow throughout this specification. However, other mechanisms to initiate a cross-device flow are possible.
 
 # Discovery and Registration
 
@@ -1070,7 +1070,7 @@ The technology described in this specification was made available from contribut
 
     * Added cross-device protocol flow
     * Clarified handling for did-based sub and sub_jwk
-    * Revising of introductory text and scope of SIOPv2
+    * Revising of introductory text and scope of Self-Issued OP v2
     * Corrected typos and reworked registration example data
 
     -03
