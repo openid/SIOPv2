@@ -796,6 +796,14 @@ The browser or operating system typically has a process by which native applicat
 
 Further details are discussed in [@app-2-app-sec].
 
+## Self-Issued OP Authentication Response Confidentiality
+
+The authentication response MUST NOT leak to a party outside of the Self-Issued OP, the RP and the system browser participating in the protocol flow. 
+
+Implementers of Self-Issed OPs are encouraged to take operating system dependent measures to ensure that the authentication response is only passed to a legitimate system browser in the same-device protocol flow. If implementers wish to support native applications acting as an RP, they MAY alternatively invoke the RP application if the Self-Issed OP can verify the RP application to be legitimate.
+
+Further details of application to application and application to web communication are discussed in [@app-2-app-sec].
+
 # Privacy Considerations
 
 ## Selective Disclosure and Unlinkable Presentations
