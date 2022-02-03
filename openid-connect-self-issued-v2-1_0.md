@@ -1044,7 +1044,7 @@ TBD
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank John Bradley, Kim Cameron, Giuseppe De Marco, Daniel Fett, Alen Horvat, Edmund Jay, Tom Jones, Niels Klomp, Torsten Lodderstedt, Tobias Looker, Jeremie Miller, Brandon Murdoch, Nat Sakimura, Oliver Terbu, David Waite, and Dmitri Zagidulin for their contributions to this specification.
+We would like to thank Christina Bauer, John Bradley, Kim Cameron, Giuseppe De Marco, Daniel Fett, Alen Horvat, Edmund Jay, Tom Jones, Niels Klomp, Torsten Lodderstedt, Tobias Looker, Jeremie Miller, Brandon Murdoch, Nat Sakimura, Oliver Terbu, David Waite, and Dmitri Zagidulin for their contributions to this specification.
 
 # Notices 
 
