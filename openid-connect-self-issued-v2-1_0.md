@@ -124,7 +124,7 @@ This specification extends the OpenID Connect implicit flow in the following way
 
 * **RP Registration**: mechanisms for how the RPs register metadata such as supported functionalities with the Self-Issued OP, registration parameters and RP Metadata Registration Methods.
 
-* **Self-Issued ID Token**: defines additional claims and processing requirements of ID Tokens issued by Self-Issued OPs
+* **Self-Issued ID Token**: defines additional claims and processing requirements of ID Tokens issued by Self-Issued OPs. An ID Token is self-issued if the values of the `iss` and the `sub` claims are the same. 
 
 * **Self-Asserted Claims**: transporting claims in a Self-Issued ID Token that are not verifiable by the RP
 
@@ -270,7 +270,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
 
-RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. Self-Issued OPs invoked via `openid:` MUST set issuer identifier, or `iss` Claim in the ID Token to `https://self-issued.me/v2`.
+RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. 
 
 Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
@@ -307,7 +307,6 @@ Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be u
 
 The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
 
-When dynamic Self-Issued OpenID Provider discovery has been used, an additional `i_am_siop` Claim MUST be included in the ID Token as a way for the RP to determine if the ID Token has been issued by the Self-Issued OP.
 
 The following is a non-normative example of a Self-Issued OP metadata obtained dynamically:
 
@@ -649,14 +648,12 @@ The response contains an ID Token and, if applicable, further response parameter
 
 This extension defines the following claims to be included in the ID token for use in Self-Issued OpenID Provider Responses:
 
+* `iss`
+    * REQUIRED. in case of a self-issued ID token, this claim MUST be set to the value of the `sub` claim in the same ID Token. 
 * `sub`
     * REQUIRED. Subject identifier value. When Subject Syntax Type is JWK Thumbprint, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When Subject Syntax Type is Decentralized Identifier, the value is a Decentralized Identifier. The thumbprint value of JWK Thumbprint Subject Syntax Type is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [@!RFC7638] specification.
 * `sub_jwk`
     * OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is JWK Thumbprint. The key is a bare key in JWK [@!RFC7517] format (not an X.509 certificate value). MUST NOT be present when Subject Syntax Type other than JWK Thumbprint is used.
-* `i_am_siop`
-    * OPTIONAL. Boolean. It MUST be set to `true` and be included when Self-Issued OP Discovery metadata has been obtained dynamically. 
-
-Note: The use of `i_am_siop` Claim is under discussion and may be replaced with something like "iss": "siop+https://siop.example.com".
 
 Note that the use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 
@@ -670,7 +667,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 ```json
 {
-  "iss": "https://self-issued.me/v2",
+  "iss": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
   "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
   "aud": "https://client.example.org/cb",
   "nonce": "n-0S6_WzA2Mj",
@@ -694,7 +691,7 @@ See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Li
 
 To validate the ID Token received, the RP MUST do the following:
 
-1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. When static Self-Issued OP Discovery metadata has been used, `iss` MUST be `https://self-issued.me/v2`. When Self-Issued OP Discovery metadata has been obtained dynamically, an additional `i_am_siop` Claim MUST be present in the ID Token and `iss` MUST exactly match the `issuer` identifier specified in the Self-Issued OP Discovery Metadata MUST be included in the ID Token as a way for the RP to determine if the, when dynamic Self-Issued OpenID Provider discovery has been used.
+1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. The ID Token is self-issued if the `iss`claims and thd `sub`claim have the same value. If both values differ, the ID Token MUST be processed as defined in [@!OpenID.Core], section 3.2.2.11..
 1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
 1. The RP MUST identify which Subject Syntax Type is used based on the URI of the `sub` Claim. Valid values defined in this specification are `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type and `did:` for Decentralized Identifier Subject Syntax Type.
 1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
@@ -713,7 +710,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 ```json
 {
-  "iss": "https://siop.example.com",
+  "iss": "did:example:NzbLsXh8uDCcd6MNwXF4W7noWXFZAfHkxZsRGC9Xs",
   "sub": "did:example:NzbLsXh8uDCcd6MNwXF4W7noWXFZAfHkxZsRGC9Xs",
   "aud": "https://client.example.org/cb",
   "nonce": "n-0S6_WzA2Mj",
