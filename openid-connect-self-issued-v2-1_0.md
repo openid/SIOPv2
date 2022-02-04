@@ -785,7 +785,7 @@ Note that if Self-Issued OP implementations belong to a trust framework, the tru
 
 ## Receiving Cross-Device Responses
 
-In case of the cross-device flow, the SIOP will send the result as a HTTP POST message to the RP, typically via the Internet. This means such RPs must be able to receive a HTTP POST request originating from the Internet. There are different ways the RP can achieve this. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the SIOP responses.  
+In case of the cross-device flow, the SIOP will send the result as a HTTP POST message to the RP. This requires connectivity between SIOP and RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the SIOP responses.  
 
 # Relationships to Other Documents
 
