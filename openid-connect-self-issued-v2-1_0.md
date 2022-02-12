@@ -158,7 +158,7 @@ Note that while this specification extends the original Section 7 of [@!OpenID.C
 
 # Protocol Flow
 
-Self-Issued OP Request results in Self-Issued OP returning an ID Token to the Relying Party when the End-User authentication succeeds and the End-User provides necessary permission. The ID Token MAY include claims about the End-User.
+Self-Issued OP Request results in Self-Issued OP returning an ID Token to the Relying Party when the End-User authentication succeeds and the End-User provides necessary permission. The ID Token always includes claims about the Authentication event and MAY include additional claims about the End-User.
 
 ~~~ ascii-art
 +------+                                           +----------------+
