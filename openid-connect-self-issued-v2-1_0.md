@@ -54,7 +54,7 @@ Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
 Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
 
-The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP can implement all flows as specified in [@!OpenID.Core]. e.g. the Code Flow, and OpenID Connect extension flows, such as [@OpenID.CIBA].  
+The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP MAY implement all flows as specified in [@!OpenID.Core]. e.g. the Code Flow, and OpenID Connect extension flows, such as [@OpenID.CIBA], as permited by its deployment model. If the Self-Issued OP is purely operated on a user device, it might be unable to expose any endpoints beyond the authorization endpoint to RPs. However, if the Self-Issued OP has cloud components, it MAY expose further endpoints, such as a token endpoint. The same is applicable for Dynamic Client Registration ([@OpenID.Registration]).
 
 This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
 
@@ -160,6 +160,7 @@ This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provi
 - Extended Relying Party Registration mechanisms to support pre-registration and dynamic registration for not-pre-registered RPs. See (#rp-resolution).
 - Added support for Dynamic Self-Issued OpenID Provider Discovery. See (#dynamic-siop-metadata). 
 - Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
+- Allows use of any OpenID Connect flow for Self-Issued OPs and Dynamic Client Registration
 
 Note that while this specification extends the original Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider, some sections of it could be applicable more generally to the entire OpenID Connect Core specification.
 
@@ -210,7 +211,7 @@ For brevity, mainly the QR code method is discussed as a mechanism to initiate a
 
 Just like in conventional OpenID Connect protocol flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
 
-However, in Self-Issued OP protocol flows, such mechanisms may be unavailable since Self-Issued OPs do not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
+However, in Self-Issued OP protocol flows, such mechanisms may be unavailable if the Self-Issued OP does not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
 
 If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
@@ -312,15 +313,14 @@ Note: Need to confirm Mandatory to Implement `alg` values that we want to explic
 
 Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be used. 
 
-The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
-
+The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. 
 
 The following is a non-normative example of a Self-Issued OP metadata obtained dynamically:
 
 ```json
 {
-  "authorization_endpoint": "siop:", //can be a universal link/app link
-  "issuer": "https://client.example.org",
+  "authorization_endpoint": "https://wallet.example.org", 
+  "issuer": "https://example.org",
   "response_types_supported": [
     "id_token"
   ],
@@ -510,7 +510,7 @@ The following is a non-normative example of the supported RP Registration Metada
 
 Self-Issued OP authentication request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
-The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], using request parameters defined by OAuth 2.0 and OpenID Connect, with the exception of the differences specified in this section.
+The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core] for the different flows or as defined for OpenID Connect extension flows, with the exception of the differences specified in this section.
 
 Communication with the Authorization Endpoint MUST utilize TLS.
 
@@ -519,7 +519,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `scope`
     * REQUIRED. As specified in Section 3.1.2 of [@!OpenID.Core].
 * `response_type`
-    * REQUIRED. Constant string value `id_token`.
+    * REQUIRED. `id_token` or any other value as defined in Section 3 of [@!OpenID.Core].
 * `client_id`
     * REQUIRED. RP's identifier at the Self-Issued OP.
 * `redirect_uri`
@@ -563,7 +563,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 ## Cross-Device Self-Issued OpenID Provider Request
 
-The cross-device authentication request differs from the same-device variant as defined in (#siop_authentication_request) as follows:
+The cross-device authentication request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
 
 * This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
@@ -592,15 +592,15 @@ Such an authentication request might result in a large QR code, especially when 
 
 # Self-Issued OpenID Provider Authentication Response {#siop-authentication-response}
 
-A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Response made in the same manner as in the Implicit Flow, as defined in Section 3.1.2.5 of [@!OpenID.Core], with the exception of the differences specified in this section.
+A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Response, whose parameters depend on the `response_type` used in the request. Depending on the `response_type` the result of the transaction is either obtained directly from the authentication response or from a token endpoint response.
 
 A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#siop-error-respose).
 
-In a same-device protocol flow, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
+In a same-device protocol flow with `response_type` `id_token`, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
 In a cross-device protocol flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
-The following is an informative example of a Self-Issued OP Response in a same-device protocol flow:
+The following is an informative example of a Self-Issued OP Response in a same-device protocol flow (`response_type` `id_token`):
 
 ```
 HTTP/1.1 302 Found
