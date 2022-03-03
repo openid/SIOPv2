@@ -54,7 +54,7 @@ Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
 Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
 
-The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core].
+The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP can implement all flows as specified in [@!OpenID.Core]. e.g. the Code Flow, and OpenID Connect extension flows, such as [@OpenID.CIBA].  
 
 This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
 
@@ -910,6 +910,28 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
       <organization>Illumila</organization>
     </author>
    <date day="8" month="Nov" year="2014"/>
+  </front>
+</reference>
+
+<reference anchor="OpenID.CIBA" target="https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html">
+  <front>
+    <title>OpenID Connect Client-Initiated Backchannel Authentication Flow - Core 1.0</title>
+    <author initials="G." surname="Fernandez" fullname="G. Fernandez">
+      <organization>Telefonica</organization>
+    </author>
+    <author initials="F." surname="Walter" fullname="F. Walter">
+      <organization>Deutsche Telekom</organization>
+    </author>
+    <author initials="A." surname="Nennker" fullname="A. Nennker">
+      <organization>Deutsche Telekom</organization>
+    </author>
+    <author initials="D." surname="Tonge" fullname="D. Tonge">
+      <organization>Moneyhub</organization>
+    </author>
+    <author initials="B." surname="Campbell" fullname="B. Campbell">
+      <organization>Ping Identity</organization>
+    </author>
+   <date day="1" month="Sept" year="2021"/>
   </front>
 </reference>
 
