@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-07"
+value = "openid-connect-self-issued-v2-1_0-08"
 status = "standard"
 
 [[author]]
@@ -1064,6 +1064,16 @@ The technology described in this specification was made available from contribut
 # Document History
 
     [[ To be removed from the final specification ]]
+    
+    -08
+
+    * added security consideration for confidentiality response (same-device)
+    * added implementation consideration for cross device flow
+    * `iss` in the ID Token must equal `sub`
+
+    -07
+
+    * reflected editorial comments received during pre-implementer's draft review period
 
     -06
 
