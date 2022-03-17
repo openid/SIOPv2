@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-07"
+value = "openid-connect-self-issued-v2-1_0-08"
 status = "standard"
 
 [[author]]
@@ -592,7 +592,7 @@ Such an authentication request might result in a large QR code, especially when 
 
 # Self-Issued OpenID Provider Authentication Response {#siop-authentication-response}
 
-A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Response made in the same manner as in the Implicit Flow, as defined in Section 3.1.2.5 of [@!OpenID.Core], with the exception of the differences specified in this section.
+A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Response made in the same manner as in the Implicit Flow, as defined in Section 3.2.2.5 of [@!OpenID.Core], with the exception of the differences specified in this section.
 
 A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party Registration metadata values received from the Relying Party in the `registration` parameter. If one or more of the Relying Party Registration Metadata Values is not supported, Self-Issued OP MUST return an error according to (#siop-error-respose).
 
@@ -1064,6 +1064,16 @@ The technology described in this specification was made available from contribut
 # Document History
 
     [[ To be removed from the final specification ]]
+    
+    -08
+
+    * added security consideration for confidentiality response (same-device)
+    * added implementation consideration for cross device flow
+    * `iss` in the ID Token must equal `sub`
+
+    -07
+
+    * reflected editorial comments received during pre-implementer's draft review period
 
     -06
 
