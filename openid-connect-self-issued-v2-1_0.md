@@ -543,7 +543,7 @@ RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Requ
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
-A previously received, encrypted `id_token` MUST be decrypted to the inner signed `id_token` for use as an `id_token_hint` value. Such a value MAY be re-encrypted if a mutually supported set of algorithms is available with the SIOP (such as those advertised with `request_object_encryption_alg_values_supported` and `request_object_encryption_enc_values_supported`), and if the `sub` of the ID token has at least one appropriate public key.
+An encrypted `id_token` MUST be decrypted for the inner signed `id_token` to be used as an `id_token_hint` value. Such a value MAY be re-encrypted if a mutually supported set of algorithms is available with the SIOP, such as those advertised with `request_object_encryption_alg_values_supported` and `request_object_encryption_enc_values_supported`, and if the `sub` of the ID token has at least one appropriately usable public key.
 
 When re-encrypting the `id_token` value, the `sub` value from the signed `id_token` MUST be included as a `sub` parameter within the JWE protected header. If the `sub` has multiple public keys associated, the JWE protected header MUST distinguish the appropriate key with the JWE `kid` protected header. The JWE protected header MUST specify `alg` and `enc` header parameters unless the use of specific `alg` and  `enc` values have been pre-negotiated.
 
