@@ -525,7 +525,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `redirect_uri`
     * REQUIRED. URI to which the Self-Issued OP Response will be sent.
 * `id_token_hint`
-    * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core]. If the ID Token is encrypted for the Self-Issued OP, the `sub` (subject) of the signed ID Token MUST be sent as the `kid` (Key ID) of the JWE.
+    * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core].
 * `claims`
     * OPTIONAL. As specified in Section 5.5 of [@!OpenID.Core].
 * `registration`
@@ -542,6 +542,10 @@ To prevent duplication, registration parameters MUST be passed either in `regist
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
+
+A previously received, encrypted `id_token` MUST be decrypted to the inner signed `id_token` for use as an `id_token_hint` value. Such a value MAY be re-encrypted if a mutually supported set of algorithms is available with the SIOP (such as those advertised with `request_object_encryption_alg_values_supported` and `request_object_encryption_enc_values_supported`), and if the `sub` of the ID token has at least one appropriate public key.
+
+When re-encrypting the `id_token` value, the `sub` value from the signed `id_token` MUST be included as a `sub` parameter within the JWE protected header. If the `sub` has multiple public keys associated, the JWE protected header MUST distinguish the appropriate key with the JWE `kid` protected header. The JWE protected header MUST specify `alg` and `enc` header parameters unless the use of specific `alg` and  `enc` values have been pre-negotiated.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
 
