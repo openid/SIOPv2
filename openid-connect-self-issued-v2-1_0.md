@@ -32,13 +32,11 @@ organization="Microsoft"
 
 OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information.
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User’s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
-
-{mainmatter}
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User’s control. End-Users can leverage Self-Issued OPs to authenticate themselves with self-signed ID Tokens and present directly to the RPs self-attested claims or identity credentials attested by the trusted third parties. When used with separate specifications such as [@!OIDC4VP], Self-Issued OP can present cryptographically verifiable claims issued by the third parties trusted by the RP. This allows End-Users to interact with RPs directly, without RPs interacting with third-party providers or the End-User hosting their own OP infrastructure. 
 
 # Introduction
 
-This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to Relying Parties (RPs). This allows users to interact with the RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
+This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. End-Users can leverage Self-Issued OPs to authenticate themselves with self-signed ID Tokens and present directly to the RPs self-attested claims or identity credentials attested by the trusted third parties. When used with separate specifications such as [@!OIDC4VP], Self-Issued OP can present cryptographically verifiable claims issued by the third parties trusted by the RP. This allows End-Users to interact with RPs directly, without RPs interacting with third-party providers or the End-User hosting their own OP infrastructure.
 
 An OP releases identity information such as End-User authentication in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP. 
 
@@ -52,7 +50,7 @@ In SIOP v2, a SIOP can be discovered using any suitable issuer URL. Setting the 
 
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
-Because a Self-Issued OP within the End-User’s local control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
+Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a self-signed ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources trusted by the RP.
 
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core].
 
