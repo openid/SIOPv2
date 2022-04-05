@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-08"
+value = "openid-connect-self-issued-v2-1_0-09"
 status = "standard"
 
 [[author]]
@@ -38,7 +38,7 @@ This specification extends OpenID Connect with the concept of a Self-Issued Open
 
 # Introduction
 
-This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. When used with separate specifications such as [@!OIDC4VP], Self-Issued OPs can present cryptographically verifiable claims issued by the third parties trusted by the RPs. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs.
+This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs.
 
 An OP releases End-User authentication information in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP.
 
@@ -1063,6 +1063,10 @@ The technology described in this specification was made available from contribut
 
     [[ To be removed from the final specification ]]
     
+    -09
+    * updated definition of SIOP to be "an OP within the End-User’s control", not local control
+    * added reference to Distributed and Aggregated Claims as an option to send third party attested claims using SIOP
+
     -08
 
     * added security consideration for confidentiality response (same-device)
