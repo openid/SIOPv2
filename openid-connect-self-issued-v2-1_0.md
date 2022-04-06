@@ -271,7 +271,14 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
   ],
   "subject_syntax_types_supported": [
     "urn:ietf:params:oauth:jwk-thumbprint"
-  ]
+  ],
+  "id_token_types_supported": [
+    "self-issued"
+  ],
+  "id_token_types_supported": [
+    "self-issued"
+  ],
+  "id_token_types_default": "self-issued"
 }
 ```
 
@@ -307,13 +314,18 @@ Note that contrary to [@!OpenID.Discovery], `jwks_uri` parameter MUST NOT be pre
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID.Core]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
     * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@JWK-Thumbprint-URI]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
-
+* `id_token_types_supported`: 
+    * OPTIONAL. A JSON array of strings containing the list of ID token types supported by the OP. The ID Token types defined in this specification are: 
+        * `self-issued`: self-issued id token, i.e. the id token is signed with key material under the end-user's control. 
+        * `3rd-party-issued`: the id token is issued by the 3rd party operating the OP, i.e. this is the classical id token as defined in [@!OpenID.Core].
+* `id_token_types_default`:
+   * REQUIRED. A JSON string determing the default id token type of the OP. 
+  
 Note: Need to confirm Mandatory to Implement `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
 
 Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be used. 
 
 The RP MUST use the `authorization_endpoint` defined in Self-Issued OP Discovery Metadata to construct the request. Issuer identifier of the Self-Issued OP, or `iss` Claim in the ID Token, MUST be the issuer identifier specified in the Discovery Metadata. 
-
 
 The following is a non-normative example of a Self-Issued OP metadata obtained dynamically:
 
@@ -341,7 +353,11 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
   "subject_syntax_types_supported": [
     "urn:ietf:params:oauth:jwk-thumbprint",
     "did:key"
-  ]
+  ],
+  "id_token_types_supported": [
+    "self-issued"
+  ],
+  "id_token_types_default": "self-issued"
 }
 ```
 
@@ -536,6 +552,8 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
     * OPTIONAL. Request Object value, as specified in Section 6.1 of [@!OpenID.Core]. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
 * `request_uri`
     * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@!OpenID.Core].
+* `id_token_type`: 
+    * OPTIONAL. This parameter determines the kind of ID token the RP wants to obtain. The allowed values are `self-issued` and `3rd-party-issued` (see (#dynamic-siop-metadata)). The default value is determined by the OPs metadata parameter `id_token_types_default`.  
 
 To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
@@ -554,6 +572,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &id_token_type=self-issued
     &claims=...
     &registration=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
