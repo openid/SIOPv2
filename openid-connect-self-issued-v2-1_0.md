@@ -598,6 +598,8 @@ A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports 
 
 In a same-device protocol flow with `response_type` `id_token`, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
+In a same-device protocol flow with `response_type` `code`, the response parameters will be returned in HTTPS POST response body of the token response. 
+
 In a cross-device protocol flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
 The following is an informative example of a Self-Issued OP Response in a same-device protocol flow (`response_type` `id_token`):
@@ -607,6 +609,26 @@ HTTP/1.1 302 Found
   Location: https://client.example.org/cb#
     id_token=...
 ```
+
+## Self-Issued OpenID Provider Response (Code Flow)
+
+The following is an informative example of a Self-Issued OP Response for the code flow (`response_type` `code`):
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+  {
+   "access_token": "SlAV32hkKG",
+   "token_type": "Bearer",
+   "expires_in": 3600,
+   "id_token": "..."
+  }
+```
+
+Note: the SIOP MAY also provide end-user claims to the RP via the Userinfo endpoint. 
 
 ## Cross-Device Self-Issued OpenID Provider Response
 
@@ -664,13 +686,12 @@ This extension defines the following claims to be included in the ID token for u
 
 Note that the use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
 
-Whether the Self-Issued OP is a mobile application or a Web application, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
+Whether the Self-Issued OP is a mobile application or a Web application, the ID Token is the same as defined in [@!OpenID.Core] with the following refinements:
 
 1. The `sub` (subject) Claim value is either the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim or a Decentralized Identifier.
 1. When the `sub` Claim value is the base64url encoded representation of the thumbprint, a `sub_jwk` Claim is present, with its value being the public key used to check the signature of the ID Token.
-1. No Access Token is returned for accessing a UserInfo Endpoint, so all Claims returned MUST be in the ID Token.
 
-The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the static Self-Issued OP Discovery and JWK Thumbprint Subject Syntax type are used (with line wraps within values for display purposes only):
+The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the JWK Thumbprint Subject Syntax type is used (with line wraps within values for display purposes only):
 
 ```json
 {
