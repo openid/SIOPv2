@@ -541,11 +541,13 @@ To prevent duplication, registration parameters MUST be passed either in `regist
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
+The ID Token to be used as an `id_token_hint` may have been encrypted to the RP in a previous transaction. Encrypted ID Tokens are Nested JWTs as defined in [JWT]. The RP MUST decrypt the ID Token value to retrieve the payload, which is a Self-Issued ID Token. The signed Self-Issued ID token MAY be used as a hint.
+
+Alternatively, the RP MAY re-encrypt the resulting Self-Issued ID token to the subject for confidentiality. Re-encryption requires a mutually supported set of algorithms between the RP and SIOP, and at least one subject public key usable for encryption. Supported algorithms MAY be advertised with the `request_object_encryption_alg_values_supported` and `request_object_encryption_enc_values_supported` OP Discovery parameters.
+
+When re-encrypting the ID Token value, the `sub` value from the signed ID Token MUST be included as a `sub` parameter within the JWE protected header. If the `sub` has multiple public keys associated, the JWE protected header MUST distinguish the appropriate key with the JWE `kid` protected header. The JWE protected header MUST specify `alg` and `enc` header parameters unless the use of specific `alg` and  `enc` values have been pre-negotiated.
+
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
-
-An encrypted `id_token` MUST be decrypted for the inner signed `id_token` to be used as an `id_token_hint` value. Such a value MAY be re-encrypted if a mutually supported set of algorithms is available with the SIOP, such as those advertised with `request_object_encryption_alg_values_supported` and `request_object_encryption_enc_values_supported`, and if the `sub` of the ID token has at least one appropriately usable public key.
-
-When re-encrypting the `id_token` value, the `sub` value from the signed `id_token` MUST be included as a `sub` parameter within the JWE protected header. If the `sub` has multiple public keys associated, the JWE protected header MUST distinguish the appropriate key with the JWE `kid` protected header. The JWE protected header MUST specify `alg` and `enc` header parameters unless the use of specific `alg` and  `enc` values have been pre-negotiated.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
 
