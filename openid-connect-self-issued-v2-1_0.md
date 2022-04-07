@@ -272,12 +272,6 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
   "subject_syntax_types_supported": [
     "urn:ietf:params:oauth:jwk-thumbprint"
   ],
-  "id_token_types_supported": [
-    "self-issued"
-  ],
-  "id_token_types_supported": [
-    "self-issued"
-  ],
   "id_token_types_default": "self-issued"
 }
 ```
@@ -355,7 +349,8 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
     "did:key"
   ],
   "id_token_types_supported": [
-    "self-issued"
+    "self-issued",
+    "3rd-party-issued"
   ],
   "id_token_types_default": "self-issued"
 }
