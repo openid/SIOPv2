@@ -42,7 +42,7 @@ This specification extends OpenID Connect with the concept of a _Self-Issued Ope
 
 An OP releases End-User authentication information in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP.
 
-In the case of a hosted third-party provided OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User. The Self-Issued OP allows the user to authenticate towards the RP with an End-User controlled identifier instead of an identifier assigned by a third-party provided OP, which might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures are validated in comparison to traditional OpenID Connect. 
+In the case of a hosted third-party provided OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User. The Self-Issued OP allows the End-User to authenticate towards the RP with an End-User controlled identifier instead of an identifier assigned by a third-party provided OP, which might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures are validated in comparison to traditional OpenID Connect. 
 
 In traditional OpenID Connect, the ID token is signed by the third-party provided OP, identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the third-party provided OP the RP trusts for that purpose and it also is an attestation of what third-party provided service created the ID token (since both are the same entity). 
 
@@ -103,7 +103,7 @@ The RP can directly receive the issuer-signed claims about the End-User from the
 
 ## Sharing Claims (e.g. VC) from Several Issuers in One Transaction
 
-When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
+When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the End-User may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
 
 ## Aggregation of Multiple Personas under One Self-Issued OP
 
@@ -195,7 +195,7 @@ There are two models of Self-Issued OP protocol flows:
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The protocol flow is therefore modified as follows:
 
 1. The RP prepares a Self-Issued OP request and renders it as a QR code.
-1. The user scans the QR code with her smartphone's camera app.
+1. The End-User scans the QR code with her smartphone's camera app.
 1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid:` custom scheme).
 1. The Self-Issued OP processes the authentication request.
 1. Upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
@@ -210,7 +210,7 @@ Just like in conventional OpenID Connect protocol flows, Relying Party and Self-
 
 However, in Self-Issued OP protocol flows, such mechanisms may be unavailable since Self-Issued OPs do not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
 
-If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
+If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the End-User is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
 If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
 
@@ -584,7 +584,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &nonce=n-0S6_WzA2Mj
 ```
 
-Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the user must use a particular Self-Issued OP application to scan the QR code with such request.
+Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the End-User must use a particular Self-Issued OP application to scan the QR code with such request.
 
 Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider using a `request_uri` in such a case.
 
@@ -628,7 +628,7 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
-* **`user_cancelled`**: user cancelled the authentication request from the RP.
+* **`user_cancelled`**: End-User cancelled the authentication request from the RP.
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
 * **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
 * **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
