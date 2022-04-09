@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-08"
+value = "openid-connect-self-issued-v2-1_0-09"
 status = "standard"
 
 [[author]]
@@ -32,27 +32,25 @@ organization="Microsoft"
 
 OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information.
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User’s control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly with a higher degree of control over their identity data then in the case of a 3rd party OP.
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs. 
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. A Self-Issued OP may purely reside on the user's device or may utilize cloud-based components operated by the user herself or by a third-party on-behalf of the user. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly with a higher degree of control over their identity data then in the case of a third-party OP.
+This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs.
 
-An OP releases identity information such as End-User authentication in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP. 
+An OP releases End-User authentication information in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP.
 
-In the case of a third-party OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User. The Self-Issued OP allows the user to authenticate towards the RP with a crypthographicaly bound identifier, which might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures are validated in comparison to traditional OpenID Connect. 
+In the case of a hosted third-party provided OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User. The Self-Issued OP allows the End-User to authenticate towards the RP with an End-User controlled identifier instead of an identifier assigned by a third-party provided OP, which might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures are validated in comparison to traditional OpenID Connect. 
 
-In traditional OpenID Connect, the ID token is signed by the OP, which is identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the OP the RP trusts for that purpose and it also is an attestation of what service created the ID token (since both are the same entity). 
+In traditional OpenID Connect, the ID token is signed by the third-party provided OP, identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the third-party provided OP the RP trusts for that purpose and it also is an attestation of what third-party provided service created the ID token (since both are the same entity). 
 
-In the self-issued case, those roles fall appart. The issuer of the ID token is the user since it is signed with a private key under the user's control. The ID token's signature can no longer be used to crypthographically validate the software or service that created the ID token. In SIOP v1, the issuer was set to the constant value "https://self-issued.me", which was the issuer value used for discovery but clearly marked self-issued ID tokens and caused the logic for signature validation to change. So the process for signature validation did not depend on the metadata obtained that way.
-
-In SIOP v2, a SIOP can be discovered using any suitable issuer URL. Setting the `iss` value to the respective URL would no longer allow the RP to recognize a self-issed ID token based on the `iss` value. Moreover, the metadata obtained based on the issuer URL are (still) not used in the signature validation process. One could mark the self-issued ID token with a special claim or detect self-issued ID tokens based on other markers. However from a conceptually perspective, the issuer of the ID token is the user thus this specification requires the `iss` value to be set to the user identifier conveyed in the `sub` claim. This also aligns SIOP with the way self-signed certificates and verifiable presentations handle subject and issuer of such certificates and self-signed assertions, respectively.  
+In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns SIOP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and self-signed assertions, respectively.  
 
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
-Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
+Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a self-issued ID Token, are by default self-asserted and non-verifiable. Self-Issued OP can also present cryptographically verifiable claims issued by the third-party sources trusted by the RP, as defined in separate specifications such as [@!OIDC4VP] or Aggregated and Distributed Claims in Section 5.6.2 of [@!OpenID.Core].
 
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP MAY implement all flows as specified in [@!OpenID.Core]. e.g. the Code Flow, and OpenID Connect extension flows, such as [@OpenID.CIBA], as permited by its deployment model. If the Self-Issued OP is purely operated on a user device, it might be unable to expose any endpoints beyond the authorization endpoint to RPs. However, if the Self-Issued OP has cloud components, it MAY expose further endpoints, such as a token endpoint. The same is applicable for Dynamic Client Registration ([@OpenID.Registration]).
 
@@ -72,7 +70,7 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
   - Response to an RP from a Self-Issued OP
 
 - Self-Issued ID Token
-  - ID Token issued by a Self-Issued OP
+  - ID Token signed using the key material controlled by the End-User. It is issued by a Self-Issued OP.
 
 - Cryptographically verifiable identifier
   - An identifier that is either based upon or resolves to cryptographic key material that can be used to verify a signature on the ID Token or the Self-Issued OP Request.
@@ -105,7 +103,7 @@ The RP can directly receive the issuer-signed claims about the End-User from the
 
 ## Sharing Claims (e.g. VC) from Several Issuers in One Transaction
 
-When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
+When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the End-User may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
 
 ## Aggregation of Multiple Personas under One Self-Issued OP
 
@@ -204,7 +202,7 @@ There are two models of Self-Issued OP protocol flows:
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The protocol flow is therefore modified as follows:
 
 1. The RP prepares a Self-Issued OP request and renders it as a QR code.
-1. The user scans the QR code with her smartphone's camera app.
+1. The End-User scans the QR code with her smartphone's camera app.
 1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid:` custom scheme).
 1. The Self-Issued OP processes the authentication request.
 1. Upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
@@ -219,7 +217,7 @@ Just like in conventional OpenID Connect protocol flows, Relying Party and Self-
 
 However, in Self-Issued OP protocol flows, such mechanisms may be unavailable if the Self-Issued OP does not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
 
-If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
+If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the End-User is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
 If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
 
@@ -592,7 +590,7 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &nonce=n-0S6_WzA2Mj
 ```
 
-Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the user must use a particular Self-Issued OP application to scan the QR code with such request.
+Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the End-User must use a particular Self-Issued OP application to scan the QR code with such request.
 
 Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider using a `request_uri` in such a case.
 
@@ -658,7 +656,7 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
-* **`user_cancelled`**: user cancelled the authentication request from the RP.
+* **`user_cancelled`**: End-User cancelled the authentication request from the RP.
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party Registration metadata values received in the request.
 * **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
 * **`invalid_registration_uri`**: the `registration_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
@@ -1114,6 +1112,10 @@ The technology described in this specification was made available from contribut
 
     [[ To be removed from the final specification ]]
     
+    -09
+    * updated definition of SIOP to be "an OP within the End-User’s control", not local control
+    * added reference to Distributed and Aggregated Claims as an option to send third party attested claims using SIOP
+
     -08
 
     * added security consideration for confidentiality response (same-device)
