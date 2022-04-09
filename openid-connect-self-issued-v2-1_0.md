@@ -117,6 +117,12 @@ The usage of multiple OPs can create friction later, as the End-User may return 
 
 With a hosted third-party provider, a user identifier used at the RP is assigned by the third-party, while with a Self-Issued OP, a user identifier can be created by an application locally controlled by the End-User. This would allow the End-User to maintain the relationship with the RP while minimizing the third-party influence, as long as the End-User can keep control of the Self-Issued identifier.
 
+## Cloud Wallet 
+
+End-users may decide to store their credentials in a cloud wallet in order to be able to access her existing credentials across devices without hazzle (e.g. no need to re-obtain credentials after changing phone). Such a wallet can protect the user's credental on a high security level. It may, for example, utilize hardware security modules to protect the user's keys from cloning and replay. Since there is a backend involved and endpoints can be exposed, a cloud wallet can utilize the OpenID Connect code flow, which allows verifier and wallet to mutually authenticate and exchange date via a direct HTTPS protected connection. 
+
+A cloud wallet may utilize a native user experience, it may also (in addition or exclusively) offer a web based experience, which can be used on any device without the need for an app installation.
+
 # Scope
 
 As a Self-Issued OP may be running locally as a native application, a browser application, or a Progressive Web Application, it may not be able to provide a network-addressable endpoint for direct communication to the RP. This specification leverages the implicit flow of OpenID Connect defined in Section 3.2 of [@!OpenID.Core] to communicate with such locally-running OPs.
