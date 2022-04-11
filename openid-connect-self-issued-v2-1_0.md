@@ -119,7 +119,7 @@ With a hosted third-party provider, a user identifier used at the RP is assigned
 
 End-users may decide to store their credentials in a cloud wallet in order to be able to access her existing credentials across devices without hazzle (e.g. no need to re-obtain credentials after changing phone). Such a wallet can protect the user's credental on a high security level. It may, for example, utilize hardware security modules to protect the user's keys from cloning and replay. Since there is a backend involved and endpoints can be exposed, a cloud wallet can utilize the OpenID Connect code flow, which allows verifier and wallet to mutually authenticate and exchange date via a direct HTTPS protected connection. 
 
-A cloud wallet may utilize a native user experience, it may also (in addition or exclusively) offer a web based experience, which can be used on any device without the need for an app installation.
+A cloud wallet may utilize a native user experience, it may also (in addition or exclusively) offer a web based experience, which can be used on any device without the need for an app installation. This also means such a wallet can always use the more secure on-device flow instead of the cross-device flow. End-user authentication can be implemented using roaming authenticators or a private protocol with an authentication app.
 
 # Scope
 
