@@ -32,13 +32,13 @@ organization="Microsoft"
 
 OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information.
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-Userâ€™s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs. 
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs. 
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-Userâ€™s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs.
+This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs directly, without RPs interacting with the issuers of the claims or the End-User using third-party provided OPs.
 
 An OP releases End-User authentication information in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP.
 
@@ -50,7 +50,7 @@ In the Self-Issued OP case, the ID token is self-signed with a private key under
 
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
-Because a Self-Issued OP within the End-Userâ€™s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a self-issued ID Token, are by default self-asserted and non-verifiable. Self-Issued OP can also present cryptographically verifiable claims issued by the third-party sources trusted by the RP, as defined in separate specifications such as [@!OIDC4VP] or Aggregated and Distributed Claims in Section 5.6.2 of [@!OpenID.Core].
+Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a self-issued ID Token, are by default self-asserted and non-verifiable. Self-Issued OP can also present cryptographically verifiable claims issued by the third-party sources trusted by the RP, as defined in separate specifications such as [@!OIDC4VP] or Aggregated and Distributed Claims in Section 5.6.2 of [@!OpenID.Core].
 
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core].
 
@@ -189,8 +189,8 @@ Figure: Self-Issued OP Protocol Flow
 
 There are two models of Self-Issued OP protocol flows:
 
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-Userâ€™s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP protocol flow for authentication.
-* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-Userâ€™s user interactions are occurring.
+* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP protocol flow for authentication.
+* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The protocol flow is therefore modified as follows:
 
@@ -566,7 +566,7 @@ The cross-device authentication request differs from the same-device variant as 
 * This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
-Self-Issued OP is on a different device than the one on which the End-Userâ€™s user interactions are occurring.
+Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
 
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device protocol flow (#cross-device-siop):
 
@@ -1064,7 +1064,7 @@ The technology described in this specification was made available from contribut
     [[ To be removed from the final specification ]]
     
     -09
-    * updated definition of SIOP to be "an OP within the End-Userâ€™s control", not local control
+    * updated definition of SIOP to be "an OP within the End-User’s control", not local control
     * added reference to Distributed and Aggregated Claims as an option to send third party attested claims using SIOP
 
     -08
