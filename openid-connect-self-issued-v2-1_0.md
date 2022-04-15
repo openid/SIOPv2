@@ -117,7 +117,7 @@ With a hosted third-party provider, a user identifier used at the RP is assigned
 
 ## Cloud Wallet 
 
-End-users may decide to store their credentials in a cloud wallet in order to be able to access her existing credentials across devices without hazzle (e.g. no need to re-obtain credentials after changing phone). Such a wallet can protect the user's credental on a high security level. It may, for example, utilize hardware security modules to protect the user's keys from cloning and replay. Since there is a backend involved and endpoints can be exposed, a cloud wallet can utilize the OpenID Connect code flow, which allows verifier and wallet to mutually authenticate and exchange date via a direct HTTPS protected connection. 
+End-Users may decide to store their credentials in a cloud wallet, in order to be able to access her existing credentials across devices without hazzle (e.g. no need to re-obtain credentials after changing phone). A cloud wallet is an applicatication that is not hosted entirely locally on the End-User's device, but has cloud-based components and is capable of hosting backend endpoints. Such a wallet can protect the user's credental on a high security level. It may, for example, utilize hardware security modules to protect the user's keys from cloning and replay. Since there is a backend involved and endpoints can be exposed, a cloud wallet can utilize the OpenID Connect authorization code flow, which allows verifier and wallet to mutually authenticate and exchange date via a direct HTTPS protected connection. 
 
 A cloud wallet may utilize a native user experience, it may also (in addition or exclusively) offer a web based experience, which can be used on any device without the need for an app installation. This also means such a wallet can always use the more secure on-device flow instead of the cross-device flow. End-user authentication can be implemented using roaming authenticators or a private protocol with an authentication app.
 
@@ -606,7 +606,7 @@ In a same-device protocol flow with `response_type` `code`, the response paramet
 
 In a cross-device protocol flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
 
-The following is an informative example of a Self-Issued OP Response in a same-device protocol flow (`response_type` `id_token`):
+The following is an informative example of a Self-Issued OP Response in a same-device protocol flow (`response_type=id_token`):
 
 ```
 HTTP/1.1 302 Found
@@ -614,9 +614,9 @@ HTTP/1.1 302 Found
     id_token=...
 ```
 
-## Self-Issued OpenID Provider Response (Code Flow)
+## Self-Issued OpenID Provider Response (Authorization Code Flow)
 
-The following is an informative example of a Self-Issued OP Response for the code flow (`response_type` `code`):
+The following is an informative example of a Self-Issued OP Response for the authorization code flow (`response_type=code`):
 
 ```
 HTTP/1.1 200 OK
