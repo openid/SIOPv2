@@ -42,7 +42,9 @@ Self-Issued OPs can also present cryptographically verifiable claims issued by t
 
 This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs, without RPs interacting with claims issuers.
 
-End-user control does not imply the SIOP entirely runs on an End-user's device, the End-user may also rely in a service provider to host her SIOP. Consequently, there are different ways to implement a SIOP: the SIOP can completely run on a End-user device, it might utilize cloud components, it might also completely run in the cloud. The crucial difference between a traditional OP and the SIOP is that the SIOP acts on behalf of the End-user. So the End-user controls the identifiers and claims being released to a RP. Even in the case of cryptographically verifiable claims issued by a third party, it is the End-user who decides whether and when to use such claims. 
+End-user control does not imply the Self-Issued OP is entirely locally hosted on an End-user's device, the End-user may also rely on a service provider to host her Self-Issued OP. Consequently, there are different ways to implement a Self-Issued OP: the Self-Issued OP can completely run on a End-user device; it might utilize cloud components; or it might completely run in the cloud. 
+
+The crucial difference between a traditional OP and the Self-Issued OP is not where it is hosted, but that the Self-Issued OP allows the End-user to control the identifiers and claims released to the RP. Even in the case of cryptographically verifiable claims issued by a third party, it is the End-user who decides whether and when to use such claims. 
 
 An OP releases End-User authentication information in the form of an ID Token. An RP will trust an ID token based on the relationship between the RP and the issuer of this ID token.
 
@@ -50,7 +52,7 @@ In the case of an OP acting as ID token issuer (the traditional OpenID Connect m
 
 In traditional OpenID Connect, the ID token is signed by the OP as an entity, identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the OP the RP trusts for that purpose and it also is an attestation of what service produced the ID token (since both are the same entity). 
 
-In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns SIOP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and self-signed assertions, respectively.  
+In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns Self-Issued OP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and self-signed assertions, respectively.  
 
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
@@ -855,7 +857,7 @@ Note that if Self-Issued OP implementations belong to a trust framework, the tru
 
 ## Receiving Cross-Device Responses
 
-In case of the cross-device flow, the SIOP will send the result as a HTTP POST message to the RP. This requires connectivity between SIOP and RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the SIOP responses.  
+In case of the cross-device flow, the Self-Issued OPwill send the result as a HTTP POST message to the RP. This requires connectivity between Self-Issued OPand RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the Self-Issued OPresponses.  
 
 # Relationships to Other Documents
 
