@@ -523,7 +523,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `redirect_uri`
     * REQUIRED. URI to which the Self-Issued OP Response will be sent.
 * `id_token_hint`
-    * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core]. If the ID Token is encrypted for the Self-Issued OP, the `sub` (subject) of the signed ID Token MUST be sent as the `kid` (Key ID) of the JWE.
+    * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core].
 * `claims`
     * OPTIONAL. As specified in Section 5.5 of [@!OpenID.Core].
 * `registration`
@@ -538,6 +538,12 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
+
+The ID Token to be used as an `id_token_hint` may have been encrypted to the RP in a previous transaction. Encrypted ID Tokens are Nested JWTs as defined in [JWT]. The RP MUST decrypt the ID Token value to retrieve the payload, which is a Self-Issued ID Token. The signed Self-Issued ID Token MAY be used as a hint.
+
+Alternatively, the RP MAY re-encrypt the resulting Self-Issued ID Token to the subject for confidentiality. Re-encryption requires a mutually supported set of algorithms between the RP and SIOP, and at least one subject public key usable for encryption. Supported algorithms MAY be advertised with the `request_object_encryption_alg_values_supported` and `request_object_encryption_enc_values_supported` OP Discovery parameters.
+
+When re-encrypting the ID Token value, the `sub` value from the signed ID Token MUST be included as a `sub` parameter within the JWE protected header. If the `sub` has multiple public keys associated, the JWE protected header MUST distinguish the appropriate key with the JWE `kid` protected header. The JWE protected header MUST specify `alg` and `enc` header parameters unless the use of specific `alg` and  `enc` values have been pre-negotiated.
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
