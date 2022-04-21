@@ -30,9 +30,9 @@ organization="Microsoft"
 
 .# Abstract
 
-OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) about herself to a Relying Party (RP) which can act on that information. In this model, the RP trusts in the assertions made by the OP, i.e. the OP is the issuer of this assertions. 
+OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information. In this model, the RP trusts in the assertions made by the OP, i.e. the OP is the issuer of this assertions. 
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which acts on behalf of the End-User’s and does not itself assert identity information about this End-user. Instead the End-user becomes the issuer of identity information. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens signed with keys under the End-user's control and present self-attested claims directly to the RPs. 
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP controlled by the End-User’s and does not itself assert identity information about this End-user. Instead the End-user becomes the issuer of identity information. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens signed with keys under the End-user's control and present self-attested claims directly to the RPs. 
 
 Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs, without RPs interacting directly with claims issuers. 
 
@@ -44,7 +44,7 @@ This specification extends OpenID Connect with the concept of a _Self-Issued Ope
 
 End-user control does not imply the Self-Issued OP is entirely locally hosted on an End-user's device, the End-user may also rely on a service provider to host her Self-Issued OP. Consequently, there are different ways to implement a Self-Issued OP: the Self-Issued OP can completely run on a End-user device; it might utilize cloud components; or it might completely run in the cloud. 
 
-The crucial difference between a traditional OP and the Self-Issued OP is not where it is hosted, but that the Self-Issued OP allows the End-user to control the identifiers and claims released to the RP. Even in the case of cryptographically verifiable claims issued by a third party, it is the End-user who decides whether and when to use such claims. 
+The crucial difference between a traditional OP and the SIOP is that the SIOP acts on behalf of the End-User, i.e. the SIOP allows the End-user to control the identifiers and claims released to the RP. Even in the case of cryptographically verifiable claims issued by a third party, it is the End-user who decides whether and when to use such claims. 
 
 An OP releases End-User authentication information in the form of an ID Token. An RP will trust an ID token based on the relationship between the RP and the issuer of this ID token.
 
