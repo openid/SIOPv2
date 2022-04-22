@@ -1141,61 +1141,61 @@ The technology described in this specification was made available from contribut
 
 # Document History
 
-    [[ To be removed from the final specification ]]
+   [[ To be removed from the final specification ]]
     
-    -09
+   -09
 
-    * updated definition of SIOP to be "an OP within the End-User’s control", not local control
-    * added reference to Distributed and Aggregated Claims as an option to send third party attested claims using SIOP
-    * added metadata and request parameter to explicitely publish and request SIOP support
-    * extended specification to allow for use the code flow and all other OpenID Connect flows
-    * added examples of possible SIOP architectures
+   * updated definition of SIOP to be "an OP within the End-User’s control", not local control
+   * added reference to Distributed and Aggregated Claims as an option to send third party attested claims using SIOP
+   * added metadata and request parameter to explicitely publish and request SIOP support
+   * extended specification to allow for use the code flow and all other OpenID Connect flows
+   * added examples of possible SIOP architectures
 
-    -08
+   -08
 
-    * added security consideration for confidentiality response (same-device)
-    * added implementation consideration for cross device flow
-    * `iss` in the ID Token must equal `sub`
+   * added security consideration for confidentiality response (same-device)
+   * added implementation consideration for cross device flow
+   * `iss` in the ID Token must equal `sub`
 
-    -07
+   -07
 
-    * reflected editorial comments received during pre-implementer's draft review period
+   * reflected editorial comments received during pre-implementer's draft review period
 
-    -06
+   -06
 
-    * Added statically registered clients
-    * Cleanups in preparation for the first proposed Implementer's Draft
-    * Updated Security Considerations
-    * Added an Acknowledgements section
-    * Clarified which Hash Function is to be used to compute/verify JWK Thumbprints
-    * Added more examples
+   * Added statically registered clients
+   * Cleanups in preparation for the first proposed Implementer's Draft
+   * Updated Security Considerations
+   * Added an Acknowledgements section
+   * Clarified which Hash Function is to be used to compute/verify JWK Thumbprints
+   * Added more examples
 
-    -05
+   -05
 
-    * Merged `did_methods_supported` metadata into `subject_syntax_type_supported`
-    * Added RP Metadata resolution methods
-    * Editorial - language in Relying Party Registration Metadata Error Response
-    * Introduced mandatory `i_am_siop` claim
+   * Merged `did_methods_supported` metadata into `subject_syntax_type_supported`
+   * Added RP Metadata resolution methods
+   * Editorial - language in Relying Party Registration Metadata Error Response
+   * Introduced mandatory `i_am_siop` claim
 
-    -04
+   -04
 
-    * Added cross-device protocol flow
-    * Clarified handling for did-based sub and sub_jwk
-    * Revising of introductory text and scope of Self-Issued OP v2
-    * Corrected typos and reworked registration example data
+   * Added cross-device protocol flow
+   * Clarified handling for did-based sub and sub_jwk
+   * Revising of introductory text and scope of Self-Issued OP v2
+   * Corrected typos and reworked registration example data
 
-    -03
+   -03
     
-    * sub_jwk made optional for Subject Syntax Type DID and mandatory for subtype jwk thumbprint
-    * Added text that nonce is mandatory
-    * Replaced vp claim with reference to OIDC4VP draft
-    * Adopted Self-Issued OP chooser as Self-Issued OP Discovery
-    * Deprecated openid:// for Self-Issued OP Discovery as not recommended
-    * Clarified Discovery and Registration metadata
-    * Formatted Normative Reference Section to mmarkdown
+   * sub_jwk made optional for Subject Syntax Type DID and mandatory for subtype jwk thumbprint
+   * Added text that nonce is mandatory
+   * Replaced vp claim with reference to OIDC4VP draft
+   * Adopted Self-Issued OP chooser as Self-Issued OP Discovery
+   * Deprecated openid:// for Self-Issued OP Discovery as not recommended
+   * Clarified Discovery and Registration metadata
+   * Formatted Normative Reference Section to mmarkdown
 
-    -02
-     * Converted into mmarkdown
+   -02
+   * Converted into mmarkdown
 
-    -01
-     * Version proposed for working group adoption
+   -01
+   * Version proposed for working group adoption
