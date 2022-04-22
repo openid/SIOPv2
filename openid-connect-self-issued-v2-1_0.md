@@ -40,7 +40,7 @@ organization="yes.com"
 
 OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information. In this model, the RP trusts in the assertions made by the OP, i.e. the OP is the issuer of this assertions. 
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP controlled by the End-User’s and does not itself assert identity information about this End-user. Instead the End-user becomes the issuer of identity information. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens signed with keys under the End-user's control and present self-attested claims directly to the RPs. 
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP controlled by the End-User. The Self-Issued OP does not itself assert identity information about this End-user. Instead the End-user becomes the issuer of identity information. Using Self-Issued OPs, End-Users can authenticate themselves with self-issued ID Tokens signed with keys under the End-user's control and present self-attested claims directly to the RPs. 
 
 Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OIDC4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs, without RPs interacting directly with claims issuers. 
 
@@ -52,11 +52,11 @@ This specification extends OpenID Connect with the concept of a _Self-Issued Ope
 
 End-user control does not imply the Self-Issued OP is entirely locally hosted on an End-user's device, the End-user may also rely on a service provider to host her Self-Issued OP. Consequently, there are different ways to implement a Self-Issued OP: the Self-Issued OP can completely run on a End-user device; it might utilize cloud components; or it might completely run in the cloud. 
 
-The crucial difference between a traditional OP and the SIOP is that the SIOP acts on behalf of the End-User, i.e. the SIOP allows the End-user to control the identifiers and claims released to the RP. Even in the case of cryptographically verifiable claims issued by a third party, it is the End-user who decides whether and when to use such claims. 
+The crucial difference between a traditional OP and the Self-Issued OP is that the Self-Issued OP acts on behalf of the End-User, i.e. the Self-Issued OP allows the End-user to control the identifiers and claims released to the RP. Even in the case of cryptographically verifiable claims issued by a third party, it is the End-user who decides whether and when to use such claims. 
 
-An OP releases End-User authentication information in the form of an ID Token. An RP will trust an ID token based on the relationship between the RP and the issuer of this ID token.
+[@!OpenID.Core] defines that an OP releases End-User authentication information in the form of an ID Token. An RP will trust an ID token based on the relationship between the RP and the issuer of this ID token.
 
-In the traditional OpenID Connect model when an OP acts as an ID token issuer, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the Self-Issued OP model, the RPs' trust relationship is directly with the End-User. The Self-Issued OP allows the End-User to authenticate towards the RP with an identifier controlled by the End-User instead of an identifier assigned to the End-User by a third-party provided OP. End-User controlled identifier might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures of the Self-Issued ID Tokens are validated in comparison to the traditional OpenID Connect model.
+In the traditional OpenID Connect model when an OP acts as an ID token issuer, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the Self-Issued OP model, the RPs' trust relationship is directly with the End-User. The Self-Issued OP allows the End-User to authenticate towards the RP with an identifier controlled by the End-User instead of an identifier assigned to the End-User by a third-party provided OP. An End-User controlled identifier might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures of the Self-Issued ID Tokens are validated in comparison to the traditional OpenID Connect model.
 
 In traditional OpenID Connect, the ID token is signed by the OP as an entity, identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the OP the RP trusts for that purpose and it also is an attestation of what service produced the ID token (since both are the same entity). 
 
@@ -563,7 +563,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 * `request_uri`
     * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@!OpenID.Core].
 * `id_token_type`: 
-    * OPTIONAL. Space-separated string that specifies the types of ID token the RP wants to obtain, with the values appearing in order of preference. The allowed individual values are `subject_signed` and `attester_signed` (see (#dynamic-siop-metadata)). The default value is `attester_signed`. The RP determines the type if ID token returned based on the comparison of the `iss` and `sub` claims values (see(see (#siop-id-token-validation)). In order to preserve compatibility with existing OpenID Connect deployments, the OP MAY return an ID token that does not fulfill the requirements as expressed in this parameter. So the RP SHOULD be prepared to reliable handle such an outcome. 
+    * OPTIONAL. Space-separated string that specifies the types of ID token the RP wants to obtain, with the values appearing in order of preference. The allowed individual values are `subject_signed` and `attester_signed` (see (#dynamic-siop-metadata)). The default value is `attester_signed`. The RP determines the type if ID token returned based on the comparison of the `iss` and `sub` claims values (see(see (#siop-id-token-validation)). In order to preserve compatibility with existing OpenID Connect deployments, the OP MAY return an ID token that does not fulfill the requirements as expressed in this parameter. So the RP SHOULD be prepared to reliably handle such an outcome. 
 
 To prevent duplication, registration parameters MUST be passed either in `registration` or `registration_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire registration metadata, `registration` or `registration_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `registration` or `registration_uri` parameters MUST be included in either of those parameters.
 
@@ -1144,8 +1144,12 @@ The technology described in this specification was made available from contribut
     [[ To be removed from the final specification ]]
     
     -09
+
     * updated definition of SIOP to be "an OP within the End-User’s control", not local control
     * added reference to Distributed and Aggregated Claims as an option to send third party attested claims using SIOP
+    * added metadata and request parameter to explicitely publish and request SIOP support
+    * extended specification to allow for use the code flow and all other OpenID Connect flows
+    * added examples of possible SIOP architectures
 
     -08
 
