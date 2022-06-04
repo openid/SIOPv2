@@ -778,30 +778,15 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
   "aud": "https://client.example.org/cb",
   "nonce": "n-0S6_WzA2Mj",
   "exp": 1311281970,
-  "iat": 1311280970,
-  "presentation_submission": {
-    "id": "Selective disclosure example presentation",
-    "definition_id": "Selective disclosure example",
-    "descriptor_map": [
-      {
-        "id": "ID Card with constraints",
-        "format": "ldp_vp",
-        "path": "$",
-        "path_nested": {
-          "format": "ldp_vc",
-          "path": "$.verifiableCredential[0]"
-        }
-      }
-    ]
-  }
+  "iat": 1311280970
 }
 ```
 
-Further processing steps are required if the authentication response contains `presentation_submission` as in the example above - see [@!OIDC4VP].
+Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
 # Verifiable Presentation Support
 
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID Connect for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
+Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID for Verifiable Presentations [@!OIDC4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
 
 Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
 
@@ -1015,9 +1000,9 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
   </front>
 </reference>
 
-<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
+<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
   <front>
-    <title>OpenID Connect for Verifiable Presentations</title>
+    <title>OpenID for Verifiable Presentations</title>
     <author initials="O." surname="Terbu" fullname="Oliver Terbu">
       <organization>ConsenSys Mesh</organization>
     </author>
