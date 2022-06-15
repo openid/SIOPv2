@@ -270,7 +270,6 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 ```json
 {
   "authorization_endpoint": "openid:",
-  "issuer": "https://self-issued.me/v2",
   "response_types_supported": [
     "id_token"
   ],
