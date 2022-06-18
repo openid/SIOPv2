@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-09"
+value = "openid-connect-self-issued-v2-1_0-10"
 status = "standard"
 
 [[author]]
@@ -1126,6 +1126,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -10
+
+   * alignment with OpenID for Verifiable Presentation
     
    -09
 
