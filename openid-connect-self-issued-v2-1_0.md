@@ -1183,7 +1183,9 @@ The technology described in this specification was made available from contribut
    * Formatted Normative Reference Section to mmarkdown
 
    -02
+
    * Converted into mmarkdown
 
    -01
+   
    * Version proposed for working group adoption
