@@ -749,6 +749,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 ```
 
 ## Self-Issued ID Token Validation {#siop-id-token-validation}
+
 See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
 
 To validate the ID Token received, the RP MUST do the following:
@@ -761,6 +762,8 @@ To validate the ID Token received, the RP MUST do the following:
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
 1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+
+Any claim in the Self-Issued ID Token is considered to be self-attested. Verifying attestation by a third party requires additional artifacts and processing steps - see [@!OIDC4VP].
 
 ## Cross-Device Self-Issued ID Token Validation
 
@@ -780,8 +783,6 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
   "iat": 1311280970
 }
 ```
-
-Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
 
 # Verifiable Presentation Support
 
