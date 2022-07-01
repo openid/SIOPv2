@@ -188,7 +188,7 @@ Self-Issued OP Request results in Self-Issued OP returning an ID Token to the Re
 +------+                                           +----------------+
 |      |                                           |                |
 |      |--(1) Self-Issued OpenID Provider Request->|                |
-|      |     (Authentication Request)              |                |
+|      |     (Authorization Request)              |                |
 |      |                                           |                |
 |      |       +----------+                        |                |
 |      |       |          |                        |                |
@@ -216,8 +216,8 @@ This section outlines how Self-Issued OP is used in cross-device scenarios, and 
 1. The RP prepares a Self-Issued OP request and renders it as a QR code.
 1. The End-User scans the QR code with her smartphone's camera app.
 1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid:` custom scheme).
-1. The Self-Issued OP processes the authentication request.
-1. Upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
+1. The Self-Issued OP processes the Authorization Request.
+1. Upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
 
 The request in Step 5 is not a form post request where the Self-Issued OP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The Self-Issued OP sends this request directly to the RP's endpoint.
 
@@ -384,7 +384,7 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 * Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. The subject syntax type MUST be cryptographically verified against the resolved DID Document as defined in {#siop-id_token-validation}.
 
-The RP indicates Subject Syntax Type it supports in RP parameter `subject_syntax_types_supported` defined in {#rp-metadata}.
+The RP indicates Subject Syntax Type it supports in Client metadata parameter `subject_syntax_types_supported` defined in {#rp-metadata}.
 
 # Relying Party Registration {#rp-resolution}
 
@@ -394,7 +394,7 @@ Registration mechanism depends on whether the Self-Issued OP and the RP have a p
 
 When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registration, and `client_metadata` nor `client_metadata_uri` parameters MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
-The following is a non-normative example of a same-device request when the RP is pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
+The following is a non-normative example of a same-device request when the RP is pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
@@ -408,19 +408,19 @@ The following is a non-normative example of a same-device request when the RP is
 
 ## Non-Pre-Registered Relying Party
 
-When the RP has not pre-registered and has to dynamically register with the Self-Issued OP, the registration mechanism depends on whether the Self-Issued OP Request is signed or not.
+When the RP has not pre-registered, it may pass its metadata to the Self-Issued OP in the Authorization Request. This mechanism is different from registration (Dynamic Client Registration or an out-of-band pre-registration) since Self-Issued OP does not return client_id to the RP that the RP can re-use at the Self-Issued OP.
 
-When the Self-Issued OP request is not signed, all client metadata parameters MUST be passed using client metadata parameter defined in (#rp-registration-parameter), or using out-of-band mechanism. In this case, `client_id` MUST equal `redirect_uri`.
+When the Self-Issued OP request is not signed, all client metadata parameters MUST be passed using client metadata parameter defined in (#rp-registration-parameter). In this case, `client_id` MUST equal `redirect_uri`.
 
 When the Self-Issued OP request is signed, the public key to verify the signature is obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP parameter SHOULD be included either in the `client_metadata` parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, `client_id` MUST NOT equal `redirect_uri`.
 
 `client_metadata` parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `client_metadata` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
-Note that in Self-Issued OP protocol flow, no registration response is returned. A successful authentication response implicitly indicates that the client metadata parameters were accepted.
+Note that in Self-Issued OP protocol flow, no registration response is returned. A successful Authorization Response implicitly indicates that the client metadata parameters were accepted.
 
 ### Relying Party client metadata parameter {#rp-registration-parameter}
 
-OpenID Connect defines the following negotiation parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic Client Registration:
+OpenID Connect defines the following parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during registration:
 
 * `client_metadata` 
   * OPTIONAL. This parameter enables RP parameter to be passed in a single, self-contained parameter. The value is a JSON object containing RP parameter values. The client metadata parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
@@ -430,13 +430,13 @@ OpenID Connect defines the following negotiation parameters to enable Relying Pa
 
 If one of these parameters is used, the other MUST NOT be used in the same request.
 
-RP Negotiation metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification as well as [@!RFC7591].
+Client metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification as well as [@!RFC7591].
 
 Metadata parameters should preferably be sent by reference as a URI using `client_metadata_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `client_metadata` parameter.
 
-`client_metadata` and `client_metadata_uri` parameters SHOULD NOT be used when the OP is not a Self-Issued OP.
+When `client_metadata` or `client_metadata_uri` parameters are present, but Self-Issued OP recognizes `client_id` and knows metadata associated with it, Self-Issued OP MUST return an error. Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` that Self-Issued OP might be seeing for the first time is mutualy exclusive with the registration mechanism where Self-Issued OP assigns `client_id` to the RP after receiving RP's metadata.
 
-The following is a non-normative example of an **unsigned** same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authentication Request to the Self-Issued OP (with line wraps within values for display purposes only):
+The following is a non-normative example of an **unsigned** same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
@@ -531,15 +531,15 @@ The following is a non-normative example of the supported RP parameter Values:
 }
 ```
 
-# Self-Issued OpenID Provider Authentication Request {#siop_authentication_request}
+# Self-Issued OpenID Provider Authorization Request {#siop_authentication_request}
 
-Self-Issued OP authentication request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
+Self-Issued OP Authorization Request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
 The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core] for the different flows or as defined for OpenID Connect extension flows, with the exception of the differences specified in this section.
 
 Communication with the Authorization Endpoint MUST utilize TLS.
 
-The RP sends the Authentication Request to the Authorization Endpoint with the following parameters:
+The RP sends the Authorization Request to the Authorization Endpoint with the following parameters:
 
 * `scope`
     * REQUIRED. As specified in Section 3.1.2 of [@!OpenID.Core].
@@ -566,7 +566,7 @@ The RP sends the Authentication Request to the Authorization Endpoint with the f
 
 To prevent duplication, client metadata parameters MUST be passed either in `client_metadata` or `client_metadata_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `client_metadata` or `client_metadata_uri` parameters MUST be included in either of those parameters.
 
-RPs MUST send a `nonce` parameter  with every Self-Issued OP Authentication Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
+RPs MUST send a `nonce` parameter  with every Self-Issued OP Authorization Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
 The ID Token to be used as an `id_token_hint` may have been encrypted to the RP in a previous transaction. Encrypted ID Tokens are Nested JWTs as defined in [JWT]. The RP MUST decrypt the ID Token value to retrieve the payload, which is a Self-Issued ID Token. The signed Self-Issued ID Token MAY be used as a hint.
 
@@ -578,7 +578,7 @@ Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
 The entire URL MUST NOT exceed 2048 ASCII characters.
 
-The following is a non-normative example HTTP 302 redirect request by the RP which triggers the User Agent to make an Authentication Request to the Self-Issued OP in a same-device protocol flow (with line wraps within values for display purposes only):
+The following is a non-normative example HTTP 302 redirect request by the RP which triggers the User Agent to make an Authorization Request to the Self-Issued OP in a same-device protocol flow (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
@@ -597,7 +597,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 ## Cross-Device Self-Issued OpenID Provider Request
 
-The cross-device authentication request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
+The cross-device Authorization Request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
 
 * This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
@@ -620,13 +620,13 @@ The following is a non-normative example of a Self-Issued OP Request URL in a cr
     &nonce=n-0S6_WzA2Mj
 ```
 
-Note that the authentication request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the End-User must use a particular Self-Issued OP application to scan the QR code with such request.
+Note that the Authorization Request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the End-User must use a particular Self-Issued OP application to scan the QR code with such request.
 
-Such an authentication request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider using a `request_uri` in such a case.
+Such an Authorization Request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider using a `request_uri` in such a case.
 
-# Self-Issued OpenID Provider Authentication Response {#siop-authentication-response}
+# Self-Issued OpenID Provider Authorization Response {#siop-authentication-response}
 
-A Self-Issued OpenID Provider Response is an OpenID Connect Authentication Response, whose parameters depend on the `response_type` used in the request. Depending on the `response_type` the result of the transaction is either obtained directly from the authentication response or from a token endpoint response.
+A Self-Issued OpenID Provider Response is an OpenID Connect Authorization Response, whose parameters depend on the `response_type` used in the request. Depending on the `response_type` the result of the transaction is either obtained directly from the Authorization Response or from a token endpoint response.
 
 A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party parameter values received from the Relying Party in the `client_metadata` parameter. If one or more of the Relying Party parameter Values is not supported, Self-Issued OP MUST return an error according to (#siop-error-respose).
 
@@ -634,7 +634,7 @@ In a same-device protocol flow with `response_type` `id_token`, the response par
 
 In a same-device protocol flow with `response_type` `code`, the response parameters will be returned in HTTPS POST response body of the token response. 
 
-In a cross-device protocol flow, upon completion of the authentication request, the Self-Issued OP directly sends a HTTP POST request with the authentication response to an endpoint exposed by the RP.
+In a cross-device protocol flow, upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
 
 The following is an informative example of a Self-Issued OP Response in a same-device protocol flow (`response_type=id_token`):
 
@@ -666,7 +666,7 @@ Note: the SIOP MAY also provide end-user claims to the RP via the Userinfo endpo
 
 ## Cross-Device Self-Issued OpenID Provider Response
 
-The Self-Issued OP sends the authentication response to the endpoint passed in the `redirect_uri` authentication request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The authentication response contains the parameters as defined in (#siop-authentication-response).
+The Self-Issued OP sends the Authorization Response to the endpoint passed in the `redirect_uri` Authorization Request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The Authorization Response contains the parameters as defined in (#siop-authentication-response).
 
 The Self-Issued OP MUST NOT follow redirects on this request.
 
@@ -686,7 +686,7 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
-* **`user_cancelled`**: End-User cancelled the authentication request from the RP.
+* **`user_cancelled`**: End-User cancelled the Authorization Request from the RP.
 * **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party parameter values received in the request.
 * **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
 * **`invalid_registration_uri`**: the `client_metadata_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
@@ -754,19 +754,19 @@ See [@!OIDC4VP] on how to support multiple credential formats such as JWT and Li
 To validate the ID Token received, the RP MUST do the following:
 
 1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. The ID Token is self-issued if the `iss`claims and thd `sub`claim have the same value. If both values differ, the ID Token MUST be processed as defined in [@!OpenID.Core], section 3.2.2.11..
-1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authentication Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
+1. The RP MUST validate that the `aud` (audience) Claim contains the value of the `client_id` that the RP sent in the Authorization Request as an audience. When the request has been signed, the value might be an HTTPS URL, or a Decentralized Identifier.
 1. The RP MUST identify which Subject Syntax Type is used based on the URI of the `sub` Claim. Valid values defined in this specification are `urn:ietf:params:oauth:jwk-thumbprint` for JWK Thumbprint Subject Syntax Type and `did:` for Decentralized Identifier Subject Syntax Type.
 1. The RP MUST validate the signature of the ID Token. When Subject Syntax Type is JWK Thumbprint, validation is done according to JWS [@!RFC7515] using the algorithm specified in the `alg` header parameter of the JOSE Header, using the key in the `sub_jwk` Claim. The key MUST be a bare key in JWK format (not an X.509 certificate value). The RP MUST validate that the algorithm is one of the allowed algorithms (as in `id_token_signing_alg_values_supported`). When Subject Syntax Type is Decentralized Identifier, validation is performed against the key obtained from a DID Document. DID Document MUST be obtained by resolving a Decentralized Identifier included in the `sub` Claim using DID Resolution as defined by a DID Method specification of the DID Method used. Since `verificationMethod` property in the DID Document may contain multiple public key sets, public key identified by a key identifier `kid` in a Header of a signed ID Token MUST be used to validate that ID Token.
 1. The RP MUST validate the `sub` value. When Subject Syntax Type is JWK Thumbprint, the RP MUST validate that the `sub` Claim value equals the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim, as specified in (#siop-authentication-response). When Subject Syntax Type is Decentralized Identifier, the RP MUST validate that the `sub` Claim value equals the `id` property in the DID Document. 
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
-1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authorization Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
 
 ## Cross-Device Self-Issued ID Token Validation
 
 The RP MUST perform all the check as defined in (#siop-id-token-validation).
 
-Additionally, the RP MUST check whether the `nonce` Claim value provided in the ID Token is known to the RP and was not used before in an authentication response.
+Additionally, the RP MUST check whether the `nonce` Claim value provided in the ID Token is known to the RP and was not used before in an Authorization Response.
 
 The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the dynamic Self-Issued OP Discovery and Decentralized Identifier Subject Syntax type are used (with line wraps within values for display purposes only):
 
@@ -781,7 +781,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 }
 ```
 
-Further processing steps are required if the authentication response contains verifiable presentations - see [@!OIDC4VP].
+Further processing steps are required if the Authorization Response contains verifiable presentations - see [@!OIDC4VP].
 
 # Verifiable Presentation Support
 
@@ -814,19 +814,19 @@ The integrity and authenticity of Self-Issued OP and RP metadata is paramount fo
 
 ## Usage of Cross-Device Self-Issued OP for Authentication
 
-A known attack in cross-device Self-Issued OP is an authentication request replay attack, where a victim is tricked to send a response to an authentication request that an RP has generated for an attacker. In other words, the attacker would trick a victim to respond to a request that the attacker has generated for him/herself at a good RP, for example, by showing the QR code encoding the authentication request that would normally be presented on the RP's website on the attacker's website. In this case, the victim might not be able to detect that the request was generated by the RP for the attacker. (Note that the same attack applies when methods other than a QR code are used to encode the authentication request. For brevity, only the QR code method will be discussed in the following, but the same considerations apply to other transport methods as well.)
+A known attack in cross-device Self-Issued OP is an Authorization Request replay attack, where a victim is tricked to send a response to an Authorization Request that an RP has generated for an attacker. In other words, the attacker would trick a victim to respond to a request that the attacker has generated for him/herself at a good RP, for example, by showing the QR code encoding the Authorization Request that would normally be presented on the RP's website on the attacker's website. In this case, the victim might not be able to detect that the request was generated by the RP for the attacker. (Note that the same attack applies when methods other than a QR code are used to encode the Authorization Request. For brevity, only the QR code method will be discussed in the following, but the same considerations apply to other transport methods as well.)
 
-This attack is based on the fact that the authentication request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the cross-device protocol flow, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
+This attack is based on the fact that the Authorization Request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the cross-device protocol flow, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
 
 Implementers MUST take this fact into consideration when using cross-device Self-Issued OP. There are a number of measures that can be taken to reduce the risk of such an attack, but none of these can completely prevent the attack. For example:
 
  * The Self-Issued OP can show the origin of the request (e.g., the domain where the response will be sent) and/or ask the End-User to confirm this origin. In an attack, this origin would be different from the attacker's origin where the QR code is displayed to the End-User. It cannot be expected that all End-Users will identify an attack in this way, but at least for some users it might help to detect the attack. Note that depending on the device on which the attacker is showing the QR code, there might be no indication of the origin, e.g., on a terminal devices that does not show a browser with a URL bar.
- * The authentication request can be made short-lived. An attacker would have to request a new authentication request (e.g., QR code) frequently and update it on its website as well. This requires more effort from the attacker.
+ * The Authorization Request can be made short-lived. An attacker would have to request a new Authorization Request (e.g., QR code) frequently and update it on its website as well. This requires more effort from the attacker.
  * Self-Issued OP can warn the End-User when logging in at a new RP for the first time.
 
 Implementors should be cautious when using cross-device Self-Issued OP model for authentication and should implement mitigations according to the desired security level.
 
-This attack does not apply for the same-device Self-Issued OP protocol flows as the RP checks that the authentication response comes from the same browser where the authentication request was sent to. Same-device Self-Issued OP protocol flows therefore can be used for authentication, given all other security measures are put in place.
+This attack does not apply for the same-device Self-Issued OP protocol flows as the RP checks that the Authorization Response comes from the same browser where the Authorization Request was sent to. Same-device Self-Issued OP protocol flows therefore can be used for authentication, given all other security measures are put in place.
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
@@ -834,17 +834,17 @@ Usage of private-use URI schemes such as `openid:`, also referred to as custom U
 
 Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
-Implementors are highly encouraged to explore other options before using private-use URI schemes due to the known security issues of such schemes, such as lack of controls to prevent unknown applications from attempting to service authentication requests. Any malicious app can register the custom scheme already used by another app, imitate the user interface and impersonate a good app. 
+Implementors are highly encouraged to explore other options before using private-use URI schemes due to the known security issues of such schemes, such as lack of controls to prevent unknown applications from attempting to service Authorization Requests. Any malicious app can register the custom scheme already used by another app, imitate the user interface and impersonate a good app. 
 
 The browser or operating system typically has a process by which native applications and websites can register support that one or more apps be called when a HTTPS URI is triggered in lieu of a system browser. This feature goes by several names including "App Links" and "Universal Links", and MAY be used to invoke an installed/registered Self-Issued OP. If no appropriate application has been rendered, the request for a Self-Issued OP will go to a browser, which MAY display additional information such as appropriate software options.
 
 Further details are discussed in [@app-2-app-sec].
 
-## Self-Issued OP Authentication Response Confidentiality
+## Self-Issued OP Authorization Response Confidentiality
 
-The authentication response MUST NOT leak to a party outside of the Self-Issued OP, the RP and the system browser participating in the protocol flow. 
+The Authorization Response MUST NOT leak to a party outside of the Self-Issued OP, the RP and the system browser participating in the protocol flow. 
 
-Implementers of Self-Issed OPs are encouraged to take operating system dependent measures to ensure that the authentication response is only passed to a legitimate system browser in the same-device protocol flow. If implementers wish to support native applications acting as an RP, they MAY alternatively invoke the RP application if the Self-Issed OP can verify the RP application to be legitimate.
+Implementers of Self-Issed OPs are encouraged to take operating system dependent measures to ensure that the Authorization Response is only passed to a legitimate system browser in the same-device protocol flow. If implementers wish to support native applications acting as an RP, they MAY alternatively invoke the RP application if the Self-Issed OP can verify the RP application to be legitimate.
 
 Further details of application to application and application to web communication are discussed in [@app-2-app-sec].
 
