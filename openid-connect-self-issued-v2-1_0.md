@@ -386,9 +386,9 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 The RP indicates Subject Syntax Type it supports in Client metadata parameter `subject_syntax_types_supported` defined in {#rp-metadata}.
 
-# Relying Party Registration {#rp-resolution}
+# Relying Party Metadata {#rp-resolution}
 
-Registration mechanism depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
+How Self-Issued OP obtains metadata about the RP depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
 
 ## Pre-Registered Relying Party
 
@@ -434,8 +434,6 @@ Client metadata values are defined in Section 4.3 and Section 2.1 of the OpenID 
 
 Metadata parameters should preferably be sent by reference as a URI using `client_metadata_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `client_metadata` parameter.
 
-When `client_metadata` or `client_metadata_uri` parameters are present, but Self-Issued OP recognizes `client_id` and knows metadata associated with it, Self-Issued OP MUST return an error. Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` that Self-Issued OP might be seeing for the first time is mutualy exclusive with the registration mechanism where Self-Issued OP assigns `client_id` to the RP after receiving RP's metadata.
-
 The following is a non-normative example of an **unsigned** same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
 ```
@@ -450,6 +448,14 @@ The following is a non-normative example of an **unsigned** same-device request 
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
+
+#### Relying Party Metadata Error Response
+
+When `client_metadata` or `client_metadata_uri` parameters are present, but Self-Issued OP recognizes `client_id` and knows metadata associated with it, Self-Issued OP MUST return an error. 
+
+Self-Issued OPs compliant to this specification MUST NOT proceed with the transaction when pre-registered client metadata has been found based on the `client_id`, but `client_metadata` parameter has also been present.
+
+Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` that Self-Issued OP might be seeing for the first time is mutualy exclusive with the registration mechanism where Self-Issued OP assigns `client_id` to the RP after receiving RP's metadata.
 
 ### Relying Party Metadata Resolution Methods {#rp-resolution-parameter}
 
