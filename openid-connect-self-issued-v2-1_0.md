@@ -93,9 +93,6 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
 - Verifiable Credential (VC)
   - A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. See [@!VC-DATA].
 
-- Wallet
-  - Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) towards the Credential Issuer. 
-
 ## Abbreviations
 
 * OP: OpenID Provider
