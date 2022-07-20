@@ -73,25 +73,31 @@ This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.
 Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
 
 - Self-Issued OpenID Provider (Self-Issued OP)
-  - An OpenID Provider (OP) used by the End-users to prove control over a cryptographically verifiable identifier
+  An OpenID Provider (OP) used by the End-users to prove control over a cryptographically verifiable identifier
 
 - Self-Issued OP Request
-  - Request to a Self-Issued OP from an RP
+  Request to a Self-Issued OP from an RP
 
 - Self-Issued OP Response
-  - Response to an RP from a Self-Issued OP
+  Response to an RP from a Self-Issued OP
 
 - Self-Issued ID Token
-  - ID Token signed using the key material controlled by the End-User. It is issued by a Self-Issued OP.
+  ID Token signed using the key material controlled by the End-User. It is issued by a Self-Issued OP.
 
 - Cryptographically verifiable identifier
-  - An identifier that is either based upon or resolves to cryptographic key material that can be used to verify a signature on the ID Token or the Self-Issued OP Request.
+  An identifier that is either based upon or resolves to cryptographic key material that can be used to verify a signature on the ID Token or the Self-Issued OP Request.
     
 - Trust Framework
-  - A legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
+  A legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
 
 - Verifiable Credential (VC)
-  - A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. See [@!VC-DATA].
+  A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. See [@!VC-DATA].
+
+- Wallet
+  Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an Self-Issued OpenID Provider towards the RP. 
+
+
+
 
 ## Abbreviations
 
