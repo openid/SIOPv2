@@ -221,7 +221,7 @@ This section outlines how Self-Issued OP is used in cross-device scenarios, and 
 
 1. The RP prepares a Self-Issued OP request and renders it as a QR code.
 1. The End-User scans the QR code with her smartphone's camera app.
-1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid:` custom scheme).
+1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid://idtoken` custom scheme).
 1. The Self-Issued OP processes the Authorization Request.
 1. Upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
 
@@ -237,7 +237,7 @@ However, in Self-Issued OP protocol flows, such mechanisms may be unavailable if
 
 If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the End-User is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
-If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
+If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid://idtoken` as an `authorization_endpoint` is defined in this specification.
 
 If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `client_metadata` nor `client_metadata_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
@@ -275,7 +275,7 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 ```json
 {
-  "authorization_endpoint": "openid:",
+  "authorization_endpoint": "openid://idtoken",
   "response_types_supported": [
     "id_token"
   ],
@@ -302,9 +302,9 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 
 Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
 
-RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. 
+RP MUST use custom URI scheme `openid://idtoken` as the `authorization_endpoint` to construct the request. 
 
-Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+Note that the request using custom URI scheme `openid://idtoken` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
 ## Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
 
@@ -510,7 +510,7 @@ The following is a non-normative example of a `client_id` resolvable using Decen
 The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
 
 ```
-  openid://?
+  openid://idtoken?
     scope=openid%20profile
     &response_type=id_token
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
@@ -594,7 +594,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 ```
   HTTP/1.1 302 Found
-  Location: openid://?
+  Location: openid://idtoken?
     scope=openid
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
@@ -619,7 +619,7 @@ Self-Issued OP is on a different device than the one on which the End-User’s u
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device protocol flow (#cross-device-siop):
 
 ```
-  openid://?
+  openid://idtoken?
     scope=openid%20profile
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
@@ -843,7 +843,7 @@ This attack does not apply for the same-device Self-Issued OP protocol flows as 
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
-Usage of private-use URI schemes such as `openid:`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
+Usage of private-use URI schemes such as `openid://idtoken`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
 
 Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
