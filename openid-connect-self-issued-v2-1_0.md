@@ -269,36 +269,18 @@ RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a requ
 
 The value of the `iss` Claim in the ID Token indicates which Self-Issued OP discovery mechanism was used.
 
-## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-discovery}
+## Static Configuration Values {#static-siop-discovery}
 
 When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used. 
 
-```json
-{
-  "authorization_endpoint": "openid://idtoken",
-  "response_types_supported": [
-    "id_token"
-  ],
-  "scopes_supported": [
-    "openid"
-  ],
-  "subject_types_supported": [
-    "pairwise"
-  ],
-  "id_token_signing_alg_values_supported": [
-    "ES256"
-  ],
-  "request_object_signing_alg_values_supported": [
-    "ES256"
-  ],
-  "subject_syntax_types_supported": [
-    "urn:ietf:params:oauth:jwk-thumbprint"
-  ],
-  "id_token_types_supported": [
-    "subject_signed"
-  ]
-}
-```
+- "authorization_endpoint" MUST be "openid://idtoken"
+- "response_types_supported" MUST be "id_token"
+- "scopes_supported" MUST be "openid"
+- "subject_types_supported" MUST be "pairwise"
+- "id_token_signing_alg_values_supported" MUST be "ES256"
+- "request_object_signing_alg_values_supported" MUST be "ES256"
+- "subject_syntax_types_supported" MUST be "urn:ietf:params:oauth:jwk-thumbprint"
+- "id_token_types_supported" MUST be "subject_signed"
 
 Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
 
