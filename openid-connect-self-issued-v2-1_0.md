@@ -842,7 +842,7 @@ Below is a non-exhaustive list of profiles known to date that define static conf
 
 ### A Set of Static Configuration Value Defined in This Specification
 
-When the RP does not have the means to perform dynamic discovery and is not aware of any profiles, the following static configuration values can be used:
+When the RP does not have the means to perform dynamic discovery and is not using any of the profiles listed above, the following static configuration values can be used:
 
 - "authorization_endpoint" is "openid://idtoken"
 - "response_types_supported" is "id_token"
@@ -852,8 +852,6 @@ When the RP does not have the means to perform dynamic discovery and is not awar
 - "request_object_signing_alg_values_supported" is "ES256"
 - "subject_syntax_types_supported" is "urn:ietf:params:oauth:jwk-thumbprint"
 - "id_token_types_supported" is "subject_signed"
-
-Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
 
 RP MUST use custom URI scheme `openid://idtoken` as the `authorization_endpoint` to construct the request. 
 
