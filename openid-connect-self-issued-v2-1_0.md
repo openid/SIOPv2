@@ -804,7 +804,7 @@ This attack does not apply for the same-device Self-Issued OP protocol flows as 
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
-Usage of private-use URI schemes such as `openid://idtoken`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
+Usage of private-use URI schemes with a certain path such as `openid://idtoken`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
 
 Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
@@ -853,9 +853,9 @@ When the RP does not have the means to perform dynamic discovery and is not usin
 - "subject_syntax_types_supported" is "urn:ietf:params:oauth:jwk-thumbprint"
 - "id_token_types_supported" is "subject_signed"
 
-RP MUST use custom URI scheme `openid://idtoken` as the `authorization_endpoint` to construct the request. 
+RP MUST use a custom URI scheme with a certain path `openid://idtoken` as the `authorization_endpoint` to construct the request. 
 
-Note that the request using custom URI scheme `openid://idtoken` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+Note that the request using `openid://idtoken` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
 ## Supporting Multiple Self-Issued OPs
 
