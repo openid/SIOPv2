@@ -590,7 +590,7 @@ Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
 The entire URL is NOT RECOMMENDED to exceed 2048 ASCII characters.
 
-Note that multiple size limitations exist: majority of browsers and mobile OS in general have approximately 1MB of URL length restrictions, while QR codes, intermediary CDN or firewalls might have a lower URL length restriction.
+Note that multiple size limitations exist: the majority of browsers and mobile OS in general have approximately 1MB of URL length restrictions, while QR codes, intermediary CDN or firewalls might have a lower URL length restriction.
 
 The following is a non-normative example HTTP 302 redirect request by the RP which triggers the User Agent to make an Authorization Request to the Self-Issued OP in a same-device protocol flow (with line wraps within values for display purposes only):
 
