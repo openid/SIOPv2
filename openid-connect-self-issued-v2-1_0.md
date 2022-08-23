@@ -96,7 +96,8 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
 - Wallet
   Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an Self-Issued OpenID Provider towards the RP. 
 
-
+- Base64url Encoding
+  Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
 
 ## Abbreviations
@@ -588,7 +589,9 @@ When re-encrypting the ID Token value, the `sub` value from the signed ID Token 
 
 Other parameters MAY be sent. Note that all Claims are returned in the ID Token.
 
-The entire URL MUST NOT exceed 2048 ASCII characters.
+The entire URL is NOT RECOMMENDED to exceed 2048 ASCII characters.
+
+Note that multiple size limitations exist: the majority of browsers and mobile OS in general have approximately 1MB of URL length restrictions, while QR codes, intermediary CDN or firewalls might have a lower URL length restriction.
 
 The following is a non-normative example HTTP 302 redirect request by the RP which triggers the User Agent to make an Authorization Request to the Self-Issued OP in a same-device protocol flow (with line wraps within values for display purposes only):
 
