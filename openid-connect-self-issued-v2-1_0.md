@@ -844,14 +844,32 @@ Below is a non-exhaustive list of profiles known to date that define static conf
 
 When the RP does not have the means to perform dynamic discovery and is not using any of the profiles listed above, the following static configuration values can be used:
 
-- "authorization_endpoint" is "siopv2://"
-- "response_types_supported" is "id_token"
-- "scopes_supported" is "openid"
-- "subject_types_supported" is "pairwise"
-- "id_token_signing_alg_values_supported" is "ES256"
-- "request_object_signing_alg_values_supported" is "ES256"
-- "subject_syntax_types_supported" is "urn:ietf:params:oauth:jwk-thumbprint"
-- "id_token_types_supported" is "subject_signed"
+```json
+{
+  "authorization_endpoint": "siopv2:",
+  "response_types_supported": [
+    "id_token"
+  ],
+  "scopes_supported": [
+    "openid"
+  ],
+  "subject_types_supported": [
+    "pairwise"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "request_object_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "subject_syntax_types_supported": [
+    "urn:ietf:params:oauth:jwk-thumbprint"
+  ],
+  "id_token_types_supported": [
+    "subject_signed"
+  ]
+}
+```
 
 RP MUST use a custom URI scheme with a certain path `siopv2://` as the `authorization_endpoint` to construct the request. 
 
