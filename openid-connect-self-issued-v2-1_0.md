@@ -471,7 +471,7 @@ The following is a non-normative example of a `client_id` resolvable using Decen
 The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
 
 ```
-  openid://idtoken?
+  siopv2://idtoken?
     scope=openid%20profile
     &response_type=id_token
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
@@ -555,7 +555,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 ```
   HTTP/1.1 302 Found
-  Location: openid://idtoken?
+  Location: siopv2://?
     scope=openid
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
@@ -580,7 +580,7 @@ Self-Issued OP is on a different device than the one on which the End-User’s u
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device protocol flow (#cross-device-siop):
 
 ```
-  openid://idtoken?
+  siopv2://?
     scope=openid%20profile
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
@@ -804,7 +804,7 @@ This attack does not apply for the same-device Self-Issued OP protocol flows as 
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
-Usage of private-use URI schemes with a certain path such as `openid://idtoken`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
+Usage of private-use URI schemes with a certain path such as `siopv2://`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
 
 Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
@@ -844,7 +844,7 @@ Below is a non-exhaustive list of profiles known to date that define static conf
 
 When the RP does not have the means to perform dynamic discovery and is not using any of the profiles listed above, the following static configuration values can be used:
 
-- "authorization_endpoint" is "openid://idtoken"
+- "authorization_endpoint" is "siopv2://"
 - "response_types_supported" is "id_token"
 - "scopes_supported" is "openid"
 - "subject_types_supported" is "pairwise"
@@ -853,9 +853,9 @@ When the RP does not have the means to perform dynamic discovery and is not usin
 - "subject_syntax_types_supported" is "urn:ietf:params:oauth:jwk-thumbprint"
 - "id_token_types_supported" is "subject_signed"
 
-RP MUST use a custom URI scheme with a certain path `openid://idtoken` as the `authorization_endpoint` to construct the request. 
+RP MUST use a custom URI scheme with a certain path `siopv2://` as the `authorization_endpoint` to construct the request. 
 
-Note that the request using `openid://idtoken` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+Note that the request using `siopv2://` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
 ## Supporting Multiple Self-Issued OPs
 
