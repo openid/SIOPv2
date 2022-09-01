@@ -610,6 +610,10 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &nonce=n-0S6_WzA2Mj
 ```
 
+#### `aud` of a Request Object
+
+When the RP is using a Request Object as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], in a Self-Issued OP Request, `aud` claim MUST be omitted. Self-Issued OP identifier is unique per instance, and it is challenging for the RP to know that identifier at the request time.
+
 ## Cross-Device Self-Issued OpenID Provider Request
 
 The cross-device Authorization Request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
