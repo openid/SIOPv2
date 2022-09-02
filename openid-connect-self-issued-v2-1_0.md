@@ -1133,6 +1133,7 @@ The technology described in this specification was made available from contribut
    -11
 
    * Replaced JWK-Thumbprint-URI reference with RFC 9278.
+   * Renamed registration and registration_uri to client_metadata and client_metadata_uri, respectively
 
    -10
 
