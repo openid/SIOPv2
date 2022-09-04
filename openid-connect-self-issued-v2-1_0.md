@@ -612,7 +612,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 #### `aud` of a Request Object
 
-When the RP is using a Request Object as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], in a Self-Issued OP Request, `aud` claim MUST be omitted. Self-Issued OP identifier is unique per instance, and it is challenging for the RP to know that identifier at the request time.
+The `aud` claim SHOULD be omitted from the Request Object when a RP is sending a Request Object in a Self-Issued OP Request as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], because the RP most likely does not know the unique identifier of the subject.
 
 ## Cross-Device Self-Issued OpenID Provider Request
 
