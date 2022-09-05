@@ -1134,6 +1134,9 @@ The technology described in this specification was made available from contribut
 
    * Replaced JWK-Thumbprint-URI reference with RFC 9278.
    * Renamed registration and registration_uri to client_metadata and client_metadata_uri, respectively
+   * Relaxed URI length restrictions
+   * Added definition for base64url encoding
+   * Added definition of term "wallet"
 
    -10
 
