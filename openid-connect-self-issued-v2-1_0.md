@@ -833,9 +833,11 @@ Usage of decentralized identifiers does not automatically prevent possible RP co
 
 Consider supporting selective disclosure and unlinkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
 
-# Implementation Considerations 
+# Implementation Considerations
 
 ## Static Configuration Values of the Self-Issued OPs {#static-config}
+
+This document lists profiles known to date that define static configuration values of Self-Issued OPs and defines two set of static configuration values for Self-Issued OPs as native apps that can be used by the RP when it is unable to perform dynamic discovery and is not using any of the profiles.
 
 ### Profiles that Define Static Configuration Values
 
@@ -843,9 +845,9 @@ Below is a non-exhaustive list of profiles known to date that define static conf
 
 - [JWT VC Presentation Profile](https://identity.foundation/jwt-vc-presentation-profile/)
 
-### A Set of Static Configuration Value Defined in This Specification
+### A Set of Static Configuration Values bound to `siopv2://`
 
-When the RP does not have the means to perform dynamic discovery and is not using any of the profiles listed above, the following static configuration values can be used:
+Below is a set of static configuration values that can be used with `id_token` as a supported `response_type`, bound to a custom URL scheme `siopv2://` as an `authorization_endpoint`:
 
 ```json
 {
@@ -874,9 +876,45 @@ When the RP does not have the means to perform dynamic discovery and is not usin
 }
 ```
 
-RP MUST use a custom URI scheme with a certain path `siopv2://` as the `authorization_endpoint` to construct the request. 
+### A Set of Static Configuration Values bound to `openid://`
 
-Note that the request using `siopv2://` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+Another set of static configuration values is used with both `vp_token` and `id_token` as supported `response_type`, bound to a custom URL scheme `openid://` as an `authorization_endpoint`:
+
+```json
+{
+  "authorization_endpoint": "openid:",
+  "response_types_supported": [
+    "vp_token",
+    "id_token"
+  ],
+  "vp_formats_supported": {
+    "jwt_vp": {
+      "alg": ["ES256"]
+    },
+    "jwt_vc": {
+      "alg": ["ES256"]
+    }
+  },
+  "scopes_supported": [
+    "openid"
+  ],
+  "subject_types_supported": [
+    "pairwise"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "request_object_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "subject_syntax_types_supported": [
+    "urn:ietf:params:oauth:jwk-thumbprint"
+  ],
+  "id_token_types_supported": [
+    "subject_signed"
+  ]
+}
+```
 
 ## Supporting Multiple Self-Issued OPs
 
