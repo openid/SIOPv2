@@ -837,7 +837,7 @@ Consider supporting selective disclosure and unlinkable presentations using zero
 
 ## Static Configuration Values of the Self-Issued OPs {#static-config}
 
-This document lists profiles known to date that define static configuration values of Self-Issued OPs and defines two set of static configuration values for Self-Issued OPs as native apps that can be used by the RP when it is unable to perform dynamic discovery and is not using any of the profiles.
+This document lists profiles that define static configuration values of Self-Issued OPs and defines two set of static configuration values for Self-Issued OPs as native apps that can be used by the RP when it is unable to perform dynamic discovery and is not using any of the profiles.
 
 ### Profiles that Define Static Configuration Values
 
