@@ -101,7 +101,6 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
 - Base64url Encoding
   Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
-
 ## Abbreviations
 
 * OP: OpenID Provider
@@ -110,11 +109,9 @@ Common terms in this document come from four primary sources: [@!OpenID.Core], [
 
 # Scope
 
-As a Self-Issued OP may be running locally as a native application, a browser application, or a Progressive Web Application, it may not be able to provide a network-addressable endpoint for direct communication to the RP. This specification leverages the implicit flow of OpenID Connect defined in Section 3.2 of [@!OpenID.Core] to communicate with such locally-running OPs.
-
 ## In Scope
 
-This specification extends the OpenID Connect implicit flow in the following ways:
+This specification extends the OpenID Connect Core in the following ways:
 
 * **Invocation of a Self-Issued OP**: mechanisms for how the RP invokes/opens a Self-Issued OP.
 
@@ -124,9 +121,9 @@ This specification extends the OpenID Connect implicit flow in the following way
 
 * **Self-Issued ID Token**: defines additional claims and processing requirements of ID Tokens issued by Self-Issued OPs. An ID Token is self-issued if the values of the `iss` and the `sub` claims are the same. 
 
-* **Self-Asserted Claims**: transporting claims in a Self-Issued ID Token that are not verifiable by the RP
+* **Support for Self-Asserted Claims**: transporting claims in a Self-Issued ID Token that are not verifiable by the RP
 
-* **Cryptographically Verifiable Identifiers**: an identifier that is either based upon or can be resolved to cryptographic key material and is used by the Self-Issued OPs in the `sub` Claim of the ID Token to prove possession of the cryptographic key used to sign the ID Token. Types of such identifiers are defined in this specification as Subject Syntax Types.
+* **Support for Cryptographically Verifiable Identifiers**: an identifier that is either based upon or can be resolved to cryptographic key material and is used by the Self-Issued OPs in the `sub` Claim of the ID Token to prove possession of the cryptographic key used to sign the ID Token. Types of such identifiers are defined in this specification as Subject Syntax Types.
 
 ## Out of Scope
 
@@ -140,7 +137,7 @@ The following are considered out of scope of this document.
 
   A Self-Issued OP can present two types of claims - self-attested claims and cryptographically verifiable claims issued by trusted third-party sources.
 
-  This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which describes the presentation of W3C Verifiable Credentials with OpenID Connect.
+  This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which extends OAuth 2.0 to enable presentation of Verifiable Credentials, supporting W3C Verifiable Credentials and ISO/IEC 18013-5:2021 mdoc as well as other credential formats.
   
 ## Relationship with Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider
 
@@ -198,20 +195,6 @@ The request in Step 5 is not a form post request where the Self-Issued OP would 
 
 For brevity, mainly the QR code method is discussed as a mechanism to initiate a cross-device protocol flow throughout this specification. However, other mechanisms to initiate a cross-device flow are possible.
 
-# Discovery and Registration
-
-Just like in conventional OpenID Connect protocol flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
-
-However, in Self-Issued OP protocol flows, such mechanisms may be unavailable if the Self-Issued OP does not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
-
-If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the End-User is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
-
-If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
-
-If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `client_metadata` nor `client_metadata_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
-
-If the Self-Issued OP is unable to perform pre-registration of the RPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the `client_metadata` parameter or using out-of-band mechanisms. When the request is signed, the mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is a HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [@!OpenID.Federation]. If `client_id` is a Decentralized Identifier, the public key is obtained from a DID Doc as defined in [@!DID-Core] and the rest of the metadata is obtained from the `client_metadata` parameter.
-
 # Self-Issued OpenID Provider Invocation {#siop-invocation}
 
 When the End-user first interacts with the RP, there are currently no established, robust means for the RP to reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
@@ -238,7 +221,7 @@ RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a requ
 
 The value of the `iss` Claim in the ID Token indicates which Self-Issued OP discovery mechanism was used.
 
-## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-discovery}
+## Static Self-Issued OpenID Provider Metadata {#static-siop-discovery}
 
 When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used. 
 
@@ -269,13 +252,11 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 }
 ```
 
-Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
-
 RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. 
 
 Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
 
-## Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
+## Dynamic Dyscovery of Self-Issued OpenID Provider Metadata {#dynamic-siop-metadata}
 
 As an alternative mechanism to the (#static-siop-discovery), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
@@ -284,6 +265,8 @@ How the RP obtains Self-Issued OP's issuer identifier is out of scope of this sp
 When [@!OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Self-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issued OP's Issuer Identifier.
 
 Note that contrary to [@!OpenID.Discovery], `jwks_uri` parameter MUST NOT be present in Self-Issued OP Metadata. If it is, the RP MUST ignore it and use the `sub` Claim in the ID Token to obtain signing keys to validate the signatures from the Self-Issued OpenID Provider.
+
+These OpenID Provider Metadata values are used by the Self-Issued OP:
 
 * `authorization_endpoint`
     * REQUIRED. URL of the Self-Issued OP used by the RP to perform Authentication of the End-User. Can be custom URI scheme, or Universal Links/App links. See (#choice-of-authoriation-endpoint).
@@ -306,7 +289,7 @@ Note that contrary to [@!OpenID.Discovery], `jwks_uri` parameter MUST NOT be pre
         * `subject_signed`: Self-Issued ID Token, i.e. the id token is signed with key material under the end-user's control. 
         * `attester_signed`: the id token is issued by the party operating the OP, i.e. this is the classical id token as defined in [@!OpenID.Core].
   
-Note: Need to confirm Mandatory to Implement `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`
+Note: Need to confirm Mandatory to Implement `alg` values that we want to explicitly support for `id_token_signing_alg_values_supported` and  `request_object_signing_alg_values_supported`.
 
 Other Discovery parameters defined in Section 3 of [@!OpenID.Discovery] MAY be used. 
 
