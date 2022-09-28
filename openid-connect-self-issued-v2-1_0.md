@@ -328,7 +328,7 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 }
 ```
 
-### Choice of `authorization_endpoint` {#choice-of-authoriation-endpoint}
+## Choice of `authorization_endpoint` {#choice-of-authoriation-endpoint}
 
 As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links or App Links is RECOMMENDED over the use of custom URI schemes. See (#invocation-using-custom-scheme) for details.
 
