@@ -332,18 +332,6 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 
 As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links or App Links is RECOMMENDED over the use of custom URI schemes. See (#invocation-using-custom-scheme) for details.
 
-### Subject Syntax Types {#sub-syntax-type}
-
-Subject Syntax Type refers to a type of an identifier used in a `sub` Claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP protocol flow serves as an identifier of the Self-Issued OP's Holder and is used to obtain cryptographic material to verify the signature on the ID Token.
-
-This specification defines the following two Subject Syntax Types. Additional Subject Syntax Types may be defined in the future versions of this specification, or profiles of this specification.
-
-* JWK Thumbprint subject syntax type. When this type is used, the `sub` Claim value MUST be the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` Claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP Response.
-
-* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. The subject syntax type MUST be cryptographically verified against the resolved DID Document as defined in {#siop-id_token-validation}.
-
-The RP indicates Subject Syntax Type it supports in Client metadata parameter `subject_syntax_types_supported` defined in {#rp-metadata}.
-
 # Relying Party Metadata {#rp-resolution}
 
 How Self-Issued OP obtains metadata about the RP depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
@@ -494,6 +482,18 @@ The following is a non-normative example of the supported RP parameter Values:
   ]
 }
 ```
+
+# Subject Syntax Types {#sub-syntax-type}
+
+Subject Syntax Type refers to a type of an identifier used in a `sub` Claim in the ID Token issued by a Self-Issued OP. `sub` in Self-Issued OP protocol flow serves as an identifier of the Self-Issued OP's Holder and is used to obtain cryptographic material to verify the signature on the ID Token.
+
+This specification defines the following two Subject Syntax Types. Additional Subject Syntax Types may be defined in the future versions of this specification, or profiles of this specification.
+
+* JWK Thumbprint subject syntax type. When this type is used, the `sub` Claim value MUST be the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` Claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued OP Response.
+
+* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued OP Response. The subject syntax type MUST be cryptographically verified against the resolved DID Document as defined in {#siop-id_token-validation}.
+
+The RP indicates Subject Syntax Type it supports in Client metadata parameter `subject_syntax_types_supported` defined in {#rp-metadata}.
 
 # Self-Issued OpenID Provider Authorization Request {#siop_authentication_request}
 
