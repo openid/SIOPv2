@@ -841,7 +841,7 @@ This document lists profiles that define static configuration values of Self-Iss
 
 ### Profiles that Define Static Configuration Values
 
-Below is a non-exhaustive list of profiles that define static configuration values of Self-Issued OPs:
+Below is a list of profiles that define static configuration values of Self-Issued OPs:
 
 - [JWT VC Presentation Profile](https://identity.foundation/jwt-vc-presentation-profile/)
 
