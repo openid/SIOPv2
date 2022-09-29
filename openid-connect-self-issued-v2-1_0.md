@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-11"
+value = "openid-connect-self-issued-v2-1_0-12"
 status = "standard"
 
 [[author]]
@@ -217,7 +217,9 @@ The following is a non-normative example of a request with no specific `authoriz
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
 
-RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a request targeted to a particular application either by using the static set of Self-Issued OP metadata as defined in (#static-siop-discovery), or by pre-obtaining `authorization_endpoint` as defined in (#dynamic-siop-metadata).
+How the RP obtains metadata including `authorization_endpoint` of the Self-Issued OP to construct a request targeted to a particular application depends on whether the Self-Issued OP has API endpoints for the Discovery purpose.
+
+This specification defines a static set of Self-Issued OP metadata in (#static-siop-discovery), and Dynamic Dyscover in (#dynamic-siop-metadata).
 
 The value of the `iss` Claim in the ID Token indicates which Self-Issued OP discovery mechanism was used.
 
@@ -332,13 +334,13 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 
 As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links or App Links is RECOMMENDED over the use of custom URI schemes. See (#invocation-using-custom-scheme) for details.
 
-# Relying Party Metadata {#rp-resolution}
+# Relying Party Registration {#rp-resolution}
 
 How Self-Issued OP obtains metadata about the RP depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
 
 ## Pre-Registered Relying Party
 
-When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registration, and `client_metadata` nor `client_metadata_uri` parameters MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
+When the RP has pre-registered with the Self-Issued OP using [@!OpenID.Registration] or out-of-band mechanisms, `client_id` MUST equal to the client identifier the RP has obtained from the Self-Issued OP during pre-registration, and `client_metadata` nor `client_metadata_uri` parameters defined in (#rp-registration-parameter) MUST NOT be present in the Self-Issued OP Request. When the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
 The following is a non-normative example of a same-device request when the RP is pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
@@ -354,17 +356,75 @@ The following is a non-normative example of a same-device request when the RP is
 
 ## Non-Pre-Registered Relying Party
 
-When the RP has not pre-registered, it may pass its metadata to the Self-Issued OP in the Authorization Request. This mechanism is different from registration (Dynamic Client Registration or an out-of-band pre-registration) since Self-Issued OP does not return client_id to the RP that the RP can re-use at the Self-Issued OP.
+When the RP has not pre-registered, it may pass its metadata to the Self-Issued OP in the Authorization Request. This mechanism is different from registration (Dynamic Client Registration or an out-of-band pre-registration) since Self-Issued OP does not return `client_id` to the RP that the RP can re-use at the Self-Issued OP.
 
-When the Self-Issued OP request is not signed, all client metadata parameters MUST be passed using client metadata parameter defined in (#rp-registration-parameter). In this case, `client_id` MUST equal `redirect_uri`.
+No registration response is returned. A successful Authorization Response implicitly indicates that the client metadata parameters were accepted.
 
-When the Self-Issued OP request is signed, the public key to verify the signature is obtained by resolving Relying Party's `client_id`. Depending on the Relying Party Metadata Resolution Method used, the rest of the RP parameter SHOULD be included either in the `client_metadata` parameter inside the Self-Issued OP request, or in the Entity Statement as defined in OpenID Federation 1.0 Automatic Registration. In this case, `client_id` MUST NOT equal `redirect_uri`.
+### `client_id` equals `redirect_uri`
 
-`client_metadata` parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `client_metadata` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
+In the simplest option, the RP can proceed without registration as if it had registered with the OP and obtained the following Client Registration Response:
 
-Note that in Self-Issued OP protocol flow, no registration response is returned. A successful Authorization Response implicitly indicates that the client metadata parameters were accepted.
+* `client_id`
+  * `redirect_uri` value of the RP.
 
-### Relying Party client metadata parameter {#rp-registration-parameter}
+In this case, the Self-Issued OP request cannot be signed and all client metadata parameters MUST be passed using client metadata parameter defined in (#rp-registration-parameter).
+
+#### OpenID Federation 1.0 Automatic Registration
+
+When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [@!OpenID.Federation] MUST be used. The Relying Party's Entity Identifier defined in Section 1.2 of [@!OpenID.Federation] MUST be `client_id`. 
+
+When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in Section 3.1 of [@!OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
+
+Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
+
+The following is a non-normative example of a `client_id` resolvable using OpenID Federation 1.0 Automatic Registration:
+
+```json
+"client_id": "https://client.example.org"
+```
+
+The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. (with line wraps within values for display purposes only):
+
+```
+HTTP/1.1 302 Found
+  Location: https://client.example.org/universal-link?
+    response_type=id_token
+    &client_id=https%3A%2F%2Fclient.example.org%2F
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=openid%20profile
+    &nonce=n-0S6_WzA2Mj
+```
+
+#### Decentralized Identifiers
+
+`client_id` MAY be expressed as a Decentralized Identifier as defined in [@!DID-Core].
+
+If the Self-Issued OpenID Request is signed, a public key to verify the signature MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
+
+All RP metadata other than the public key MUST be obtained from the `client_metadata` parameter as defined in {#rp-registration-parameter}.
+
+The following is a non-normative example of a `client_id` resolvable using Decentralized Identifier Resolution:
+
+```json
+"client_id": "did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
+```
+
+The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
+
+```
+  openid://?
+    scope=openid%20profile
+    &response_type=id_token
+    &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &claims=...
+    &registration=%7B%22subject_syntax_types_supported%22%3A
+    %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
+    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
+    &nonce=n-0S6_WzA2Mj
+```
+
+### Relying Party Client Metadata parameter {#rp-registration-parameter}
 
 OpenID Connect defines the following parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during registration:
 
@@ -377,6 +437,8 @@ OpenID Connect defines the following parameters to enable Relying Party to provi
 If one of these parameters is used, the other MUST NOT be used in the same request.
 
 Client metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification as well as [@!RFC7591].
+
+Client Metadata parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `client_metadata` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued OP request.
 
 Metadata parameters should preferably be sent by reference as a URI using `client_metadata_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `client_metadata` parameter.
 
@@ -402,65 +464,6 @@ When `client_metadata` or `client_metadata_uri` parameters are present, but Self
 Self-Issued OPs compliant to this specification MUST NOT proceed with the transaction when pre-registered client metadata has been found based on the `client_id`, but `client_metadata` parameter has also been present.
 
 Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` that Self-Issued OP might be seeing for the first time is mutualy exclusive with the registration mechanism where Self-Issued OP assigns `client_id` to the RP after receiving RP's metadata.
-
-### Relying Party Metadata Resolution Methods {#rp-resolution-parameter}
-
-This specification defines two methods of resolving `client_id` of the RP to obtain RP's public key and metadata. These methods are specific to different syntaxes that the `client_id` may utilize. 
-
-Other resolution methods may be defined in future versions of this specification or by Trust Frameworks.
-
-#### OpenID Federation 1.0 Automatic Registration
-
-When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [@!OpenID.Federation] MUST be used.
-
-The Relying Party's Entity Identifier defined in Section 1.2 of [@!OpenID.Federation] MUST be `client_id`. When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in Section 3.1 of [@!OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
-
-Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
-
-The following is a non-normative example of a `client_id` resolvable using OpenID Federation 1.0 Automatic Registration:
-
-```json
-"client_id": "https://client.example.org"
-```
-
-The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. (with line wraps within values for display purposes only):
-
-```
-HTTP/1.1 302 Found
-  Location: https://client.example.org/universal-link?
-    response_type=id_token
-    &client_id=https%3A%2F%2Fclient.example.org%2F
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &scope=openid%20profile
-    &nonce=n-0S6_WzA2Mj
-```
-
-#### Decentralized Identifier Resolution
-
-When the Relying Party's `client_id` is expressed as a `did` URI as defined in [@!DID-Core], a public key used to sign the request MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
-
-RP metadata other than the public key MUST be obtained from the `client_metadata` parameter as defined in {#rp-registration-parameter}.
-
-The following is a non-normative example of a `client_id` resolvable using Decentralized Identifier Resolution:
-
-```json
-"client_id": "did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
-```
-
-The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
-
-```
-  openid://?
-    scope=openid%20profile
-    &response_type=id_token
-    &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
-    %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
-    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &nonce=n-0S6_WzA2Mj
-```
 
 ### Relying Party Metadata Values {#rp-metadata}
 
@@ -1121,6 +1124,9 @@ A cloud wallet may utilize a native user experience, it may also (in addition or
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -12 
+   * Clean up of the text
 
    -11
 
