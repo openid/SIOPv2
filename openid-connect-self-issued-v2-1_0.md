@@ -571,6 +571,13 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &nonce=n-0S6_WzA2Mj
 ```
 
+#### `aud` of a Request Object
+
+When an RP is sending a Request Object in a Self-Issued OP Request as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], the `aud` Claim value depends on whether the recipient of the request can be identified by the RP or not:
+
+- the `aud` claim MUST equal to the `issuer` Claim value, when Dynamic Self-Issued OP Discovery is performed.
+- the `aud` claim MUST be "https://self-issued.me", when Static Self-Issued OP Discovery Metadata is used.
+
 ## Cross-Device Self-Issued OpenID Provider Request
 
 The cross-device Authorization Request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
@@ -1175,6 +1182,10 @@ The technology described in this specification was made available from contribut
    -11
 
    * Replaced JWK-Thumbprint-URI reference with RFC 9278.
+   * Renamed registration and registration_uri to client_metadata and client_metadata_uri, respectively
+   * Relaxed URI length restrictions
+   * Added definition for base64url encoding
+   * Added definition of term "wallet"
 
    -10
 
