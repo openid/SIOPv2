@@ -576,7 +576,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 When an RP is sending a Request Object in a Self-Issued OP Request as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], the `aud` Claim value depends on whether the recipient of the request can be identified by the RP or not:
 
 - the `aud` claim MUST equal to the `issuer` Claim value, when Dynamic Self-Issued OP Discovery is performed.
-- the `aud` claim MUST be "https://self-issued.me", when Static Self-Issued OP Discovery Metadata is used.
+- the `aud` claim MUST be "https://self-issued.me/v2", when Static Self-Issued OP Discovery Metadata is used.
 
 ## Cross-Device Self-Issued OpenID Provider Request
 
