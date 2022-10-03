@@ -66,7 +66,7 @@ In the traditional OpenID Connect model, when an OP acts as an ID token issuer, 
 
 In traditional OpenID Connect, the ID token is signed by the OP as an entity, identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the OP the RP trusts for that purpose and it also is an attestation of what service produced the ID token (since both are the same entity). 
 
-In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns Self-Issued OP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and self-signed assertions, respectively.  
+In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns Self-Issued OP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and assertions, respectively.  
 
 Because a Self-Issued OP within the End-User’s control does not have the legal, reputational trust of a traditional OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Self-Issued OP can also present cryptographically verifiable claims issued by the third-party sources trusted by the RP, as defined in separate specifications such as [@!OIDC4VP] or Aggregated and Distributed Claims in Section 5.6.2 of [@!OpenID.Core].
 
@@ -219,7 +219,7 @@ The following is a non-normative example of a request with no specific `authoriz
 
 RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a request targeted to a particular application either by using the pre-agreed static configuration values, or by performing Dynamic Discovery as defined in (#dynamic-siop-metadata).
 
-## Dynamic Dyscovery of Self-Issued OpenID Provider Metadata {#dynamic-siop-metadata}
+## Dynamic Discovery of Self-Issued OpenID Provider Metadata {#dynamic-siop-metadata}
 
 As an alternative mechanism to the (#static-config), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
@@ -334,7 +334,7 @@ In this case, the Self-Issued OP request cannot be signed and all client metadat
 
 When Relying Party's `client_id` is expressed as an `https` URI, Automatic Registration defined in [@!OpenID.Federation] MUST be used. The Relying Party's Entity Identifier defined in Section 1.2 of [@!OpenID.Federation] MUST be `client_id`. 
 
-When the Self-Issued Request is signed, Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in Section 3.1 of [@!OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
+Self-Issued Request MUST be signed. Self-Issued OP MUST obtain the public key from the `jwks` property in the Relying Party's Entity Statement defined in Section 3.1 of [@!OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
 
 Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
 
@@ -344,7 +344,7 @@ The following is a non-normative example of a `client_id` resolvable using OpenI
 "client_id": "https://client.example.org"
 ```
 
-The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. (with line wraps within values for display purposes only):
+The following is a non-normative example of a signed cross-device request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. (with line wraps within values for display purposes only):
 
 ```
 HTTP/1.1 302 Found
@@ -360,7 +360,7 @@ HTTP/1.1 302 Found
 
 `client_id` MAY be expressed as a Decentralized Identifier as defined in [@!DID-Core].
 
-If the Self-Issued OpenID Request is signed, a public key to verify the signature MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
+Self-Issued OpenID Request MUST be signed. A public key to verify the signature MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, Self-Issued OP MUST use DID Resolution defined by the DID method must be used by the RP.
 
 All RP metadata other than the public key MUST be obtained from the `client_metadata` parameter as defined in {#rp-registration-parameter}.
 
@@ -370,7 +370,7 @@ The following is a non-normative example of a `client_id` resolvable using Decen
 "client_id": "did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
 ```
 
-The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
+The following is a non-normative example of a signed cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
 
 ```
   siopv2://idtoken?
@@ -403,7 +403,7 @@ Client Metadata parameters MUST NOT include `redirect_uris` to prevent attackers
 
 Metadata parameters should preferably be sent by reference as a URI using `client_metadata_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `client_metadata` parameter.
 
-The following is a non-normative example of an **unsigned** same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
+The following is a non-normative example of an unsigned same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
 ```
   HTTP/1.1 302 Found
