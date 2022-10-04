@@ -115,9 +115,9 @@ This specification extends the OpenID Connect Core in the following ways:
 
 * **Invocation of a Self-Issued OP**: mechanisms for how the RP invokes/opens a Self-Issued OP.
 
-* **Static and Dynamic Self-Issued OP Discovery**: mechanisms for how the RP discovers Self-issued OP's metadata such as authorization endpoint.
+* **Obtaining Self-Issued OP Metadata (Static and Dynamic Discovery)**: mechanisms for how the RP discovers Self-issued OP's metadata such as authorization endpoint.
 
-* **RP Registration**: mechanisms for how the RPs register metadata such as supported functionalities with the Self-Issued OP, client metadata parameters and RP Metadata Registration Methods.
+* **Obtaining RP Metadata**: mechanisms for how the Self-Issued OPs obtain RP metadata both with or without RP pre-registering with the Self-Issued OP.
 
 * **Self-Issued ID Token**: defines additional claims and processing requirements of ID Tokens issued by Self-Issued OPs. An ID Token is self-issued if the values of the `iss` and the `sub` claims are the same. 
 
