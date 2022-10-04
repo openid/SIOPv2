@@ -222,7 +222,7 @@ This section outlines how Self-Issued OP is used in cross-device scenarios, and 
 
 1. The RP prepares a Self-Issued OP request and renders it as a QR code.
 1. The End-User scans the QR code with her smartphone's camera app.
-1. The standard mechanisms for invoking the Self-Issued OP are used on the smartphone (based on the `openid:` custom scheme).
+1. Self-Issued OP is invoked on the smartphone (custom URL scheme or claimed URLs).
 1. The Self-Issued OP processes the Authorization Request.
 1. Upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
 
@@ -238,7 +238,7 @@ However, in Self-Issued OP protocol flows, such mechanisms may be unavailable if
 
 If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the End-User is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
-If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
+If the RP is unable to perform dynamic discovery of the Self-Issued OPs, a set of static configuration values pre-agreed by the implementers should be used. (For the examples of profiles defining such values, see (#static-config) in the Implementation Considerations Section)
 
 If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `client_metadata` nor `client_metadata_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
@@ -266,50 +266,11 @@ The following is a non-normative example of a request with no specific `authoriz
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
 
-RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a request targeted to a particular application either by using the static set of Self-Issued OP metadata as defined in (#static-siop-discovery), or by pre-obtaining `authorization_endpoint` as defined in (#dynamic-siop-metadata).
-
-The value of the `iss` Claim in the ID Token indicates which Self-Issued OP discovery mechanism was used.
-
-## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-discovery}
-
-When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metadata, dynamic discovery is not performed. Instead, the following static configuration values are used. 
-
-```json
-{
-  "authorization_endpoint": "openid:",
-  "response_types_supported": [
-    "id_token"
-  ],
-  "scopes_supported": [
-    "openid"
-  ],
-  "subject_types_supported": [
-    "pairwise"
-  ],
-  "id_token_signing_alg_values_supported": [
-    "ES256"
-  ],
-  "request_object_signing_alg_values_supported": [
-    "ES256"
-  ],
-  "subject_syntax_types_supported": [
-    "urn:ietf:params:oauth:jwk-thumbprint"
-  ],
-  "id_token_types_supported": [
-    "subject_signed"
-  ]
-}
-```
-
-Editor's Note: Discuss whether `subject_syntax_types_supported` should be defined in static Self-Issued OP Discovery Metadata.
-
-RP MUST use custom URI scheme `openid:` as the `authorization_endpoint` to construct the request. 
-
-Note that the request using custom URI scheme `openid:` will open only Self-Issued OPs as native apps and does not support Self-Issued OPs as Web applications. For other types of Self-Issued OP deployments, the usage of the Universal Links, or App Links is recommended as explained in (#choice-of-authoriation-endpoint).
+RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a request targeted to a particular application either by using the pre-agreed static configuration values, or by performing Dynamic Discovery as defined in (#dynamic-siop-metadata).
 
 ## Dynamic Self-Issued OpenID Provider Discovery Metadata {#dynamic-siop-metadata}
 
-As an alternative mechanism to the (#static-siop-discovery), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
+As an alternative mechanism to the (#static-config), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
 How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
 
@@ -511,7 +472,7 @@ The following is a non-normative example of a `client_id` resolvable using Decen
 The following is a non-normative example of a **signed** cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
 
 ```
-  openid://?
+  siopv2://idtoken?
     scope=openid%20profile
     &response_type=id_token
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
@@ -597,7 +558,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
 
 ```
   HTTP/1.1 302 Found
-  Location: openid://?
+  Location: siopv2://?
     scope=openid
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
@@ -609,6 +570,13 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
 ```
+
+#### `aud` of a Request Object
+
+When an RP is sending a Request Object in a Self-Issued OP Request as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], the `aud` Claim value depends on whether the recipient of the request can be identified by the RP or not:
+
+- the `aud` claim MUST equal to the `issuer` Claim value, when Dynamic Self-Issued OP Discovery is performed.
+- the `aud` claim MUST be "https://self-issued.me/v2", when Static Self-Issued OP Discovery Metadata is used.
 
 ## Cross-Device Self-Issued OpenID Provider Request
 
@@ -622,7 +590,7 @@ Self-Issued OP is on a different device than the one on which the End-User’s u
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device protocol flow (#cross-device-siop):
 
 ```
-  openid://?
+  siopv2://?
     scope=openid%20profile
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
@@ -846,7 +814,7 @@ This attack does not apply for the same-device Self-Issued OP protocol flows as 
 
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
-Usage of private-use URI schemes such as `openid:`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
+Usage of private-use URI schemes with a certain path such as `siopv2://`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
 
 Private-use URI schemes are a mechanism offered by mobile operating system providers. If an application developer registers a custom URL scheme with the application, that application will be invoked when a request containing custom scheme is received by the device. If no available application supports the custom URI scheme, the platform or browser will typically generate a modal error and present it to the End-User.
 
@@ -873,6 +841,87 @@ Usage of decentralized identifiers does not automatically prevent possible RP co
 Consider supporting selective disclosure and unlinkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
 
 # Implementation Considerations
+
+## Static Configuration Values of the Self-Issued OPs {#static-config}
+
+This document lists profiles that define static configuration values of Self-Issued OPs and defines two set of static configuration values for Self-Issued OPs as native apps that can be used by the RP when it is unable to perform dynamic discovery and is not using any of the profiles.
+
+### Profiles that Define Static Configuration Values
+
+Below is a list of profiles that define static configuration values of Self-Issued OPs:
+
+- [JWT VC Presentation Profile](https://identity.foundation/jwt-vc-presentation-profile/)
+
+### A Set of Static Configuration Values bound to `siopv2://`
+
+Below is a set of static configuration values that can be used with `id_token` as a supported `response_type`, bound to a custom URL scheme `siopv2://` as an `authorization_endpoint`:
+
+```json
+{
+  "authorization_endpoint": "siopv2:",
+  "response_types_supported": [
+    "id_token"
+  ],
+  "scopes_supported": [
+    "openid"
+  ],
+  "subject_types_supported": [
+    "pairwise"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "request_object_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "subject_syntax_types_supported": [
+    "urn:ietf:params:oauth:jwk-thumbprint"
+  ],
+  "id_token_types_supported": [
+    "subject_signed"
+  ]
+}
+```
+
+### A Set of Static Configuration Values bound to `openid://`
+
+Another set of static configuration values is used with both `vp_token` and `id_token` as supported `response_type`, bound to a custom URL scheme `openid://` as an `authorization_endpoint`:
+
+```json
+{
+  "authorization_endpoint": "openid:",
+  "response_types_supported": [
+    "vp_token",
+    "id_token"
+  ],
+  "vp_formats_supported": {
+    "jwt_vp": {
+      "alg": ["ES256"]
+    },
+    "jwt_vc": {
+      "alg": ["ES256"]
+    }
+  },
+  "scopes_supported": [
+    "openid"
+  ],
+  "subject_types_supported": [
+    "pairwise"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "request_object_signing_alg_values_supported": [
+    "ES256"
+  ],
+  "subject_syntax_types_supported": [
+    "urn:ietf:params:oauth:jwk-thumbprint"
+  ],
+  "id_token_types_supported": [
+    "subject_signed"
+  ]
+}
+```
 
 ## Supporting Multiple Self-Issued OPs
 
