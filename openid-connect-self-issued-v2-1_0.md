@@ -291,8 +291,6 @@ As the `authorization_endpoint` of a Self-Issued OP, the use of Universal Links 
 
 # Relying Party Registration {#rp-resolution}
 
-How  obtains metadata about the RP depends on whether the Self-Issued OP and the RP have a pre-established relationship or not.
-
 The Self-Issued OP utilizing this specification has multiple options to obtain RP's metadata:
 
 * Obtain it prior to a transaction, e.g using [@!OpenID.Registration] or out-of-band mechanisms. See (#pre-registered-rp) for the details.
@@ -378,21 +376,7 @@ The following is a non-normative example of a signed cross-device request when t
 
 ## Relying Party Client Metadata parameter {#rp-registration-parameter}
 
-OpenID Connect defines the following parameters to enable Relying Party to provide information about itself to a Self-Issued OP that would normally be provided to an OP during registration:
-
-* `client_metadata` 
-  * OPTIONAL. This parameter enables RP parameter to be passed in a single, self-contained parameter. The value is a JSON object containing RP parameter values. The client metadata parameter value is represented in an OAuth 2.0 request as a UTF-8 encoded JSON object (which ends up being form-urlencoded when passed as an OAuth parameter). When used in a Request Object value, per Section 6.1, the JSON object is used as the value of the registration member.
-
-* `client_metadata_uri` 
-  * OPTIONAL. This parameter enables RP parameter to be passed by reference, rather than by value. The `request_uri` value is a URL using the https scheme referencing a resource containing RP Negotiation Metadata values. The contents of the resource referenced by the URL MUST be a RP parameter Object. The scheme used in the `client_metadata_uri` value MUST be https. The `request_uri` value MUST be reachable by the Self-Issued OP and SHOULD be reachable by the RP. This parameter is used identically to the request parameter, other than that the Relying Party parameter value is retrieved from the resource at the specified URL.
-
-If one of these parameters is used, the other MUST NOT be used in the same request.
-
-Client metadata values are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic RP Registration 1.0 [@!OpenID.Registration] specification as well as [@!RFC7591].
-
-Client Metadata parameters MUST NOT include `redirect_uris` to prevent attackers from inserting malicious Redirection URI. If `client_metadata` parameter includes `redirect_uris`, Self-Issued OP MUST ignore it and only use `redirect_uri` directly supplied in the Self-Issued Request.
-
-Metadata parameters should preferably be sent by reference as a URI using `client_metadata_uri` parameter, but when RP cannot host a webserver, metadata parameters should be sent by value using `client_metadata` parameter.
+As defined in Section X.X of [@!OpenID4VP].
 
 The following is a non-normative example of an unsigned same-device request when the RP is not pre-registered with the Self-Issued OP. HTTP 302 redirect request by the RP triggers the User Agent to make an Authorization Request to the Self-Issued OP (with line wraps within values for display purposes only):
 
