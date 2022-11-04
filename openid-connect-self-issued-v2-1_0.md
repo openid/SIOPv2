@@ -75,7 +75,7 @@ Because a Self-Issued OP within the End-User’s control does not have the legal
 Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
 
 Self-Issued OpenID Provider (Self-Issued OP)
-  An OpenID Provider (OP) used by the End-users to prove control over a cryptographically verifiable identifier
+  An OpenID Provider (OP) used by the End-users to prove control over a cryptographically Verifiable Identifier
 
 Self-Issued Request
   Request to a Self-Issued OP from an RP
@@ -86,7 +86,7 @@ Self-Issued Response
 Self-Issued ID Token
   ID Token signed using the key material controlled by the End-User. It is issued by a Self-Issued OP.
 
-Cryptographically verifiable identifier
+Cryptographically Verifiable Identifier
   An identifier that is either based upon or resolves to cryptographic key material that can be used to verify a signature on the ID Token or the Self-Issued Request.
     
 Trust Framework
@@ -129,15 +129,11 @@ This specification extends the OpenID Connect Core in the following ways:
 
 The following are considered out of scope of this document.
 
-### Issuance of Verifiable Credentials
+### Presentation of Claims from the Third-Party Issuers
 
-  The mechanism for a Self-Issued OP to acquire credentials which can be presented is out of scope of this document. Similar to presentation, a traditional OP may also wish to acquire third-party credentials to present to Relying Parties. One mechanism to issue credentials is being defined within the Claims Aggregation specification.
+  A Self-Issued OP can present self-attested claims in the ID Token.
 
-### Presentation of Aggregated Claims
-
-  A Self-Issued OP can present two types of claims - self-attested claims and cryptographically verifiable claims issued by trusted third-party sources.
-
-  This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which extends OAuth 2.0 to enable presentation of Verifiable Credentials, supporting W3C Verifiable Credentials and ISO/IEC 18013-5:2021 mdoc as well as other credential formats.
+  Methods to present of cryptographically verifiable claims issued by trusted third-party sources is defined in other specifications, such as [@!OIDC4VP], which extends OAuth 2.0 to enable presentation of Verifiable Credentials, supporting W3C Verifiable Credentials and ISO/IEC 18013-5:2021 mdoc as well as other credential formats.
   
 ## Relationship with Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider
 
