@@ -242,7 +242,7 @@ These OpenID Provider Metadata values are used by the Self-Issued OP:
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID.Core]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending did without any method-name.
 * `id_token_types_supported`: 
     * OPTIONAL. A JSON array of strings containing the list of ID Token types supported by the OP, the default value is `attester_signed_id_token`. The ID Token types defined in this specification are: 
         * `subject_signed_id_token`: Self-Issued ID Token, i.e. the id token is signed with key material under the end-user's control. 
@@ -1086,6 +1086,22 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
     </author>
    <date day="16" month="Dec" year="2021"/>
   </front>
+</reference>
+
+<reference anchor="DID_Specification_Registries" target="https://www.w3.org/TR/did-spec-registries/">
+        <front>
+          <title>DID Specification Registries</title>
+      <author fullname="Orie Steele">
+            <organization>Transmute</organization>
+          </author>
+          <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+          </author>
+          <author fullname="Michael Prorock">
+            <organization>mesur.io</organization>
+          </author>
+         <date month="Aug" year="2022"/>
+        </front>
 </reference>
 
 # IANA Considerations
