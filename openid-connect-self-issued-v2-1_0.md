@@ -1153,6 +1153,8 @@ A cloud wallet may utilize a native user experience, it may also (in addition or
    [[ To be removed from the final specification ]]
 
    -12 
+
+   * Made SIOPv2 compatible with JAR
    * Clean up of the text
 
    -11
