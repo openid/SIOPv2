@@ -395,7 +395,7 @@ The following is a non-normative example of an unsigned same-device request when
 
 ## Relying Party Metadata Error Response
 
-When Self-Issued OP receives a pre-registered `client_id` of a (#pre-registered-rp), but `client_metadata` or `client_metadata_uri` parameters of a (#non-pre-registered-rp) are also present, Self-Issued OP MUST return an error. When Self-Issued OP receives a `client_id` of a (#non-pre-registered-rp) that it has cached following one of the methods defined in (#non-preregistered-rp), it does not not return an error.
+When Self-Issued OP receives a pre-registered `client_id` of a (#pre-registered-rp), but `client_metadata` or `client_metadata_uri` parameters of a (#non-pre-registered-rp) are also present, Self-Issued OP MUST return an error. When Self-Issued OP receives a `client_id` of a (#non-pre-registered-rp) that it has cached following one of the methods defined in (#non-pre-registered-rp), it does not not return an error.
 
 Self-Issued OPs compliant with this specification MUST NOT proceed with the transaction when pre-registered client metadata has been found based on the `client_id`, but `client_metadata` parameter has also been present.
 
@@ -438,36 +438,21 @@ The RP indicates Subject Syntax Types it supports in Client metadata parameter `
 
 Self-Issued OP Authorization Request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
-The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core] for the different flows or as defined for OpenID Connect extension flows, with the exception of the differences specified in this section.
+The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core], with the exception of the differences specified in this section.
 
 Communication with the Authorization Endpoint MUST utilize TLS.
 
-The RP sends the Authorization Request to the Authorization Endpoint with the following parameters:
+This specification defines the following new authorization request parameters in addition to [@!OpenID.Core]:
 
-* `scope`
-    * REQUIRED. As specified in Section 3.1.2 of [@!OpenID.Core].
-* `response_type`
-    * REQUIRED. `id_token` or any other value as defined in Section 3 of [@!OpenID.Core].
-* `client_id`
-    * REQUIRED. RP's identifier at the Self-Issued OP.
-* `redirect_uri`
-    * REQUIRED. URI to which the Self-Issued Response will be sent.
-* `id_token_hint`
-    * OPTIONAL. As specified in Section 3.1.2 of [@!OpenID.Core].
-* `claims`
-    * OPTIONAL. As specified in Section 5.5 of [@!OpenID.Core].
-* `client_metadata`
-    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.
-* `client_metadata_uri`
-    * OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}.
-* `request`
-    * OPTIONAL. Request Object value, as specified in Section 6.1 of [@!OpenID.Core]. The Request Object MAY be encrypted to the Self-Issued OP by the RP. In this case, the `sub` (subject) of a previously issued ID Token for this RP MUST be sent as the `kid` (Key ID) of the JWE.
-* `request_uri`
-    * OPTIONAL. URL where Request Object value can be retrieved from, as specified in Section 6.2 of [@!OpenID.Core].
-* `id_token_type`: 
-    * OPTIONAL. Space-separated string that specifies the types of ID Token the RP wants to obtain, with the values appearing in order of preference. The allowed individual values are `subject_signed_id_token` and `attester_signed_id_token` (see (#dynamic-siop-metadata)). The default value is `attester_signed_id_token`. The RP determines the type if ID Token returned based on the comparison of the `iss` and `sub` claims values (see(see (#siop-id-token-validation)). In order to preserve compatibility with existing OpenID Connect deployments, the OP MAY return an ID Token that does not fulfill the requirements as expressed in this parameter. So the RP SHOULD be prepared to reliably handle such an outcome. 
+* `client_metadata`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}. It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
+* `client_metadata_uri`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}. It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
+* `id_token_type`: OPTIONAL. Space-separated string that specifies the types of ID Token the RP wants to obtain, with the values appearing in order of preference. The allowed individual values are `subject_signed_id_token` and `attester_signed_id_token` (see (#dynamic-siop-metadata)). The default value is `attester_signed_id_token`. The RP determines the type if ID Token returned based on the comparison of the `iss` and `sub` claims values (see(see (#siop-id-token-validation)). In order to preserve compatibility with existing OpenID Connect deployments, the OP MAY return an ID Token that does not fulfill the requirements as expressed in this parameter. So the RP SHOULD be prepared to reliably handle such an outcome. 
 
-To prevent duplication, client metadata parameters MUST be passed either in `client_metadata` or `client_metadata_uri` parameters or `request` or `request_uri` parameters. Therefore, when `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. When `request` or `request_uri` parameters are present, `client_metadata` or `client_metadata_uri` parameters MUST be included in either of those parameters.
+This specification allows RPs to sent authorization request parameters by using "request by value" and "request by reference" as defined in [@!RFC9101] through the request parameters `request` or `request_uri`. 
+
+Note: When using the parameters `request` or `request_uri` the only further required parameter of the authorization request is the `client_id`. 
+
+When `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. `client_metadata` and `client_metadata_uri` are mutual exclusiv.
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authorization Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
@@ -500,9 +485,18 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &nonce=n-0S6_WzA2Mj
 ```
 
-#### `aud` of a Request Object
+The following is a non-normative example of an authorization request utilizing a `request_uri` (with line wraps within values for display purposes only):
 
-When an RP is sending a Request Object in a Self-Issued Request as defined in Section 6.1 of [@!OpenID.Core] or [@!RFC9101], the `aud` Claim value depends on whether the recipient of the request can be identified by the RP or not:
+```
+  HTTP/1.1 302 Found
+  Location: siopv2://?
+    client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &request_uri=https%3A%2F%2Fclient.example.org%2Frequests%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
+```
+
+## `aud` of a Request Object
+
+When an RP is sending a Request Object in a Self-Issued Request as defined in [@!RFC9101], the `aud` Claim value depends on whether the recipient of the request can be identified by the RP or not:
 
 - the `aud` claim MUST equal to the `issuer` Claim value, when Dynamic Self-Issued OP Discovery is performed.
 - the `aud` claim MUST be "https://self-issued.me/v2", when Static Self-Issued OP Discovery Metadata is used.
