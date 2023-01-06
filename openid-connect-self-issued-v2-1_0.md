@@ -141,10 +141,10 @@ This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provi
 
 - Added support for Decentralized Identifiers defined in [@!DID-Core] as Cryptographically Verifiable Identifiers in addition to the JWK thumbprint defined in Self-Issued OP v2. See (#sub-syntax-type).
 - Added support for Cross-Device Self-Issued OP model. See (#cross-device-siop).
-- Extended Relying Party Registration mechanisms to support pre-registration and dynamic registration for not-pre-registered RPs. See (#rp-resolution).
+- Extended mechanisms how not-pre-registered RPs can pass their metadata in the Authorization Request. See (#rp-resolution).
 - Added support for Dynamic Self-Issued OpenID Provider Discovery. See (#dynamic-siop-metadata). 
 - Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
-- Allows use of any OpenID Connect flow for Self-Issued OPs and Dynamic Client Registration
+- Added support to use of any OpenID Connect flow for Self-Issued OPs and Dynamic Client Registration.
 
 Note that while this specification extends the original Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider, some sections of it could be applicable more generally to the entire OpenID Connect Core specification.
 
@@ -368,7 +368,7 @@ The following is a non-normative example of a signed cross-device request when t
     &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -388,7 +388,7 @@ The following is a non-normative example of an unsigned same-device request when
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &scope=openid%20profile
     &nonce=n-0S6_WzA2Mj
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22RS256%22%5D%7D
 ```
@@ -479,7 +479,7 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &id_token_type=subject_signed_id_token
     &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -520,7 +520,7 @@ The following is a non-normative example of a Self-Issued Request URL in a cross
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
     &response_mode=post
     &claims=...
-    &registration=%7B%22subject_syntax_types_supported%22%3A
+    &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
     &nonce=n-0S6_WzA2Mj
@@ -593,10 +593,10 @@ The error response must be made in the same manner as defined in Section 3.1.2.6
 In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Section 3.1.2.6 of [@!OpenID.Core], this specification also defines the following error codes:
 
 * **`user_cancelled`**: End-User cancelled the Authorization Request from the RP.
-* **`registration_value_not_supported`**: the Self-Issued OP does not support some Relying Party parameter values received in the request.
+* **`client_metadata_value_not_supported`**: the Self-Issued OP does not support some Relying Party parameter values received in the request.
 * **`subject_syntax_types_not_supported`**: the Self-Issued OP does not support any of the Subject Syntax Types supported by the RP, which were communicated in the request in the `subject_syntax_types_supported` parameter.
-* **`invalid_registration_uri`**: the `client_metadata_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
-* **`invalid_registration_object`**: the `client_metadata` parameter contains an invalid RP parameter Object.
+* **`invalid_client_metadata_uri`**: the `client_metadata_uri` in the Self-Issued OpenID Provider request returns an error or contains invalid data.
+* **`invalid_client_metadata_object`**: the `client_metadata` parameter contains an invalid RP parameter Object.
 
 Other error codes MAY be used.
 
