@@ -204,11 +204,8 @@ In the second scenario, the request includes the `authorization_endpoint` of a S
 The following is a non-normative example of a request with no specific `authorization_endpoint`, which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device. It is a request when the RP is pre-registered with the Self-Issued OP (line wraps within values are for display purposes only):
 
 ```
-    response_type=id_token
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
-    &scope=openid
-    &nonce=n-0S6_WzA2Mj
 ```
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
