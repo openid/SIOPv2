@@ -232,7 +232,7 @@ These OpenID Provider Metadata values are used by the Self-Issued OP:
 * `issuer`
     * REQUIRED. URL using the `https` scheme with no query or fragment component that the Self-Issued OP asserts as its Issuer Identifier. MUST be identical to the `iss` Claim value in ID Tokens issued from this Self-Issued OP.
 * `response_types_supported`
-    * REQUIRED. A JSON array of strings representing supported response types. MUST be `id_token`.
+    * REQUIRED. A JSON array of strings representing supported response types. MUST include `id_token`.
 * `scopes_supported`
     * REQUIRED. A JSON array of strings representing supported scopes. MUST support the `openid` scope value.
 * `subject_types_supported`
