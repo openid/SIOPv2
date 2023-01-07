@@ -242,7 +242,7 @@ These OpenID Provider Metadata values are used by the Self-Issued OP:
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID.Core]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending did without any method-name.
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending did without any method-name.
 * `id_token_types_supported`: 
     * OPTIONAL. A JSON array of strings containing the list of ID Token types supported by the OP, the default value is `attester_signed_id_token`. The ID Token types defined in this specification are: 
         * `subject_signed_id_token`: Self-Issued ID Token, i.e. the id token is signed with key material under the end-user's control. 
@@ -406,7 +406,7 @@ Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` 
 This extension defines the following RP parameter value, used by the RP to provide information about itself to the Self-Issued OP:
 
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in {#sub-syntax-type}. When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods is indicated by sending `did` without any method-name.
 
 Other client metadata parameters defined in [@!OpenID.Registration] MAY be used. Examples are explanatory parameters such as `policy_uri`, `tos_uri`, and `logo_uri`. If the RP uses more than one Redirection URI, the `redirect_uris` parameter would be used to register them. Finally, if the RP is requesting encrypted responses, it would typically use the `jwks_uri`, `id_token_encrypted_response_alg` and `id_token_encrypted_response_enc` parameters.
 
@@ -430,9 +430,9 @@ This specification defines the following two Subject Syntax Types. Additional Su
 
 * JWK Thumbprint subject syntax type. When this type is used, the `sub` Claim value MUST be the base64url encoded representation of the JWK thumbprint of the key in the `sub_jwk` Claim [@!RFC7638], and `sub_jwk` MUST be included in the Self-Issued Response.
 
-* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued Response. The subject syntax type MUST be cryptographically verified against the resolved DID Document as defined in {#siop-id_token-validation}.
+* Decentralized Identifier subject syntax type. When this type is used,  the `sub` value MUST be a DID as defined in [@!DID-Core], and `sub_jwk` MUST NOT be included in the Self-Issued Response.
 
-The RP indicates Subject Syntax Types it supports in Client metadata parameter `subject_syntax_types_supported` defined in {#rp-metadata}.
+The RP indicates Subject Syntax Types it supports in Client metadata parameter `subject_syntax_types_supported` defined in (#rp-metadata).
 
 # Self-Issued OpenID Provider Authorization Request {#siop_authentication_request}
 
@@ -444,8 +444,8 @@ Communication with the Authorization Endpoint MUST utilize TLS.
 
 This specification defines the following new authorization request parameters in addition to [@!OpenID.Core]:
 
-* `client_metadata`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}. It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
-* `client_metadata_uri`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in {#rp-registration-parameter}. It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
+* `client_metadata`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter). It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
+* `client_metadata_uri`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter). It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
 * `id_token_type`: OPTIONAL. Space-separated string that specifies the types of ID Token the RP wants to obtain, with the values appearing in order of preference. The allowed individual values are `subject_signed_id_token` and `attester_signed_id_token` (see (#dynamic-siop-metadata)). The default value is `attester_signed_id_token`. The RP determines the type if ID Token returned based on the comparison of the `iss` and `sub` claims values (see(see (#siop-id-token-validation)). In order to preserve compatibility with existing OpenID Connect deployments, the OP MAY return an ID Token that does not fulfill the requirements as expressed in this parameter. So the RP SHOULD be prepared to reliably handle such an outcome. 
 
 This specification allows RPs to sent authorization request parameters by using "request by value" and "request by reference" as defined in [@!RFC9101] through the request parameters `request` or `request_uri`. 
