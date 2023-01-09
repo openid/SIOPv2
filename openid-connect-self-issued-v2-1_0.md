@@ -358,7 +358,7 @@ This is a Request Object used in the example above before base64url encoding and
     "subject_syntax_types_supported": "did:example",
     "id_token_signing_alg_values_supported": "ES256"
   },
-  nonce=n-0S6_WzA2Mj
+  "nonce": "n-0S6_WzA2Mj"
 }
 ```
 
