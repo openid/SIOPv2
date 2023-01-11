@@ -72,33 +72,44 @@ Because a Self-Issued OP within the End-User’s control does not have the legal
 
 ## Terms and Definitions
 
-Common terms in this document come from four primary sources: [@!OpenID.Core], [@!VC-DATA] and [@!DID-Core]. In the case where a term has a definition that differs, the definition below is authoritative.
+Common terms in this document come from [@!OpenID.Core]. 
+
+This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative.
 
 Self-Issued OpenID Provider (Self-Issued OP)
+
   An OpenID Provider (OP) used by the End-users to prove control over a cryptographically Verifiable Identifier
 
 Self-Issued Request
+
   Request to a Self-Issued OP from an RP
 
 Self-Issued Response
+
   Response to an RP from a Self-Issued OP
 
 Self-Issued ID Token
+
   ID Token signed using the key material controlled by the End-User. It is issued by a Self-Issued OP.
 
 Cryptographically Verifiable Identifier
+
   An identifier that is either based upon or resolves to cryptographic key material that can be used to verify a signature on the ID Token or the Self-Issued Request.
     
 Trust Framework
+
   A legally enforceable set of specifications, rules, and agreements that govern a multi-party system established for a common purpose, designed for conducting specific types of transactions among a community of participants, and bound by a common set of requirements, as defined in [OIX](https://openidentityexchange.org/networks/87/item.html?id=365).
 
 Verifiable Credential (VC)
+
   A verifiable credential is a tamper-evident credential that has authorship that can be cryptographically verified. Verifiable credentials can be used to build verifiable presentations, which can also be cryptographically verified. The claims in a credential can be about different subjects. See [@!VC-DATA].
 
 Wallet
+
   Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an Self-Issued OpenID Provider towards the RP. 
 
 Base64url Encoding
+
   Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
 ## Abbreviations
