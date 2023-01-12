@@ -256,7 +256,7 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 
 ```json
 {
-  "authorization_endpoint": "https://wallet.example.org", 
+  "authorization_endpoint": "https://wallet.example.com", 
   "issuer": "https://example.org",
   "response_types_supported": [
     "id_token"
@@ -309,7 +309,7 @@ The following is a non-normative example of a same-device request when the RP is
 
 ```
   HTTP/1.1 302 Found
-  Location:  https://wallet.example.org/universal-link?
+  Location:  https://wallet.example.com/universal-link?
     response_type=id_token
     &client_id=s6BhdRkqt3
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
@@ -384,7 +384,7 @@ The following is a non-normative example of an unsigned same-device request when
 
 ```
   HTTP/1.1 302 Found
-  Location: https://wallet.example.org/universal-link?
+  Location: https://wallet.example.com/universal-link?
     response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
