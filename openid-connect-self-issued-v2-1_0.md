@@ -492,7 +492,7 @@ The following is a non-normative example of an authorization request utilizing a
   HTTP/1.1 302 Found
   Location: siopv2://?
     client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
+    &request_uri=https%3A%2F%2Fclient.example.org%2Frequests%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 ## `aud` of a Request Object
