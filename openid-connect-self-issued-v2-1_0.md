@@ -219,7 +219,7 @@ RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a requ
 
 As an alternative mechanism to the (#static-config), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
-How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
+How the RP obtains Self-Issued OP's Issuer Identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
 
 When [@!OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Self-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issued OP's Issuer Identifier.
 
@@ -309,7 +309,7 @@ The following is a non-normative example of a same-device request when the RP is
 
 ```
   HTTP/1.1 302 Found
-  Location:  https://client.example.org/universal-link?
+  Location:  https://wallet.example.org/universal-link?
     response_type=id_token
     &client_id=s6BhdRkqt3
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
@@ -335,31 +335,6 @@ The following is a non-normative example of a `client_id` resolvable using OpenI
 
 ```json
 "client_id": "https://client.example.org"
-```
-
-The following is a non-normative example of a request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. It is signed with `ES256` algorithm using the key obtained from the Entity Statement and uses Universal Link as an Authorization Endpoint (with line wraps within values for display purposes only):
-
-```
-HTTP/1.1 302 Found
-  Location: https://client.example.org/universal-link?
-    &client_id=https%3A%2F%2Fclient.example.org%2F
-    &request=eyJraWQiOiI2NjIxMzUzNC01MjU0LTQ0YjMtOTE3Zi03OWQzYTIzMWNiMDkiLCJhbGciOiJFUzI1NiJ9.ew0KICAic2NvcGUiOiAib3BlbmlkIHByb2ZpbGUiLA0KICAicmVzcG9uc2VfdHlwZSI6ICJpZF90b2tlbiIsDQogICJyZWRpcmVjdF91cmkiOiAiaHR0cHM6Ly9jbGllbnQuZXhhbXBsZS5vcmcvY2IiLA0KICAiY2xpZW50X21ldGFkYXRhIjogew0KICAgICJzdWJqZWN0X3N5bnRheF90eXBlc19zdXBwb3J0ZWQiOiAiZGlkOmV4YW1wbGUiLA0KICAgICJpZF90b2tlbl9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjogIkVTMjU2Ig0KICB9LA0KICBub25jZT1uLTBTNl9XekEyTWoNCn0.VEtiunYwvbnjgxPOsJCDNmv1u57oYhy3Jh1gZwO0gEsXtZffrRzsvKkUv0rmpqAFhudJXwWusjgPLrkHx_Y_3Q
-```
-
-This is a Request Object used in the example above before base64url encoding and signing:
-
-```
-{
-  "client_id": "https://client.example.org",
-  "scope": "openid profile",
-  "response_type": "id_token",
-  "redirect_uri": "https://client.example.org/cb",
-  "client_metadata": {
-    "subject_syntax_types_supported": "did:example",
-    "id_token_signing_alg_values_supported": "ES256"
-  },
-  "nonce": "n-0S6_WzA2Mj"
-}
 ```
 
 ### Decentralized Identifiers
@@ -409,7 +384,7 @@ The following is a non-normative example of an unsigned same-device request when
 
 ```
   HTTP/1.1 302 Found
-  Location: https://client.example.org/universal-link?
+  Location: https://wallet.example.org/universal-link?
     response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
