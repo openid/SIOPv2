@@ -732,6 +732,8 @@ Implementors should be cautious when using cross-device Self-Issued OP model for
 
 This attack does not apply for the same-device Self-Issued OP protocol flows as the RP checks that the Authorization Response comes from the same browser where the Authorization Request was sent to. Same-device Self-Issued OP protocol flows therefore can be used for authentication, given all other security measures are put in place.
 
+For more details on possible attacks and mitigations see [@Cross-Device.BCP].
+
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
 Usage of private-use URI schemes with a certain path such as `siopv2://`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
@@ -936,6 +938,22 @@ The scope of this draft was an extension to Chapter 7 Self-Issued OpenID Provide
     </author>
    <date day="8" month="Nov" year="2014"/>
   </front>
+</reference>
+
+<reference anchor="Cross-Device.BCP" target="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-cross-device-security">
+        <front>
+          <title>Cross-Device Flows: Security Best Current Practice</title>
+		      <author fullname="P. Kasselman">
+            <organization>Microsoft</organization>
+          </author>
+          <author fullname="D. Fett">
+            <organization>yes.com</organization>
+          </author>
+          <author fullname="F. Skokan">
+            <organization>Okta</organization>
+          </author>
+          <date year="2022"/>
+        </front>
 </reference>
 
 <reference anchor="OpenID.CIBA" target="https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html">
