@@ -205,7 +205,7 @@ The following is a non-normative example of a request with no specific `authoriz
 
 ```
     client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
+    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
@@ -349,7 +349,7 @@ The following is a non-normative example of a request when the RP is not pre-reg
 ```
 siopv2://?
   client_id=did%3Aexample%3AEiDri
-  &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
+  &request_uri=https%3A%2F%2Fclient.example.org%2Frequest%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 The following is a non-normative example of a Request Object referenced by the `request_uri`. It is signed with `ES256` algorithm, using the keys obtained from the DID Document before base64url encoding:
@@ -489,7 +489,7 @@ The following is a non-normative example of an authorization request utilizing a
   HTTP/1.1 302 Found
   Location: siopv2://?
     client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &request_uri=https%3A%2F%2Fclient.example.org%2Frequests%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
+    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 ## `aud` of a Request Object
