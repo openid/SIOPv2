@@ -56,7 +56,7 @@ The crucial difference between a traditional OP and the Self-Issued OP is that t
 
 [@!OpenID.Core] defines that an OP releases End-User authentication information in the form of an ID Token. An RP will trust an ID Token based on the relationship between the RP and the issuer of this ID Token.
 
-The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP MAY implement all flows as specified in [@!OpenID.Core], e.g. the Authorization Code Flow, and OpenID Connect extension flows, such as [@!OpenID.CIBA], as permitted by its deployment model. If the Self-Issued OP is operated entirely locally on a user device, it might be unable to expose any endpoints beyond the authorization endpoint to the RPs. However, if the Self-Issued OP has cloud-based components, it MAY expose further endpoints, such as a token endpoint. The same is applicable for Dynamic Client Registration ([@!OpenID.Registration]).
+The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP MAY implement all flows as specified in [@!OpenID.Core], e.g. the Authorization Code Flow, and OpenID Connect extension flows, such as [@!OpenID.CIBA], as permitted by its deployment model. If the Self-Issued OP is operated entirely locally on a user device, it might be unable to expose any endpoints beyond the authorization endpoint to the RPs. However, if the Self-Issued OP has cloud-based components, it MAY expose further endpoints, such as a Token Endpoint. The same is applicable for Dynamic Client Registration ([@!OpenID.Registration]).
 
 This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
 
@@ -72,7 +72,7 @@ Because a Self-Issued OP within the End-User’s control does not have the legal
 
 ## Terms and Definitions
 
-Common terms in this document come from [@!OpenID.Core]. 
+This specification uses the terms "Authorization Request", "Authorization Response", "Authorization Server", "Client", "Client Identifier", "Response Type", and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", "Request Object", and "Request URI" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!7519], the term "JOSE Header" defined by JSON Web Signature (JWS) [@!RFC7515], the term "Response Mode" defined by OAuth 2.0 Multiple Response Type Encoding Practices [@!OAuth.Responses], and the term "Base64url Encoding" defined by The Base16, Base32, and Base64 Data Encodings [@!RFC4648].
 
 This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative.
 
@@ -96,9 +96,6 @@ Trust Framework:
 
 Wallet:
 :  Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an Self-Issued OpenID Provider towards the RP. 
-
-Base64url Encoding:
-:  Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
 ## Abbreviations
 
@@ -502,7 +499,7 @@ When an RP is sending a Request Object in a Self-Issued Request as defined in [@
 
 The cross-device Authorization Request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
 
-* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
+* This specification introduces a new response mode `direct_post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
 Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
@@ -528,13 +525,13 @@ Such an Authorization Request might result in a large QR code, especially when i
 
 # Self-Issued OpenID Provider Authorization Response {#siop-authentication-response}
 
-A Self-Issued OpenID Provider Response is an OpenID Connect Authorization Response, whose parameters depend on the `response_type` used in the request. Depending on the `response_type` the result of the transaction is either obtained directly from the Authorization Response or from a token endpoint response.
+A Self-Issued OpenID Provider Response is an OpenID Connect Authorization Response, whose parameters depend on the `response_type` used in the request. Depending on the `response_type` the result of the transaction is either obtained directly from the Authorization Response or from a Token Response.
 
 A Self-Issued OpenID Provider Response is returned when Self-Issued OP supports all Relying Party parameter values received from the Relying Party in the `client_metadata` parameter. If one or more of the Relying Party parameter Values is not supported, Self-Issued OP MUST return an error according to (#siop-error-respose).
 
-In a same-device protocol flow with `response_type` `id_token`, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
+In a same-device protocol flow with Response Type `id_token`, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
-In a same-device protocol flow with `response_type` `code`, the response parameters will be returned in HTTPS POST response body of the token response. 
+In a same-device protocol flow with Response Type `code`, the response parameters will be returned in HTTPS POST response body of the token response. 
 
 In a cross-device protocol flow, upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
 
