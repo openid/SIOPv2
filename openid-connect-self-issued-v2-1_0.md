@@ -731,6 +731,8 @@ Implementors should be cautious when using cross-device Self-Issued OP model for
 
 This attack does not apply for the same-device Self-Issued OP protocol flows as the RP checks that the Authorization Response comes from the same browser where the Authorization Request was sent to. Same-device Self-Issued OP protocol flows therefore can be used for authentication, given all other security measures are put in place.
 
+For more details on possible attacks and mitigations see [@I-D.ietf-oauth-cross-device-security].
+
 ## Invocation using Private-Use URI Schemes (Custom URL Schemes) {#invocation-using-custom-scheme}
 
 Usage of private-use URI schemes with a certain path such as `siopv2://`, also referred to as custom URL schemes, as a way to invoke a Self-Issued OP may lead to phishing attacks and undefined behavior, as described in [@RFC8252].
