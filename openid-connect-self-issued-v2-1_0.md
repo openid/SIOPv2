@@ -72,7 +72,7 @@ Because a Self-Issued OP within the End-User’s control does not have the legal
 
 ## Terms and Definitions
 
-This specification uses the terms "Authorization Request", "Authorization Response", "Authorization Server", "Client", "Client Identifier", "Response Type", and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", "Request Object", and "Request URI" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!7519], the term "JOSE Header" defined by JSON Web Signature (JWS) [@!RFC7515], the term "Response Mode" defined by OAuth 2.0 Multiple Response Type Encoding Practices [@!OAuth.Responses], and the term "Base64url Encoding" defined by The Base16, Base32, and Base64 Data Encodings [@!RFC4648].
+This specification uses the terms "Authorization Request", "Authorization Response", "Authorization Server", "Client", "Client Identifier", "Response Type", and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", "Request Object", and "Request URI" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519], the term "JOSE Header" and the term "Base64url Encoding" defined by JSON Web Signature (JWS) [@!RFC7515], and the term "Response Mode" defined by OAuth 2.0 Multiple Response Type Encoding Practices [@!OAuth.Responses].
 
 This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative.
 
