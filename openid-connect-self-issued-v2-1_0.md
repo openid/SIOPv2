@@ -1125,7 +1125,7 @@ As internet-connected smartphones have risen in availability, traditionally in-p
 
 The RP can directly receive the issuer-signed claims about the End-User from the Self-Issued OP, without talking to the Issuer. This prevents the Issuer from knowing where the End-User is presenting these issuer-signed claims. In this use-case, obtaining and potentially storing the issuer-signed credentials is the Self-Issued OP's responsibility using specifications such as [@!OpenID4VP].
 
-## Sharing Claims (e.g. VC) from Several Issuers in One Transaction
+## Presenting Claims (e.g. VC) from Several Issuers in One Transaction
 
 When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the End-User may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
 
