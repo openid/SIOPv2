@@ -60,6 +60,10 @@ The extensions defined in this specification provide the protocol changes needed
 
 This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
 
+## Requirements Notation and Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 [@!RFC2119].
+
 ## Notable Differences between OpenID Connect Core and Self-Issued OP Models
 
 In the traditional OpenID Connect model, when an OP acts as an ID Token issuer, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the Self-Issued OP model, the RP's trust relationship is directly with the End-User. The Self-Issued OP allows the End-User to authenticate towards the RP with an identifier controlled by the End-User instead of an identifier assigned to the End-User by a third-party provided OP. An End-User controlled identifier might be a public key fingerprint or a Decentralized Identifier (see [@!DID-Core]). This changes the trust model and the way signatures of the Self-Issued ID Tokens are validated in comparison to the traditional OpenID Connect model.
