@@ -1,5 +1,5 @@
 %%%
-title = "Self-Issued OpenID Provider v2"
+title = "Self-Issued OpenID Provider v2 - draft 12"
 abbrev = "siop-v2"
 ipr = "none"
 workgroup = "OpenID Connect"
