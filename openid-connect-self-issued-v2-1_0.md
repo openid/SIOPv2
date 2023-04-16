@@ -1,5 +1,5 @@
 %%%
-title = "Self-Issued OpenID Provider v2"
+title = "Self-Issued OpenID Provider v2 - draft 12"
 abbrev = "siop-v2"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -59,6 +59,10 @@ The crucial difference between a traditional OP and the Self-Issued OP is that t
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core]. Most notably, a Self-Issued OP MAY implement all flows as specified in [@!OpenID.Core], e.g. the Authorization Code Flow, and OpenID Connect extension flows, such as [@!OpenID.CIBA], as permitted by its deployment model. If the Self-Issued OP is operated entirely locally on a user device, it might be unable to expose any endpoints beyond the authorization endpoint to the RPs. However, if the Self-Issued OP has cloud-based components, it MAY expose further endpoints, such as a Token Endpoint. The same is applicable for Dynamic Client Registration ([@!OpenID.Registration]).
 
 This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.1](https://identity.foundation/did-siop/) and was written as a working item of a liaison between Decentralized Identity Foundation and OpenID Foundation.
+
+## Requirements Notation and Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 [@!RFC2119].
 
 ## Notable Differences between OpenID Connect Core and Self-Issued OP Models
 
