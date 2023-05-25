@@ -691,7 +691,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 # Verifiable Presentation Support
 
-Self-Issued OP and the RP that wish to support request and presentation of cryptographically verifiable claims issued by trusted third-party sources, or Verifiable Presentations, MUST be compliant with OpenID for Verifiable Presentations [@!OpenID4VP].
+Self-Issued OP and the RP that wish to support request and presentation of cryptographically verifiable claims issued by trusted third-party sources (Verifiable Presentations) MUST be compliant with OpenID for Verifiable Presentations [@!OpenID4VP].
 
 To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP protocol flow MUST be bound to the `nonce` provided by the RP and the Client ID of the RP, as described in [@!OpenID4VP].
 
