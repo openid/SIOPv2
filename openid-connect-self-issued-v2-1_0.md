@@ -131,9 +131,11 @@ The following are considered out of scope of this document.
 
 ### Presentation of Claims from the Third-Party Issuers
 
-  A Self-Issued OP can present self-attested claims in the ID Token.
+A Self-Issued OP can present self-attested claims in the ID Token.
 
-  Methods to present of cryptographically verifiable claims issued by trusted third-party sources are defined in other specifications, such as [@!OpenID4VP], which extends OAuth 2.0 to enable presentation of Verifiable Credentials, supporting W3C Verifiable Credentials and ISO/IEC 18013-5:2021 mdoc as well as other credential formats.
+Methods to present of cryptographically verifiable claims issued by trusted third-party sources are defined in other specifications, such as [@!OpenID4VP], which extends OAuth 2.0 to enable presentation of Verifiable Credentials, supporting W3C Verifiable Credentials and ISO/IEC 18013-5:2021 mdoc as well as other credential formats.
+
+The cryptographic keys within the Verifiable Presentation and for signing the Self-Issued ID Token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
   
 ## Relationship with Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider
 
@@ -655,8 +657,6 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 ## Self-Issued ID Token Validation {#siop-id-token-validation}
 
-See [@!OpenID4VP] on how to support multiple credential formats such as JWT and Linked Data Proofs.
-
 To validate the ID Token received, the RP MUST do the following:
 
 1. The Relying Party (RP) MUST determine whether the ID Token has been issued by the Self-Issued OP. The ID Token is self-issued if the `iss` Claim and the `sub` Claim have the same value. If both values differ, the ID Token MUST be processed as defined in [@!OpenID.Core], section 3.2.2.11..
@@ -691,9 +691,7 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 # Verifiable Presentation Support
 
-Self-Issued OP and the RP that wish to support request and presentation of Verifiable Presentations MUST be compliant with OpenID for Verifiable Presentations [@!OpenID4VP] and W3C Verifiable Credentials Specification [@!VC-DATA].
-
-Verifiable Presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain selectively disclosed data that is synthesized from, but does not contain, the original verifiable credentials (for example, zero-knowledge proofs). [@!VC-DATA]
+Self-Issued OP and the RP that wish to support request and presentation of cryptographically verifiable claims issued by trusted third-party sources (Verifiable Presentations) MUST be compliant with OpenID for Verifiable Presentations [@!OpenID4VP].
 
 To prevent replay attacks, any Verifiable Presentations presented in a Self-Issued OP protocol flow MUST be bound to the `nonce` provided by the RP and the Client ID of the RP, as described in [@!OpenID4VP].
 
@@ -707,12 +705,6 @@ Using the mechanisms described in this specification and [@!OpenID4VP], data abo
 Regarding the ID Token as a transport mechanism, the RP can trust that the Self-Issued OP has access to the private key required to sign the ID Token. The value of the `sub` Claim is bound to this key. It is in the Self-Issued OP's interest to not make the signing available to other parties, in particular attackers. The RP can therefore use the `sub` Claim as a primary identifier for the End-User, assuming that the ID Token was checked properly.
 
 Other Claims within the ID Token MUST be considered self-asserted: The Self-Issued OP can use arbitrary data that can usually not be checked by the RP. RPs therefore MUST NOT use other Claims than `sub` to (re-)identify users, for example, for login.
-
-### Additional Data in Verifiable Presentations
-
-The validity of data presented in W3C Verifiable Presentations is attested by the issuer of the underlying W3C Verifiable Credential. The RP MUST ensure that it trusts the specific issuer, and verify that the Verifiable Presentation is correctly bound to the Self-Issued OP transaction (`nonce` and Client ID binding as described above) before using the data. The cryptographic keys within the Verifiable Presentation and for signing the ID Token are not necessarily related and the RP SHOULD NOT make assumptions in this regard.
-
-RPs MUST consider that Verifiable Presentations can be revoked and that user data within the W3C Verifiable Credential may change over time. Such changes can only be noticed by the RP if the W3C Verifiable Presentation is checked at each login. 
 
 ## RP and Self-Issued OP Metadata Integrity
 
@@ -762,7 +754,7 @@ Further details of application to application and application to web communicati
 
 Usage of decentralized identifiers does not automatically prevent possible RP correlation. If a status check of the presentation is done, Identity Provider / Self-Issued OP correlation can occur.
 
-Consider supporting selective disclosure and unlinkable presentations using zero-knowledge proofs or single-use credentials instead of traditional correlatable signatures.
+Consider supporting pairwise identifiers that are unique per RP.
 
 # Implementation Considerations
 
@@ -1123,15 +1115,11 @@ A hosted third-party provided OP's infrastructure may become unavailable or even
 
 ## Authentication at the Edge
 
-As internet-connected smartphones have risen in availability, traditionally in-person interactions and services have begun to be optimized with digital alternatives. These services often have requirements for digital authentication and for other identity credentials. Self-Issued OPs can provide this authentication directly, without needing to delegate to remote, hosted OPs. This potentially allows for increased efficiency as well as allowing for authentication in environments which may have reduced connectivity.
+As internet-connected smartphones have risen in availability, traditionally in-person interactions and services have begun to be optimized with digital alternatives. These services often have requirements for digital authentication. Self-Issued OPs can provide this authentication directly, without needing to delegate to remote, hosted OPs. This potentially allows for increased efficiency as well as allowing for authentication in environments which may have reduced connectivity.
 
 ## Authentication and Presentations of User Claims without the involvement of the Issuer
 
 The RP can directly receive the issuer-signed claims about the End-User from the Self-Issued OP, without talking to the Issuer. This prevents the Issuer from knowing where the End-User is presenting these issuer-signed claims. In this use-case, obtaining and potentially storing the issuer-signed credentials is the Self-Issued OP's responsibility using specifications such as [@!OpenID4VP].
-
-## Presenting Claims (e.g. VC) from Several Issuers in One Transaction
-
-When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the End-User may have access to a greater set of such information for example in the format of Verifiable Credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate claims from multiple sources, potentially in multiple formats, then release them within a single transaction to a Relying Party. The Relying Party can then verify the authenticity of the information to make the necessary business decisions.
 
 ## Aggregation of Multiple Personas under One Self-Issued OP
 
