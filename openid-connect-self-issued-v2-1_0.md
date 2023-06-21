@@ -441,7 +441,7 @@ The RP indicates Subject Syntax Types it supports in Client metadata parameter `
 
 Self-Issued OP Authorization Request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
-The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core], with the exception of the differences specified in this section.
+The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core], with the exception of the differences specified in this section, and taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 Communication with the Authorization Endpoint MUST utilize TLS.
 
