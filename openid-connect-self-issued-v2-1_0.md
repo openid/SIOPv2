@@ -748,6 +748,12 @@ Implementers of Self-Issed OPs are encouraged to take operating system dependent
 
 Further details of application to application and application to web communication are discussed in [@app-2-app-sec].
 
+##  TLS Requirements
+
+Implementations MUST follow [@!BCP195].
+
+Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
+
 # Privacy Considerations
 
 ## Selective Disclosure and Unlinkable Presentations
@@ -874,6 +880,16 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
             <organization>Evernym</organization>
         </author>
         <date day="19" month="Nov" year="2019"/>
+        </front>
+</reference>
+
+<reference anchor="BCP195" target="https://www.rfc-editor.org/info/bcp195">
+        <front>
+          <title>BCP195</title>
+          <author>
+            <organization>IETF</organization>
+          </author>
+          <date year="2022"/>
         </front>
 </reference>
 
