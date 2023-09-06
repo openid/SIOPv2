@@ -1,8 +1,9 @@
-name: OID4VCI document push
+name: SIOPv2 document push
 on:
   push:
-    paths:
-      - 'openid-connect-self-issued-v2-1_0.md'
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
     compile:
@@ -22,3 +23,28 @@ jobs:
                 name: OID4CI # optional
                 # Destination path
                 path: ./openid-connect-self-issued-v2-*.html # optional
+
+    publish-to-pages:
+      name: Publish to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      needs: [ compile ]
+      runs-on: ubuntu-latest
+      permissions:
+        pages: write
+        id-token: write
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      steps:
+        - name: Download artifact
+          uses: actions/download-artifact@v2
+          with:
+            name: output
+        - name: Upload pages artifact
+          uses: actions/upload-pages-artifact@v1
+          with:
+            path: .
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v2
+
