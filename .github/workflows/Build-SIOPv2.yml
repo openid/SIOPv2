@@ -20,7 +20,7 @@ jobs:
           - uses: actions/upload-artifact@v3
             with:
                 # Artifact name
-                name: OID4CI # optional
+                name: compile # optional
                 # Destination path
                 path: ./openid-connect-self-issued-v2-*.html # optional
 
