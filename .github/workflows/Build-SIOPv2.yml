@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-    compile:
+    compile-siopv2:
         name: Compile site assets
         runs-on: ubuntu-latest
         steps:
@@ -20,14 +20,14 @@ jobs:
           - uses: actions/upload-artifact@v3
             with:
                 # Artifact name
-                name: compile # optional
+                name: output # optional
                 # Destination path
                 path: ./openid-connect-self-issued-v2-*.html # optional
 
     publish-to-pages:
       name: Publish to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      needs: [ compile ]
+      needs: [ compile-siopv2 ]
       runs-on: ubuntu-latest
       permissions:
         pages: write
