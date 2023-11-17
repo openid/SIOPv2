@@ -1,5 +1,5 @@
 %%%
-title = "Self-Issued OpenID Provider v2 - draft 12"
+title = "Self-Issued OpenID Provider v2 - draft 13"
 abbrev = "siop-v2"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-12"
+value = "openid-connect-self-issued-v2-1_0-13"
 status = "standard"
 
 [[author]]
@@ -22,9 +22,10 @@ organization="Microsoft"
 initials="M."
 surname="Jones"
 fullname="Michael B. Jones"
-organization="Microsoft"
+organization="Self-Issued Consulting"
     [author.address]
-    email = "mbj@microsoft.com"
+    email = "michael_b_jones@hotmail.com"
+    uri = "https://self-issued.info/"
 
 [[author]]
 initials="T."
@@ -1156,6 +1157,11 @@ A cloud wallet may utilize a native user experience, it may also (in addition or
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -13
+
+   * Improved many of the examples.
+   * Added Requirements Notation and Conventions section.
 
    -12 
 
