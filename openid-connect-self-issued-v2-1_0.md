@@ -1162,6 +1162,7 @@ A cloud wallet may utilize a native user experience, it may also (in addition or
 
    * Improved many of the examples.
    * Added Requirements Notation and Conventions section.
+   * Cleaned up the text
 
    -12 
 
