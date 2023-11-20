@@ -296,7 +296,7 @@ The Self-Issued OP utilizing this specification has multiple options to obtain R
 * Obtain it prior to a transaction, e.g., using [@!OpenID.Registration] or out-of-band mechanisms. See (#pre-registered-rp) for the details.
 * The RP provides metadata to the Self-Issued OP just-in-time in the Self-Issued OP Request using one of the following mechanisms defined in this specification:
     * `client_id` equals `redirect_uri`
-    * OpenID Connect Federation 1.0 Automatic Registration
+    * OpenID Federation 1.0 Automatic Registration, per [@!OpenID.Federation]
     * Decentralized Identifiers
 
 Just-in-time metadata exchange allows SIOPv2 to be used in deployments models where the Self-Issued OP does not or cannot support pre-registration of Client metadata.
@@ -327,11 +327,11 @@ No registration response is returned. A successful Authorization Response implic
 
 As defined in Section X.X of [@!OpenID4VP].
 
-### OpenID Connect Federation 1.0 Automatic Registration
+### OpenID Federation 1.0 Automatic Registration
 
 As defined in Section X.X of [@!OpenID4VP].
 
-The following is a non-normative example of a `client_id` value resolvable using OpenID Connect Federation 1.0 Automatic Registration:
+The following is a non-normative example of a `client_id` value resolvable using OpenID Federation 1.0 Automatic Registration:
 
 ```json
 "client_id": "https://client.example.org"
@@ -448,15 +448,15 @@ Communication with the Authorization Endpoint MUST utilize TLS.
 
 This specification defines the following new authorization request parameters in addition to [@!OpenID.Core]:
 
-* `client_metadata`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter). It MUST not be present if the RP uses OpenID Connect Federation 1.0 Automatic Registration to pass its metadata.
-* `client_metadata_uri`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter). It MUST not be present if the RP uses OpenID Connect Federation 1.0 Automatic Registration to pass its metadata.
+* `client_metadata`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter). It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
+* `client_metadata_uri`: OPTIONAL. This parameter is used by the RP to provide information about itself to a Self-Issued OP that would normally be provided to an OP during Dynamic RP Registration, as specified in (#rp-registration-parameter). It MUST not be present if the RP uses OpenID Federation 1.0 Automatic Registration to pass its metadata.
 * `id_token_type`: OPTIONAL. Space-separated string that specifies the types of ID Token the RP wants to obtain, with the values appearing in order of preference. The allowed individual values are `subject_signed_id_token` and `attester_signed_id_token` (see (#dynamic-siop-metadata)). The default value is `attester_signed_id_token`. The RP determines the type if ID Token returned based on the comparison of the `iss` and `sub` claims values (see(see (#siop-id-token-validation)). In order to preserve compatibility with existing OpenID Connect deployments, the OP MAY return an ID Token that does not fulfill the requirements as expressed in this parameter. So the RP SHOULD be prepared to reliably handle such an outcome. 
 
 This specification allows RPs to send authorization request parameters by using "request by value" and "request by reference" as defined in [@!RFC9101] through the request parameters `request` or `request_uri`. 
 
 When using the parameters `request` or `request_uri` the only further required parameter of the authorization request is the `client_id`. 
 
-When `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Connect Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. `client_metadata` and `client_metadata_uri` are mutually exclusive.
+When `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. `client_metadata` and `client_metadata_uri` are mutually exclusive.
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authorization Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
@@ -972,29 +972,29 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
    <date day="1" month="Sept" year="2021"/>
   </front>
 </reference>
-
 <reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
-  <front>
-    <title>OpenID Connect Federation 1.0</title>
-    <author fullname="Roland Hedberg" initials="R." role="editor"
-            surname="Hedberg">
-      <organization>independent</organization>
-    </author>
-    <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="Microsoft">Microsoft</organization>
-    </author>
-    <author fullname="Andreas &#x00C5;kre Solberg" initials="A.&#x00C5;."
-            surname="Solberg">
-      <organization abbrev="Uninett">Uninett AS</organization>
-    </author>
-    <author fullname="Samuel Gulliksson" initials="S." surname="Gulliksson">
-      <organization abbrev="Schibsted">Schibsted Media Group</organization>
-    </author>
-    <author fullname="John Bradley" initials="J." surname="Bradley">
-      <organization abbrev="Yubico">Yubico</organization>
-    </author>
-    <date day="9" month="September" year="2021"/>
-  </front>
+        <front>
+          <title>OpenID Federation 1.0</title>
+		  <author fullname="R. Hedberg, Ed.">
+            <organization>independent</organization>
+          </author>
+          <author fullname="Michael B. Jones">
+            <organization>Self-Issued Consulting</organization>
+          </author>
+          <author fullname="A. Solberg">
+            <organization>Sikt</organization>
+          </author>
+          <author fullname="John Bradley">
+            <organization>Yubico</organization>
+          </author>
+          <author fullname="Giuseppe De Marco">
+            <organization>independent</organization>
+          </author>
+          <author fullname="Vladimir Dzhuvinov">
+            <organization>Connect2id</organization>
+          </author>
+          <date day="8" month="November" year="2023"/>
+        </front>
 </reference>
 
 <reference anchor="OpenID4VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
