@@ -31,7 +31,7 @@ organization="Self-Issued Consulting"
 initials="T."
 surname="Lodderstedt"
 fullname="Torsten Lodderstedt"
-organization="yes.com"
+organization="sprind.org"
     [author.address]
     email = "torsten@lodderstedt.net"
 
@@ -1162,7 +1162,7 @@ A cloud wallet may utilize a native user experience, it may also (in addition or
 
    * Improved many of the examples.
    * Added Requirements Notation and Conventions section.
-   * Cleaned up the text
+   * Cleaned up the text.
 
    -12 
 
