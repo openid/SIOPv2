@@ -560,7 +560,6 @@ The following is an informative example of a Self-Issued Response for the author
   HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
   {
    "access_token": "SlAV32hkKG",
