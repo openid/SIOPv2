@@ -14,9 +14,9 @@ status = "standard"
 initials="K."
 surname="Yasuda"
 fullname="Kristina Yasuda"
-organization="Microsoft"
+organization="German Federal Agency for Disruptive Innovation (SPRIND)"
     [author.address]
-    email = "kristina.yasuda@microsoft.com"
+    email = "kristina.yasuda@sprind.org
 
 [[author]]
 initials="M."
@@ -31,7 +31,7 @@ organization="Self-Issued Consulting"
 initials="T."
 surname="Lodderstedt"
 fullname="Torsten Lodderstedt"
-organization="sprind.org"
+organization="German Federal Agency for Disruptive Innovation (SPRIND)"
     [author.address]
     email = "torsten@lodderstedt.net"
 
@@ -1003,10 +1003,10 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
       <organization>ConsenSys Mesh</organization>
     </author>
     <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-      <organization>yes.com</organization>
+      <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
     </author>
     <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
-      <organization>Microsoft</organization>
+      <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
     </author>
     <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
       <organization>Convergence.tech</organization>
@@ -1113,7 +1113,7 @@ TBD
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank Christina Bauer, John Bradley, Kim Cameron, Giuseppe De Marco, Daniel Fett, Alen Horvat, Edmund Jay, Tom Jones, Niels Klomp, Torsten Lodderstedt, Tobias Looker, Jeremie Miller, Brandon Murdoch, Nat Sakimura, Oliver Terbu, David Waite, and Dmitri Zagidulin for their contributions to this specification.
+We would like to thank Christina Bauer, John Bradley, Kim Cameron, Giuseppe De Marco, Daniel Fett, Alen Horvat, Edmund Jay, Tom Jones, Niels Klomp, Tobias Looker, Jeremie Miller, Brandon Murdoch, Nat Sakimura, Oliver Terbu, David Waite, and Dmitri Zagidulin for their contributions to this specification.
 
 # Notices 
 
