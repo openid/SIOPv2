@@ -974,7 +974,7 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
 <reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
         <front>
           <title>OpenID Federation 1.0</title>
-		  <author fullname="R. Hedberg, Ed.">
+	  <author fullname="R. Hedberg, Ed.">
             <organization>independent</organization>
           </author>
           <author fullname="Michael B. Jones">
@@ -992,7 +992,7 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="8" month="November" year="2023"/>
+          <date day="2" month="June" year="2025"/>
         </front>
 </reference>
 
