@@ -242,7 +242,7 @@ These metadata values are used by the Self-Issued OP:
 * `request_object_signing_alg_values_supported`
     * REQUIRED. A JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of [@!OpenID.Core]. Valid values include `none`, `RS256`, `ES256`, `ES256K`, and `EdDSA`.
 * `subject_syntax_types_supported`
-    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, a valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending `did` without any method-name.
+    * REQUIRED. A JSON array of strings representing URI scheme identifiers and optionally method names of supported Subject Syntax Types defined in (#sub-syntax-type). When Subject Syntax Type is JWK Thumbprint, a valid value is `urn:ietf:params:oauth:jwk-thumbprint` defined in [@!RFC9278]. When Subject Syntax Type is Decentralized Identifier, valid values MUST be a `did:` prefix followed by a supported DID method without a `:` suffix. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in [@DID-Extensions-Methods] is indicated by sending `did` without any method-name.
 * `id_token_types_supported`: 
     * OPTIONAL. A JSON array of strings containing the list of ID Token types supported by the OP, the default value is `attester_signed_id_token`. The ID Token types defined in this specification are: 
         * `subject_signed_id_token`: Self-Issued ID Token, i.e. the ID Token is signed with key material under the End-User's control. 
@@ -442,7 +442,7 @@ The RP indicates Subject Syntax Types it supports in Client metadata parameter `
 
 Self-Issued OP Authorization Request is sent to the Authorization Endpoint, which performs Authentication of the End-User.
 
-The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core], with the exception of the differences specified in this section, and taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
+The Authorization Endpoint of the Self-Issued OP is used in the same manner as defined in Section 3 of [@!OpenID.Core], with the exception of the differences specified in this section, and taking into account the recommendations given in [@!BCP240].
 
 Communication with the Authorization Endpoint MUST utilize TLS.
 
@@ -708,7 +708,7 @@ Other Claims within the ID Token MUST be considered self-asserted: The Self-Issu
 
 ## RP and Self-Issued OP Metadata Integrity
 
-The integrity and authenticity of Self-Issued OP and RP metadata is paramount for the security of the protocol flow. For example, a modified `authorization_endpoint` could be used by an attacker to launch phishing or mix-up-style attacks (see [@I-D.oauth-security-topics]). A modified `redirect_uri` could be used by an attacker to gather information that can then be used in replay attacks. The provisions defined in this specification ensure the authenticity and integrity of the metadata if all checks (signature validation, etc.) are performed as described.
+The integrity and authenticity of Self-Issued OP and RP metadata is paramount for the security of the protocol flow. For example, a modified `authorization_endpoint` could be used by an attacker to launch phishing or mix-up-style attacks (see [@BCP240]). A modified `redirect_uri` could be used by an attacker to gather information that can then be used in replay attacks. The provisions defined in this specification ensure the authenticity and integrity of the metadata if all checks (signature validation, etc.) are performed as described.
 
 ## Usage of Cross-Device Self-Issued OP for Authentication
 
@@ -861,92 +861,95 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
 
 {backmatter}
 
-<reference anchor="VC-DATA" target="https://www.w3.org/TR/vc-data-model/">
-        <front>
-        <title>Decentralized Identifiers (DIDs) v1.0</title>
-        <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-        </author>
-        <author fullname="Grant Noble">
-            <organization>ConsenSys</organization>
-        </author>
-        <author fullname="Dave Longley">
-            <organization>Digital Bazaar</organization>
-        </author>
-        <author fullname="Daniel C. Burnett">
-            <organization>ConsenSys</organization>
-        </author>
-        <author fullname="Brent Zundel">
-            <organization>Evernym</organization>
-        </author>
-        <date day="19" month="Nov" year="2019"/>
-        </front>
-</reference>
-
-<reference anchor="BCP195" target="https://www.rfc-editor.org/info/bcp195">
-        <front>
-          <title>BCP195</title>
-          <author>
-            <organization>IETF</organization>
-          </author>
-          <date year="2022"/>
-        </front>
-</reference>
+<referencegroup anchor="BCP195" target="https://www.rfc-editor.org/info/bcp195">
+  <reference anchor="RFC8996" target="https://www.rfc-editor.org/info/rfc8996">
+    <front>
+      <title>Deprecating TLS 1.0 and TLS 1.1</title>
+      <author fullname="K. Moriarty" initials="K." surname="Moriarty"/>
+      <author fullname="S. Farrell" initials="S." surname="Farrell"/>
+      <date month="March" year="2021"/>
+      <abstract>
+        <t>This document formally deprecates Transport Layer Security (TLS) versions 1.0 (RFC 2246) and 1.1 (RFC 4346). Accordingly, those documents have been moved to Historic status. These versions lack support for current and recommended cryptographic algorithms and mechanisms, and various government and industry profiles of applications using TLS now mandate avoiding these old TLS versions. TLS version 1.2 became the recommended version for IETF protocols in 2008 (subsequently being obsoleted by TLS version 1.3 in 2018), providing sufficient time to transition away from older versions. Removing support for older versions from implementations reduces the attack surface, reduces opportunity for misconfiguration, and streamlines library and product maintenance.</t>
+        <t>This document also deprecates Datagram TLS (DTLS) version 1.0 (RFC 4347) but not DTLS version 1.2, and there is no DTLS version 1.1.</t>
+        <t>This document updates many RFCs that normatively refer to TLS version 1.0 or TLS version 1.1, as described herein. This document also updates the best practices for TLS usage in RFC 7525; hence, it is part of BCP 195.</t>
+      </abstract>
+    </front>
+    <seriesInfo name="BCP" value="195"/>
+    <seriesInfo name="RFC" value="8996"/>
+    <seriesInfo name="DOI" value="10.17487/RFC8996"/>
+  </reference>
+  <reference anchor="RFC9325" target="https://www.rfc-editor.org/info/rfc9325">
+    <front>
+      <title>Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</title>
+      <author fullname="Y. Sheffer" initials="Y." surname="Sheffer"/>
+      <author fullname="P. Saint-Andre" initials="P." surname="Saint-Andre"/>
+      <author fullname="T. Fossati" initials="T." surname="Fossati"/>
+      <date month="November" year="2022"/>
+      <abstract>
+        <t>Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS) are used to protect data exchanged over a wide range of application protocols and can also form the basis for secure transport protocols. Over the years, the industry has witnessed several serious attacks on TLS and DTLS, including attacks on the most commonly used cipher suites and their modes of operation. This document provides the latest recommendations for ensuring the security of deployed services that use TLS and DTLS. These recommendations are applicable to the majority of use cases.</t>
+        <t>RFC 7525, an earlier version of the TLS recommendations, was published when the industry was transitioning to TLS 1.2. Years later, this transition is largely complete, and TLS 1.3 is widely available. This document updates the guidance given the new environment and obsoletes RFC 7525. In addition, this document updates RFCs 5288 and 6066 in view of recent attacks.</t>
+      </abstract>
+    </front>
+    <seriesInfo name="BCP" value="195"/>
+    <seriesInfo name="RFC" value="9325"/>
+    <seriesInfo name="DOI" value="10.17487/RFC9325"/>
+  </reference>
+</referencegroup>
 
 <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
   <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
     <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization>NRI</organization>
+      <organization>NAT.Consulting (was at NRI)</organization>
     </author>
     <author initials="J." surname="Bradley" fullname="John Bradley">
-      <organization>Ping Identity</organization>
+      <organization>Yubico (was at Ping Identity)</organization>
     </author>
     <author initials="M." surname="Jones" fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+      <organization>Self-Issued Consulting (was at Microsoft)</organization>
     </author>
     <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
       <organization>Google</organization>
     </author>
     <author initials="C." surname="Mortimore" fullname="Chuck Mortimore">
-      <organization>Salesforce</organization>
+      <organization>Disney (was at Salesforce)</organization>
     </author>
-   <date day="8" month="Nov" year="2014"/>
+   <date day="15" month="Dec" year="2023"/>
   </front>
 </reference>
 
 <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
   <front>
-    <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
-	  <author fullname="Nat Sakimura">
-      <organization>NRI</organization>
+    <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 2</title>
+    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
+      <organization>NAT.Consulting (was at NRI)</organization>
     </author>
-    <author fullname="John Bradley">
-      <organization>Ping Identity</organization>
+    <author initials="J." surname="Bradley" fullname="John Bradley">
+      <organization>Yubico (was at Ping Identity)</organization>
     </author>
-    <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+    <author initials="M." surname="Jones" fullname="Michael B. Jones">
+      <organization>Self-Issued Consulting (was at Microsoft)</organization>
     </author>
-    <date day="8" month="Nov" year="2014"/>
+    <date day="15" month="Dec" year="2023"/>
   </front>
  </reference>
 
 <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
   <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
     <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization>NRI</organization>
+      <organization>NAT.Consulting (was at NRI)</organization>
     </author>
     <author initials="J." surname="Bradley" fullname="John Bradley">
-      <organization>Ping Identity</organization>
+      <organization>Yubico (was at Ping Identity)</organization>
     </author>
     <author initials="M." surname="Jones" fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+      <organization>Self-Issued Consulting (was at Microsoft)</organization>
     </author>
     <author initials="E." surname="Jay" fullname="Edmund Jay">
       <organization>Illumila</organization>
     </author>
-   <date day="8" month="Nov" year="2014"/>
+   <date day="15" month="Dec" year="2023"/>
   </front>
 </reference>
 
@@ -971,89 +974,123 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
    <date day="1" month="Sept" year="2021"/>
   </front>
 </reference>
-<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
-        <front>
-          <title>OpenID Federation 1.0</title>
-		  <author fullname="R. Hedberg, Ed.">
-            <organization>independent</organization>
-          </author>
-          <author fullname="Michael B. Jones">
-            <organization>Self-Issued Consulting</organization>
-          </author>
-          <author fullname="A. Solberg">
-            <organization>Sikt</organization>
-          </author>
-          <author fullname="John Bradley">
-            <organization>Yubico</organization>
-          </author>
-          <author fullname="Giuseppe De Marco">
-            <organization>independent</organization>
-          </author>
-          <author fullname="Vladimir Dzhuvinov">
-            <organization>Connect2id</organization>
-          </author>
-          <date day="8" month="November" year="2023"/>
-        </front>
+
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-federation-1_0.html">
+  <front>
+    <title>OpenID Federation 1.0 - draft 44</title>
+    <author fullname="Roland Hedberg" initials="R." role="editor" surname="Hedberg">
+      <organization>independent</organization>
+      <address>
+        <email>roland@catalogix.se</email>
+      </address>
+    </author>
+    <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+      <organization abbrev="Self-Issued Consulting">Self-Issued Consulting</organization>
+      <address>
+        <email>michael_b_jones@hotmail.com</email>
+        <uri>https://self-issued.info/</uri>
+      </address>
+    </author>
+    <author fullname="Andreas Åkre Solberg" initials="A.Å." surname="Solberg">
+      <organization>Sikt</organization>
+      <address>
+        <email>Andreas.Solberg@sikt.no</email>
+        <uri>https://www.linkedin.com/in/andreassolberg/</uri>
+      </address>
+    </author>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization abbrev="Yubico">Yubico</organization>
+      <address>
+        <email>ve7jtb@ve7jtb.com</email>
+        <uri>http://www.thread-safe.com/</uri>
+      </address>
+    </author>
+    <author fullname="Giuseppe De Marco" initials="G." surname="De Marco">
+      <organization>independent</organization>
+      <address>
+        <email>demarcog83@gmail.com</email>
+        <uri>https://www.linkedin.com/in/giuseppe-de-marco-bb054245/</uri>
+      </address>
+    </author>
+    <author fullname="Vladimir Dzhuvinov" initials="V." surname="Dzhuvinov">
+      <organization>Connect2id</organization>
+      <address>
+        <email>vladimir@connect2id.com</email>
+        <uri>https://www.linkedin.com/in/vladimirdzhuvinov/</uri>
+      </address>
+    </author>
+    <date day="25" month="October" year="2025"/>
+  </front>
 </reference>
 
 <reference anchor="OpenID4VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
   <front>
-    <title>OpenID for Verifiable Presentations</title>
+    <title>OpenID for Verifiable Presentations 1.0</title>
     <author initials="O." surname="Terbu" fullname="Oliver Terbu">
-      <organization>ConsenSys Mesh</organization>
+      <organization>Mattr</organization>
+      <address>
+        <email>oliver.terbu@mattr.global</email>
+      </address>
     </author>
     <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-      <organization>yes.com</organization>
+      <organization>SPRIND</organization>
+      <address>
+        <email>torsten@lodderstedt.net</email>
+      </address>
     </author>
     <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
-      <organization>Microsoft</organization>
-    </author>
-    <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
-      <organization>Convergence.tech</organization>
+      <organization>SPRIND</organization>
+      <address>
+        <email>kristina.yasuda@sprind.org</email>
+      </address>
     </author>
     <author initials="T." surname="Looker" fullname="Tobias Looker">
       <organization>Mattr</organization>
+      <address>
+        <email>tobias.looker@mattr.global</email>
+      </address>
     </author>
-    <date day="20" month="May" year="2021"/>
+    <date/>
+    <date day="9" month="Jul" year="2025"/>
   </front>
 </reference>
 
-<reference anchor="DID-Core" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
-        <front>
-        <title>Decentralized Identifiers (DIDs) v1.0</title>
-        <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-        </author>
-        <author fullname="Amy Guy">
-            <organization>Digital Bazaar</organization>
-        </author>
-        <author fullname="Markus Sabadello">
-            <organization>Danube Tech</organization>
-        </author>
-        <author fullname="Drummond Reed">
-            <organization>Evernym</organization>
-        </author>
-        <date day="3" month="Aug" year="2021"/>
-        </front>
+<reference anchor="DID-Core" target="https://www.w3.org/TR/did-1.0/">
+  <front>
+    <title>Decentralized Identifiers (DIDs) v1.0</title>
+    <author initials="M." surname="Sporny" fullname="Manu Sporny">
+        <organization>Digital Bazaar</organization>
+    </author>
+    <author initials="A." surname="Guy" fullname="Amy Guy">
+        <organization>Digital Bazaar</organization>
+    </author>
+    <author initials="M." surname="Sabadello" fullname="Markus Sabadello">
+        <organization>Danube Tech</organization>
+    </author>
+    <author initials="D." surname="Reed" fullname="Drummond Reed">
+        <organization>Evernym</organization>
+    </author>
+    <date day="19" month="Jul" year="2022"/>
+  </front>
 </reference>
 
 <reference anchor="OAuth.Responses" target="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
-        <front>
-        <title>OAuth 2.0 Multiple Response Type Encoding Practices</title>
-        <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
-            <organization>Google</organization>
-        </author>
-        <author initials="M." surname="Scurtescu" fullname="M. Scurtescu">
-            <organization>Google</organization>
-        </author>        
-        <author initials="P." surname="Tarjan" fullname="Facebook">
-            <organization>Evernym</organization>
-        </author>
-        <author initials="M." surname="Jones" fullname="Michael B. Jones">
-            <organization>Microsoft</organization>
-        </author>
-        <date day="25" month="Feb" year="2014"/>
-        </front>
+  <front>
+    <title>OAuth 2.0 Multiple Response Type Encoding Practices</title>
+    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
+        <organization>Google</organization>
+    </author>
+    <author initials="M." surname="Scurtescu" fullname="M. Scurtescu">
+        <organization>Google</organization>
+    </author>        
+    <author initials="P." surname="Tarjan" fullname="Facebook">
+        <organization>Evernym</organization>
+    </author>
+    <author initials="M." surname="Jones" fullname="Michael B. Jones">
+        <organization>Microsoft</organization>
+    </author>
+    <date day="25" month="Feb" year="2014"/>
+  </front>
 </reference>
 
 <reference anchor="app-2-app-sec" target="https://danielfett.de/2020/11/27/improving-app2app/">
@@ -1072,39 +1109,36 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
   </front>
 </reference>
 
-<reference anchor="I-D.oauth-security-topics" target="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics-19">
-  <front>
-    <title>OAuth 2.0 Security Best Current Practice</title>
-    <author fullname="Torsten Lodderstedt">
-      <organization>yes.com</organization>
-    </author>
-    <author fullname="John Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author fullname="Andrey Labunets">
-      <organization>Independent Researcher</organization>
-    </author>
-    <author fullname="Daniel Fett">
-      <organization>yes.com</organization>
-    </author>
-   <date day="16" month="Dec" year="2021"/>
-  </front>
-</reference>
+<referencegroup anchor="BCP240" target="https://www.rfc-editor.org/info/bcp240">
+  <reference anchor="RFC9700" target="https://www.rfc-editor.org/info/rfc9700">
+    <front>
+      <title>Best Current Practice for OAuth 2.0 Security</title>
+      <author fullname="T. Lodderstedt" initials="T." surname="Lodderstedt"/>
+      <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+      <author fullname="A. Labunets" initials="A." surname="Labunets"/>
+      <author fullname="D. Fett" initials="D." surname="Fett"/>
+      <date month="January" year="2025"/>
+      <abstract>
+        <t>This document describes best current security practice for OAuth 2.0. It updates and extends the threat model and security advice given in RFCs 6749, 6750, and 6819 to incorporate practical experiences gathered since OAuth 2.0 was published and covers new threats relevant due to the broader application of OAuth 2.0. Further, it deprecates some modes of operation that are deemed less secure or even insecure.</t>
+      </abstract>
+    </front>
+    <seriesInfo name="BCP" value="240"/>
+    <seriesInfo name="RFC" value="9700"/>
+    <seriesInfo name="DOI" value="10.17487/RFC9700"/>
+  </reference>
+</referencegroup>
 
-<reference anchor="DID_Specification_Registries" target="https://www.w3.org/TR/did-spec-registries/">
-        <front>
-          <title>DID Specification Registries</title>
-      <author fullname="Orie Steele">
-            <organization>Transmute</organization>
-          </author>
-          <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-          </author>
-          <author fullname="Michael Prorock">
-            <organization>mesur.io</organization>
-          </author>
-         <date month="Aug" year="2022"/>
-        </front>
+<reference anchor="DID-Extensions-Methods" target="https://www.w3.org/TR/did-extensions-methods/">
+  <front>
+    <title>DID Methods</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Markus Sabadello">
+      <organization>Danube Tech</organization>
+    </author>
+    <date day="28" month="Oct" year="2025"/>
+  </front>
 </reference>
 
 # IANA Considerations
